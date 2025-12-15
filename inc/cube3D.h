@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:15:05 by alejandro         #+#    #+#             */
-/*   Updated: 2025/12/15 15:15:44 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/12/15 17:36:18 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@
 */
 
 //Self created APIs
-#include "libft/libft.h"
-#include "libft/get_next_line_bonus.h"
+#include "../libs/libft/libft.h"
+#include "../libs/libft/get_next_line_bonus.h"
 //Sistem APIs
 #include <unistd.h>
 #include <fcntl.h>
@@ -31,7 +31,7 @@
 #include <sys/time.h>
 #include <math.h>
 //MiniLibx APIS
-// # include "../inc/Minilibx/mlx.h"
-// # include "../inc/Minilibx/mlx_int.h"
+# include "../libs/minilibx-linux/mlx.h"
+# include "../libs/minilibx-linux/mlx_int.h"
 
 #endif

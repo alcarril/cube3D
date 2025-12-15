@@ -6,12 +6,24 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:15:03 by alejandro         #+#    #+#             */
-/*   Updated: 2025/12/15 03:15:17 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/12/15 16:40:42 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CARBON_H
 #define CARBON_H
+/*
+	DEFINES:
+*/
 
+
+/*
+	STRUCTS:
+*/
+
+
+/*
+	FUNCTION PROTOTIPES:
+*/
 
 #endif

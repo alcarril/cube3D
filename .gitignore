@@ -1,8 +1,9 @@
 # Compilados y binarios
 cube3D
-a,out
+a.out
 *.o
 /obj/
+/libs/libft/*.o
 
 # IDE configs
 .vscode/
