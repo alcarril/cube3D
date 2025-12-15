@@ -1,0 +1,8 @@
+# Compilados y binarios
+cube3D
+a,out
+*.o
+/obj/
+
+# IDE configs
+.vscode/
