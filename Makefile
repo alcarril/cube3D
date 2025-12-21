@@ -25,7 +25,7 @@ SRC_DIR = src/
 OBJ_DIR = obj/
 MKDIR = mkdir -p
 
-SRC_FILES = mains/main.c
+SRC_FILES = mlx_init_close/prueba.c
 
 SRCS = $(addprefix $(SRC_DIR), $(SRC_FILES))
 
@@ -64,4 +64,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: clean fclean re bonus MiniLibx libft
+.PHONY: clean fclean re bonus
