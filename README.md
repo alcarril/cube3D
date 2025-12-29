@@ -46,3 +46,14 @@ bonus features and improvements
 expliacion de raycasting y renderizacion (resources)
 contribution
 license
+
+
+## MiniLibX, Xlib y el servidor X11
+
+El **servidor X11** es una subcapa del sistema operativo **Linux/UNIX** encargada de la gestión del entorno gráfico. Su función principal es manejar la comunicación entre el hardware gráfico, el sistema operativo y las aplicaciones y procesos **clientes**, proporcionando servicios como la creación de ventanas, la gestión de eventos de entrada (teclado y ratón) y el renderizado básico en pantalla.
+
+La **MiniLibX** es una **API gráfica** construida sobre la **API de Xlib**, la biblioteca que permite al **cliente X11** (proceso o aplicacion) comunicarse directamente con el **servidor X11**, que actúa como el **servidor gráfico**.
+
+En este contexto, nuestro programa actúa como un **cliente X11**, y mediante la **MiniLibX**, que abstrae y simplifica el uso de Xlib, podemos **manipular los componentes del sistema X11** —como ventanas, buffers de imagen y eventos— para llevar a cabo el **proceso de renderizado**. Esta capa de abstracción nos permite centrarnos en la lógica del motor gráfico y en el cálculo del renderizado, sin interactuar directamente con las complejidades de la API nativa de Xlib.
+
+

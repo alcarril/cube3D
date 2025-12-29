@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 21:34:21 by alejandro         #+#    #+#             */
-/*   Updated: 2025/12/29 12:41:05 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/12/29 18:23:43 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,6 +161,9 @@ bool is_minimapzone(int win_x, int win_y)
 
 	return (false);
 }
+
+
+
 
 //minmapa traslaciones 
 //minimapa zoom

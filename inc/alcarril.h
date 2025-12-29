@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2025/12/29 12:40:56 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/12/29 12:56:27 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,14 @@ typedef struct	s_player_data
 	bool	r_counterclockwise;
 	bool	r_clockwise;
 
-	//ray and vectos info
-	double	raydir[2];
-	float	delta[2];
+	//on /off mouse
+	//rotaciones
+	//rueda de raton para zoom minimapa
+
+	//cvision data
+    double	*fov_distances; // Array de distancias hasta las paredes
+    int		num_rays;       // Número de rayos
+    float	fov;            // Campo de visión del jugador (en grados)
 }	t_player;
 
 typedef struct	s_map
@@ -110,13 +115,19 @@ typedef struct	s_frame_data
 	//map cells
 	//win cords
 
+	//exta utils
+	
+
 }	t_frame;
 
 typedef struct	s_ray
 {
-	double raydir[2];
-	double delta[2];
-	double sidedist[2];
+	double	raydir[2];
+	double	delta[2];
+	double	sidedist[2];
+	int		map[2];
+	int		numrays;
+	
 	
 }	t_ray;
 
