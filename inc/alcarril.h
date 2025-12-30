@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2025/12/30 06:20:37 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/12/30 15:27:43 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@
 
 # define PI 3.14159265
 # define EPSILON 0.15f
+# define FRICTION 0.7f
 
 /*
 	STRUCTS:
@@ -73,6 +74,7 @@ typedef struct	s_player_data
     double	*fov_distances; // Array de distancias hasta las paredes
     float	fov;            // Campo de visión del jugador (en grados)
 	bool	fish_eye;
+	bool	euclidean;
 }	t_player;
 
 typedef struct	s_map

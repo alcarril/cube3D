@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 21:34:21 by alejandro         #+#    #+#             */
-/*   Updated: 2025/12/30 11:24:05 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/12/30 13:11:59 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ float get_ray_distance_euclidean(t_mlx *mlx, t_ray *ray);
 float get_ray_distance_perpendicular(t_mlx *mlx, t_ray *ray, bool side);
 bool	dda_loop(t_mlx * mlx, t_ray *ray);
 void	calc_side_dist(t_mlx * mlx, t_ray *ray);
-float get_distance_to_wall(t_mlx *mlx, t_ray *ray);
+float get_distance_to_wall(t_mlx *mlx, t_ray *ray, float ray_angle);
 void	set_ray(t_mlx *mlx, t_ray *ray, float ray_angle);
 
 //se puede optimizar pasando por refencia las variables
@@ -213,7 +213,7 @@ int throw_rays(t_mlx *mlx)
 	while (n_rays < WIDTH)
 	{
 		set_ray(mlx, &ray, ray_angle);
-		distance = get_distance_to_wall(mlx, &ray);
+		distance = get_distance_to_wall(mlx, &ray, ray_angle);
 		wall_height = calculate_wall_height(distance);
 		draw_wall_column(mlx, n_rays, wall_height);
 		ray_angle -= d_angle;
@@ -232,7 +232,7 @@ void	set_ray(t_mlx *mlx, t_ray *ray, float ray_angle)
 	ray->map[X] = (int)(mlx->player->pos_x);
 	ray->map[Y] = (int)(mlx->player->pos_y);
 	if (ray->raydir[X] == 0)
-		ray->delta[X] = 1e30; // Evitar división por cero
+		ray->delta[X] = 1e30; // Evitar división por cero //porque ese nuemero
 	else
 		ray->delta[X] = fabs(1 / ray->raydir[X]);
 	if (ray->raydir[Y] == 0)
@@ -241,17 +241,19 @@ void	set_ray(t_mlx *mlx, t_ray *ray, float ray_angle)
 		ray->delta[Y] = fabs(1 / ray->raydir[Y]);
 }
 
-float get_distance_to_wall(t_mlx *mlx, t_ray *ray)
+float get_distance_to_wall(t_mlx *mlx, t_ray *ray, float ray_angle)
 {
 	bool	side;
 	float	wall_dist;
 	
 	calc_side_dist(mlx, ray);
 	side = dda_loop(mlx, ray);
-	if (mlx->player->fish_eye == false)
+	if (mlx->player->euclidean == false)
 		wall_dist = get_ray_distance_perpendicular(mlx, ray, side);
 	else
 		wall_dist = get_ray_distance_euclidean(mlx, ray);
+	if (mlx->player->fish_eye == true)
+		wall_dist = wall_dist * cos(ray_angle - (mlx->player->angle * (PI / 180.0f)));
 	return (wall_dist);
 }
 
@@ -316,6 +318,9 @@ bool	dda_loop(t_mlx * mlx, t_ray *ray)
 float get_ray_distance_perpendicular(t_mlx *mlx, t_ray *ray, bool side)
 {
 	float	wall_dist;
+	// float	dx_distance;
+	// float	dy_distance;
+	
 	
 	if (side == VERTICAL)
 		wall_dist = (ray->map[X] - mlx->player->pos_x + (1 - ray->step[X]) / 2) / ray->raydir[X];

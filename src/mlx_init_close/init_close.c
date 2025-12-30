@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 19:53:10 by alejandro         #+#    #+#             */
-/*   Updated: 2025/12/30 10:56:41 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/12/30 15:11:03 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,10 @@ void setup_player(t_mlx *mlx)
 	// 	//buscar otra posicion libre (flood fill o algo asi)
 	// }
 	mlx->player->angle = 90.0f;//
-	mlx->player->speed = 0.04f;//
+	mlx->player->speed = 0.033f;//
 	mlx->player->fov = 60.0f;
 	mlx->player->fish_eye = false;
+	mlx->player->euclidean = false;
 	mlx->player->move_down = false;
 	mlx->player->move_up = false;
 	mlx->player->move_right = false;
