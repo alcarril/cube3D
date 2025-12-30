@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 21:34:21 by alejandro         #+#    #+#             */
-/*   Updated: 2025/12/29 18:23:43 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/12/30 11:24:05 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,15 @@ void	get_minimapscale(t_mlx *mlx, float *scale);
 bool	touch_wall(t_mlx *mlx, float x, float y, float epsilon);
 void	is_person2D(t_mlx *mlx, int *window, float *map);
 // void	update_minimap_view(t_mlx *mlx, float zoom_level, int *minimap_limits);
+
+void draw_wall_column(t_mlx *mlx, int column, int wall_height);
+int	calculate_wall_height(float perpendicular_distance);
+float get_ray_distance_euclidean(t_mlx *mlx, t_ray *ray);
+float get_ray_distance_perpendicular(t_mlx *mlx, t_ray *ray, bool side);
+bool	dda_loop(t_mlx * mlx, t_ray *ray);
+void	calc_side_dist(t_mlx * mlx, t_ray *ray);
+float get_distance_to_wall(t_mlx *mlx, t_ray *ray);
+void	set_ray(t_mlx *mlx, t_ray *ray, float ray_angle);
 
 //se puede optimizar pasando por refencia las variables
 void	buffering_pixel(int x, int y, t_mlx *mlx, int color)
@@ -160,6 +169,198 @@ bool is_minimapzone(int win_x, int win_y)
 			return (true);
 
 	return (false);
+}
+
+// int	render_frame3D(t_mlx *mlx)
+// {
+// 	int		win[2];
+
+// 	move_player(mlx);
+// 	win[Y] = 0;
+// 	while (win[X] <= WIDTH)
+// 	{
+// 		win[Y] = 0;
+// 		while (win[Y] <= HEIGHT)
+// 		{
+			
+// 			win[Y]++;
+// 		}
+// 		win[X]++;
+// 	}
+// 	// draw_ray2D(mlx);
+// 	mlx_put_image_to_window(mlx->mlx_var, mlx->mlx_window, mlx->mlx_img, 0, 0);
+// 	return (1);
+// }
+
+//barido por defecto invierte respeto al minimapta hayq ue barrede deizquierda a derecha o de derecha a izquierda 
+//apara hcer un ajuste elegante y no rmper al estrcutura, no se tiene que ajustar desde la bifferizacin porque es 
+int throw_rays(t_mlx *mlx)
+{
+	float	ray_angle;
+	float	d_angle;
+	unsigned int	n_rays;
+	t_ray	ray;
+	float	distance;
+	int		wall_height;
+
+	move_player(mlx);
+
+	// LIMPIAR IMAGEN
+	ft_bzero(mlx->bit_map_address, HEIGHT * mlx->line_length);//porque es necesaria
+	d_angle = (mlx->player->fov * PI / 180.0f) / WIDTH;
+	ray_angle = (mlx->player->angle * PI / 180.0f) + (mlx->player->fov * PI / 180.0f) / 2;
+	n_rays = 0;
+	while (n_rays < WIDTH)
+	{
+		set_ray(mlx, &ray, ray_angle);
+		distance = get_distance_to_wall(mlx, &ray);
+		wall_height = calculate_wall_height(distance);
+		draw_wall_column(mlx, n_rays, wall_height);
+		ray_angle -= d_angle;
+		n_rays++;
+	}
+	render_frame2D(mlx);
+	mlx_put_image_to_window(mlx->mlx_var, mlx->mlx_window, mlx->mlx_img, 0, 0);
+	return (0);
+}
+
+
+void	set_ray(t_mlx *mlx, t_ray *ray, float ray_angle)
+{
+	ray->raydir[X] = cos(ray_angle);
+	ray->raydir[Y] = -sin(ray_angle); //ajuste norte sur
+	ray->map[X] = (int)(mlx->player->pos_x);
+	ray->map[Y] = (int)(mlx->player->pos_y);
+	if (ray->raydir[X] == 0)
+		ray->delta[X] = 1e30; // Evitar división por cero
+	else
+		ray->delta[X] = fabs(1 / ray->raydir[X]);
+	if (ray->raydir[Y] == 0)
+		ray->delta[Y] = 1e30; // Evitar división por cero
+	else
+		ray->delta[Y] = fabs(1 / ray->raydir[Y]);
+}
+
+float get_distance_to_wall(t_mlx *mlx, t_ray *ray)
+{
+	bool	side;
+	float	wall_dist;
+	
+	calc_side_dist(mlx, ray);
+	side = dda_loop(mlx, ray);
+	if (mlx->player->fish_eye == false)
+		wall_dist = get_ray_distance_perpendicular(mlx, ray, side);
+	else
+		wall_dist = get_ray_distance_euclidean(mlx, ray);
+	return (wall_dist);
+}
+
+// Determinar la dirección del paso y la distancia inicial a los lados
+//falta control de errores de seno y conseno siempre es entre -1 y 1
+void	calc_side_dist(t_mlx * mlx, t_ray *ray)
+{
+	if (ray->raydir[X] < 0)
+	{
+		ray->step[X] = -1;
+		ray->sidedist[X] = (mlx->player->pos_x - ray->map[X]) * ray->delta[X];
+	}
+	else
+	{
+		ray->step[X] = 1;
+		ray->sidedist[X] = (ray->map[X] + 1.0 - mlx->player->pos_x) * ray->delta[X];
+	}
+	if (ray->raydir[Y] < 0)
+	{
+		ray->step[Y] = -1;
+		ray->sidedist[Y] = (mlx->player->pos_y - ray->map[Y]) * ray->delta[Y];
+	}
+	else
+	{
+		ray->step[Y] = 1;
+		ray->sidedist[Y] = (ray->map[Y] + 1.0 - mlx->player->pos_y) * ray->delta[Y];
+	}
+}
+
+// Avanzar al siguiente lado de la celda
+bool	dda_loop(t_mlx * mlx, t_ray *ray)
+{
+	int hit;
+	bool side;
+
+	hit = 0;
+	side = 0;
+	while (hit == 0)
+	{
+		if (ray->sidedist[X] < ray->sidedist[Y])
+		{
+			ray->sidedist[X] += ray->delta[X];
+			ray->map[X] += ray->step[X];
+			side = VERTICAL;
+		}
+		else
+		{
+			ray->sidedist[Y] += ray->delta[Y];
+			ray->map[Y] += ray->step[Y];
+			side = HORIZONTAL;
+		}
+        // if (ray->map[X] < 0 || ray->map[X] >= (int)mlx->map->max_columns ||
+        //     ray->map[Y] < 0 || ray->map[Y] >= (int)mlx->map->max_rows)
+        //     return (false);
+		if (mlx->map->map_grids[ray->map[Y]][ray->map[X]] == WALL)
+			hit = 1;
+	}
+	return (side);
+}
+
+//no fiche eye
+float get_ray_distance_perpendicular(t_mlx *mlx, t_ray *ray, bool side)
+{
+	float	wall_dist;
+	
+	if (side == VERTICAL)
+		wall_dist = (ray->map[X] - mlx->player->pos_x + (1 - ray->step[X]) / 2) / ray->raydir[X];
+	else
+		wall_dist = (ray->map[Y] - mlx->player->pos_y + (1 - ray->step[Y]) / 2) / ray->raydir[Y];
+	
+	return (wall_dist);
+}
+
+//fiche eye
+float get_ray_distance_euclidean(t_mlx *mlx, t_ray *ray)
+{
+	float fish_eye_dist;
+	
+	fish_eye_dist = sqrt(pow(ray->map[X] - mlx->player->pos_x, 2) +
+							   pow(ray->map[Y] - mlx->player->pos_y, 2));
+	 return fish_eye_dist;
+}
+
+int	calculate_wall_height(float perpendicular_distance)
+{
+	int wall_height;
+	
+	if (perpendicular_distance <= 0) 
+		return (HEIGHT);
+	wall_height = (int)(HEIGHT / perpendicular_distance);
+	return (wall_height);
+}
+
+void	draw_wall_column(t_mlx *mlx, int column, int wall_height)
+{
+	int	wall_start;
+	int	wall_end;
+	int i;
+	
+	i = 0;
+	wall_start = (HEIGHT / 2) - (wall_height / 2);
+	wall_end = (HEIGHT / 2) + (wall_height / 2);
+	i = wall_start;
+	while (i <= wall_end)
+	{
+		buffering_pixel(column, i, mlx, 0x00FFF00000); // Color blanco para la pared
+		i++;
+	}
+	// write(1, "lolo", 4);
 }
 
 

@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2025/12/29 12:56:27 by alejandro        ###   ########.fr       */
+/*   Updated: 2025/12/30 06:20:37 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,11 @@
 # define X 1
 # define Y 0
 
+#define VERTICAL 1
+#define HORIZONTAL 0
+
 # define PI 3.14159265
-# define EPSILON 0.2
+# define EPSILON 0.15f
 
 /*
 	STRUCTS:
@@ -68,8 +71,8 @@ typedef struct	s_player_data
 
 	//cvision data
     double	*fov_distances; // Array de distancias hasta las paredes
-    int		num_rays;       // Número de rayos
     float	fov;            // Campo de visión del jugador (en grados)
+	bool	fish_eye;
 }	t_player;
 
 typedef struct	s_map
@@ -122,11 +125,12 @@ typedef struct	s_frame_data
 
 typedef struct	s_ray
 {
-	double	raydir[2];
-	double	delta[2];
-	double	sidedist[2];
-	int		map[2];
-	int		numrays;
+	float			raydir[2];
+	float			delta[2];
+	float			sidedist[2];
+	int				map[2];
+	unsigned int	step[2];
+	float			perp_wall_dist;
 	
 	
 }	t_ray;
@@ -149,5 +153,6 @@ void	create_hooks(t_mlx *mlx);
 void	destroy_mlx_componets(int (*f)(), int (*g)(), int (*t)(),
 	t_mlx *mlx);
 void setup_player(t_mlx *mlx);
+int	throw_rays(t_mlx *mlx);
 
 #endif
