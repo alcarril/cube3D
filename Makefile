@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME = cube3D
+NAME = cub3D
 
 CC = cc
 CC_FLAGS = -Wall -Wextra -Werror
@@ -26,8 +26,13 @@ OBJ_DIR = obj/
 MKDIR = mkdir -p
 
 SRC_FILES = mlx_init_close/init_close.c \
+			mlx_init_close/setup_player_frame.c \
 			events/keys.c \
+			events/keys2.c \
+			events/move_player.c \
 			render/render.c \
+			render/render_minimap.c \
+			render/rays_2d.c \
 			mains/main.c
 
 SRCS = $(addprefix $(SRC_DIR), $(SRC_FILES))

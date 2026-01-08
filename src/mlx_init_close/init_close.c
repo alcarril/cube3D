@@ -6,12 +6,13 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 19:53:10 by alejandro         #+#    #+#             */
-/*   Updated: 2025/12/30 15:11:03 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/08 14:05:03 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/cube3D.h"
 
+//aqui tendriamos que refactorizar
 char	init_mlx_components(t_mlx *mlx)
 {
 	if (!mlx)
@@ -19,10 +20,11 @@ char	init_mlx_components(t_mlx *mlx)
 	mlx->mlx_var = mlx_init();
 	if (!mlx->mlx_var)
 		return (0);
-	mlx->mlx_window = mlx_new_window(mlx->mlx_var, WIDTH, HEIGHT, "cube3D");
+	setup_window_wh(mlx);
+	mlx->mlx_window = mlx_new_window(mlx->mlx_var, mlx->win_width, mlx->win_height, "cub3D");
 	if (!mlx->mlx_window)
 		return (destroy_mlx_componets(0, mlx_destroy_window, 0, mlx), 0);
-	mlx->mlx_img = mlx_new_image(mlx->mlx_var, HEIGHT, WIDTH);
+	mlx->mlx_img = mlx_new_image(mlx->mlx_var, mlx->win_width, mlx->win_height);
 	if (!mlx->mlx_img)
 		return (destroy_mlx_componets(0, mlx_destroy_window,
 				mlx_destroy_display, mlx), 0);
@@ -36,6 +38,15 @@ char	init_mlx_components(t_mlx *mlx)
 	return (1);
 }
 
+/*
+	Obtener la escala del mapa a la pantalla. IGual no esra necesario
+*/
+void	setup_window_wh(t_mlx *mlx)
+{
+	mlx->win_height = mlx->map->max_rows * WIN_SCALE * 4;
+	mlx->win_width = mlx->map->max_columns * WIN_SCALE * 3;
+}
+
 void	create_hooks(t_mlx *mlx)
 {
 	mlx_hook(mlx->mlx_window, KeyPress, KeyPressMask,
@@ -44,8 +55,8 @@ void	create_hooks(t_mlx *mlx)
 		key_release, mlx);
 	mlx_hook(mlx->mlx_window, DestroyNotify, StructureNotifyMask,
 		close_handler, mlx);
-	// mlx_loop_hook(mlx->mlx_var, render_frame2D, mlx);
-	mlx_loop_hook(mlx->mlx_var, throw_rays, mlx);
+	// mlx_hook(mlx->mlx_window, MotionNotify, PointerMotionMask, mouse_move, mlx);
+	mlx_loop_hook(mlx->mlx_var, game_engine, mlx);
 }
 
 void	destroy_mlx_componets(int (*f)(), int (*g)(), int (*t)(),
@@ -58,39 +69,4 @@ void	destroy_mlx_componets(int (*f)(), int (*g)(), int (*t)(),
 	if (t != NULL)
 		t(mlx->mlx_var);
 	free(mlx->mlx_var);
-}
-
-//init first player pos inisde map and init orientation inside map
-//hay que cambiar cosas
-void setup_player(t_mlx *mlx)
-{
-	unsigned int	middle_x;
-	unsigned int	middle_y;
-	
-	middle_x = mlx->map->max_columns / 2;
-	middle_y = mlx->map->max_rows / 2;
-	if (mlx->map->map_grids[middle_x][middle_y] == FLOOR)
-	{
-		mlx->player->origin[0] = middle_x;
-		mlx->player->pos_x = middle_x;
-		mlx->player->origin[1] = middle_y;
-		mlx->player->pos_y = middle_y;
-	}
-	// else
-	// {
-	// 	//buscar otra posicion libre (flood fill o algo asi)
-	// }
-	mlx->player->angle = 90.0f;//
-	mlx->player->speed = 0.033f;//
-	mlx->player->fov = 60.0f;
-	mlx->player->fish_eye = false;
-	mlx->player->euclidean = false;
-	mlx->player->move_down = false;
-	mlx->player->move_up = false;
-	mlx->player->move_right = false;
-	mlx->player->move_left = false;
-	mlx->player->r_clockwise = false;
-	mlx->player->r_counterclockwise = false;
-	printf("llega2\n");
-
 }
