@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 13:26:17 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/08 14:37:14 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/08 19:21:05 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void draw_rays2D(t_mlx *mlx)
 	Funcion para pintar un rayo en 2D desde la posicion del jugador hasta que toque una pared.
 	- En el calculo del diferencial del eje y se usa el ajuste norte sur (inverso del seno).
 */
-void	draw_ray2D(t_mlx *mlx, float diferencial[2], float rad)
+void	draw_ray2D(t_mlx *mlx, float *diferencial, float rad)
 {
 	int	window[2];
 	float step;

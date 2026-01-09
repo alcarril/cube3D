@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/08 15:05:00 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/09 14:10:46 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,16 @@
 	STRUCTS:
 */
 
+typedef struct	s_texture_img
+{
+	void	*img;
+	char	*addr;
+	int		width;
+	int		height;
+	int		bits_per_pixel;
+	int		line_length;
+	int		endian;
+}	t_texture;
 
 typedef struct	s_player_data
 {
@@ -81,9 +91,13 @@ typedef struct	s_map
 {
 	unsigned int	max_columns; //x
 	unsigned int	max_rows; //y
-	char map_grids[MAX_ROWS][MAX_COLUMS];
-	//colors
+	char			map_grids[MAX_ROWS][MAX_COLUMS];
+
 	//textures
+	t_texture	textures[4];
+	//floor ceilling colors
+	int		floor_color[3];		// R, G, B
+	int		ceiling_color[3];	// R, G, B
 }	t_map;
 
 //crear la strcutura frame para cuidar la memeria en cada frame no usar memeria local
@@ -109,8 +123,10 @@ typedef struct	s_frame_data
 	bool	euclidean;//quizas sobre
 	
 	float	*fov_distances; // Array de distancias hasta las paredes quizas osbre
+
 	
 }	t_frame;
+
 
 typedef struct	s_mlx_api_components
 {
@@ -130,6 +146,7 @@ typedef struct	s_mlx_api_components
 	int		bits_per_pixel;
 	int		line_length;
 	int		endian;
+
 	
 	//game components
 	t_player	*player;
@@ -145,7 +162,9 @@ typedef struct	s_ray
 	float			sidedist[2];
 	int				map[2];
 	unsigned int	step[2];
+	bool			side_hit;
 	float			perp_wall_dist;
+	float			proyected_wall_dist;
 }	t_ray;
 
 
@@ -161,6 +180,8 @@ void	setup_player(t_mlx *mlx);
 void	init_player_orientation_pos(t_player *pl, char cardinal, int pos[2]);
 void	init_frame_data( t_mlx *mlx);
 void	get_minimapscale(t_mlx *mlx, float *scale);
+
+void	load_textures(t_mlx *mlx);
 
 //hooks and events
 void	create_hooks(t_mlx *mlx);
@@ -189,7 +210,18 @@ void	buffering_pixel(int x, int y, t_mlx *mlx, int color);
 
 //raycasting
 void	throw_rays(t_mlx *mlx);
-void	cast_ray(t_mlx *mlx, int n_rays, float ray_angle);
+void	cast_ray(t_mlx *mlx, int n_ray, float ray_angle);
+void	set_ray(t_mlx *mlx, t_ray *ray, float ray_angle);
+float	get_distance_to_wall(t_mlx *mlx, t_ray *ray, float ray_angle);
+void	draw_wall_column1(t_mlx *mlx, int column, int wall_height);
+void	draw_wall_column(t_mlx *mlx, int column, int wall_height, t_ray *ray);
+
+//dda algorithm
+void	calc_side_dist(t_mlx * mlx, t_ray *ray);
+void	dda_loop(t_mlx * mlx, t_ray *ray);
+float	get_ray_distance_perpendicular(t_mlx *mlx, t_ray *ray);
+float	get_ray_distance_euclidean(t_mlx *mlx, t_ray *ray);
+int		calculate_wall_height(float perpendicular_distance, int win_height);
 
 //render minimap 2D
 int		render_frame2D(t_mlx *mlx);
@@ -201,11 +233,10 @@ bool	is_minimapzone(int win_x, int win_y, t_mlx *mlx);
 
 //render rays 2D
 void	draw_rays2D(t_mlx *mlx);
-void	draw_ray2D(t_mlx *mlx, float diferencial[2], float rad);
+void	draw_ray2D(t_mlx *mlx, float *diferencial, float rad);
 bool	touch_wall(t_mlx *mlx, float x, float y);
 
-
-
-
+//debug
+void	print_texture_values(t_mlx *mlx);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 18:12:38 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/08 11:34:55 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/09 14:17:45 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ int main (void)
 	mlx.frame = &frame;
 	setup_player(&mlx);
 	init_frame_data(&mlx);
+	printf("jose\n");
+	load_textures(&mlx);
 	create_hooks(&mlx);
 	// mlx_loop_hook(&mlx, render_frame2D, &mlx);
 	mlx_loop(mlx.mlx_var);

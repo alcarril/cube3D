@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 11:42:33 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/08 14:30:39 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/09 14:18:53 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void setup_player(t_mlx *mlx)
 	mlx->player->r_clockwise = false;
 	mlx->player->r_counterclockwise = false;
 	mlx->player->sprint = false;
+	printf("Player initialized successfully.\n");
 }
 
 /*
@@ -87,6 +88,7 @@ void	init_frame_data( t_mlx *mlx)
 	mlx->frame->fish_eye = false;
 	mlx->frame->euclidean = false;
 	get_minimapscale(mlx, mlx->frame->mm_scale);
+	printf("Minimap scale X: %f, Y: %f\n", mlx->frame->mm_scale[X], mlx->frame->mm_scale[Y]);
 }
 
 /*

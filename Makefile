@@ -31,6 +31,8 @@ SRC_FILES = mlx_init_close/init_close.c \
 			events/keys2.c \
 			events/move_player.c \
 			render/render.c \
+			render/raycasting.c \
+			render/dda_algorith.c \
 			render/render_minimap.c \
 			render/rays_2d.c \
 			mains/main.c
