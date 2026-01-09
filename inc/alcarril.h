@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/09 14:10:46 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/09 23:14:39 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,13 @@
 # define WIDTH 720
 # define HEIGHT 720
 
-#define WIN_SCALE 10
-
 # define MAX_COLUMS 20
 # define MAX_ROWS 15
 
 #define MINI_WIDTH 4
 #define MINI_HEIGHT 4
+
+#define WIN_SCALE 10
 
 # define WALL 1
 # define FLOOR 0
@@ -48,9 +48,26 @@
 # define EPSILON 0.15f
 # define FRICTION 0.7f
 
+//esto podria ir en enum
+#define N 0
+#define S 1
+#define E 2
+#define W 3
+
 /*
 	STRUCTS:
 */
+
+/*
+    DECLARACIONES ANTICIPADAS:
+*/
+typedef struct s_mlx_api_components t_mlx;
+typedef struct s_texture_img t_texture;
+typedef struct s_wall t_wall;
+typedef struct s_player_data t_player;
+typedef struct s_map t_map;
+typedef struct s_frame_data t_frame;
+typedef struct s_ray t_ray;
 
 typedef struct	s_texture_img
 {
@@ -62,6 +79,19 @@ typedef struct	s_texture_img
 	int		line_length;
 	int		endian;
 }	t_texture;
+
+typedef struct s_wall
+{
+	int		wall_height;      // Altura de la pared en píxeles
+	int		wall_start;       // Inicio de la pared en la pantalla pixeles
+	int		wall_end;         // Fin de la pared en la pantalla pixeles
+	int		tex_x;            // Coordenada X de la textura en la pared
+	int		tex_y;            // Coordenada Y de la textura en la pared
+	float	text_v_step;      // Text height to screen height ratio
+	float	tex_pos;          // Posición inicial en la textura
+	double	wall_x;           // Posición de impacto en la pared (0-1)
+	t_texture *texture;       // Puntero a la textura seleccionada
+}	t_wall;
 
 typedef struct	s_player_data
 {
@@ -95,9 +125,12 @@ typedef struct	s_map
 
 	//textures
 	t_texture	textures[4];
+	char 		*texture_paths[4];
 	//floor ceilling colors
 	int		floor_color[3];		// R, G, B
 	int		ceiling_color[3];	// R, G, B
+	int 	floor_color_hex;	// Hexadecimal
+	int 	ceiling_color_hex;	// Hexadecimal
 }	t_map;
 
 //crear la strcutura frame para cuidar la memeria en cada frame no usar memeria local
@@ -121,6 +154,11 @@ typedef struct	s_frame_data
 	bool	raycasting_onoff;
 	bool	fish_eye;//
 	bool	euclidean;//quizas sobre
+
+	//renderizar con ntexturas o sin ellas
+	void (*draw_walls)(t_mlx *mlx, int column, t_wall *wall, t_ray *ray);
+	//renderiza suelo y techo speed vs low speed
+	void (*floor_celling)(t_mlx *mlx);
 	
 	float	*fov_distances; // Array de distancias hasta las paredes quizas osbre
 
@@ -163,7 +201,7 @@ typedef struct	s_ray
 	int				map[2];
 	unsigned int	step[2];
 	bool			side_hit;
-	float			perp_wall_dist;
+	float			wall_dist;
 	float			proyected_wall_dist;
 }	t_ray;
 
@@ -172,28 +210,43 @@ typedef struct	s_ray
 	FUNCTION PROTOTIPES:
 */
 
-//Initializations
-char	init_mlx_components(t_mlx *mlx);
-void	setup_window_wh(t_mlx *mlx);
-void	destroy_mlx_componets(int (*f)(), int (*g)(), int (*t)(), t_mlx *mlx);
+//Initializations. start game and hooks
+bool	init_mlx_components(t_mlx *mlx);
+bool	init_images_data(t_mlx *mlx);
+bool	load_textures(t_mlx *mlx);
+bool	load_single_texture(t_mlx *mlx, t_texture *texture, char *path);
+void	start_hooks_and_game(t_mlx *mlx);
+
+//setup game
+bool	setup_game(t_mlx *mlx, t_player *player, t_map *map, t_frame *frame);
 void	setup_player(t_mlx *mlx);
 void	init_player_orientation_pos(t_player *pl, char cardinal, int pos[2]);
 void	init_frame_data( t_mlx *mlx);
 void	get_minimapscale(t_mlx *mlx, float *scale);
 
-void	load_textures(t_mlx *mlx);
+//Close and free
+void	destroy_mlx_componets(int (*f)(), int (*g)(), int (*t)(), t_mlx *mlx);
+void	free_loaded_textures(t_mlx *mlx, int loaded_count);
+int		close_handler(t_mlx *mlx);
+
+//quizas desaparezcan
+void	init_floor_and_ceiling_colors(t_map *map);
+void	setup_window_wh(t_mlx *mlx);
+int		rgb_to_hex(int r, int g, int b);
 
 //hooks and events
-void	create_hooks(t_mlx *mlx);
 int		key_press(int keysym, t_mlx *mlx);
+int		key_release(int keysym, t_mlx *mlx);
 void	player_keypress(t_mlx *mlx, int keysym);
 void	change_fov(t_mlx *mlx);
 void	toogle_raycasting(t_mlx *mlx);
+void	toggle_textures(t_mlx *mlx);
+void	toogle_floor_celling(t_mlx *mlx);
+void	toggle_fish_eye(t_mlx *mlx);
+void	toogle_dist_calc(t_mlx *mlx);
 void	toggle_minimap(t_mlx *mlx);
 void	toggle_rays(t_mlx *mlx);
-void	toggle_fish_eye(t_mlx *mlx);
-int		key_release(int keysym, t_mlx *mlx);
-int		close_handler(t_mlx *mlx);
+void	print_controls(void);
 
 //player move
 bool	is_collision(float x, float y, t_mlx *mlx, float e);
@@ -204,6 +257,7 @@ int		mouse_move(int x, int y, t_mlx *mlx);
 
 //render
 int		game_engine(t_mlx *mlx);
+//fps counter
 
 //render utils
 void	buffering_pixel(int x, int y, t_mlx *mlx, int color);
@@ -212,16 +266,26 @@ void	buffering_pixel(int x, int y, t_mlx *mlx, int color);
 void	throw_rays(t_mlx *mlx);
 void	cast_ray(t_mlx *mlx, int n_ray, float ray_angle);
 void	set_ray(t_mlx *mlx, t_ray *ray, float ray_angle);
-float	get_distance_to_wall(t_mlx *mlx, t_ray *ray, float ray_angle);
-void	draw_wall_column1(t_mlx *mlx, int column, int wall_height);
-void	draw_wall_column(t_mlx *mlx, int column, int wall_height, t_ray *ray);
+void	scale_wall(t_wall *wall, float perpendicular_distance, int win_height);
+void	draw_wall_column(t_mlx *mlx, int column, t_wall *wall, t_ray *ray);
 
 //dda algorithm
+float	get_distance_to_wall(t_mlx *mlx, t_ray *ray, float ray_angle);
 void	calc_side_dist(t_mlx * mlx, t_ray *ray);
 void	dda_loop(t_mlx * mlx, t_ray *ray);
-float	get_ray_distance_perpendicular(t_mlx *mlx, t_ray *ray);
+float	get_ray_distance(t_mlx *mlx, t_ray *ray);
 float	get_ray_distance_euclidean(t_mlx *mlx, t_ray *ray);
-int		calculate_wall_height(float perpendicular_distance, int win_height);
+
+//textured walls
+void			draw_wall_column_tex(t_mlx *mlx, int column, t_wall *wall, t_ray *ray);
+t_texture		*select_texture(t_mlx *mlx, t_ray *ray);
+double			calculate_wall_x(t_mlx *mlx, t_ray *ray);
+void			calculate_tex(t_wall *wall, t_texture *texture, int win_height);
+unsigned int	extract_color(t_texture *texture, int tex_x, int tex_y);
+
+//floor and ceiling
+void	render_floor_and_ceiling(t_mlx *mlx);
+void	render_floor_and_ceiling_speed(t_mlx *mlx);
 
 //render minimap 2D
 int		render_frame2D(t_mlx *mlx);

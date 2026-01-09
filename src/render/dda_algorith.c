@@ -6,11 +6,35 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:07:51 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/09 12:53:01 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/09 23:21:43 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
+
+/*
+	Función principal para calcular la distancia hasta la pared utilizando el algoritmo DDA
+	- Calcula la distancia inicial a los lados
+	- Ejecuta el bucle DDA para encontrar la intersección con una pared
+	- Calcula la distancia al muro según la configuración del frame (euclidiana o no)
+	- Aplica corrección de efecto de ojo de pez si está desactivado en la configuración del frame
+*/
+float	get_distance_to_wall(t_mlx *mlx, t_ray *ray, float ray_angle)
+{
+	float	wall_dist_corrected;
+	
+	calc_side_dist(mlx, ray);
+	dda_loop(mlx, ray);
+	if (mlx->frame->euclidean == false)
+		ray->wall_dist = get_ray_distance(mlx, ray);
+	else
+		ray->wall_dist = get_ray_distance_euclidean(mlx, ray);
+	if (mlx->frame->fish_eye == false)
+		wall_dist_corrected = ray->wall_dist * cos(ray_angle - (mlx->player->rad_angle));
+	else
+		wall_dist_corrected = ray->wall_dist;
+	return (wall_dist_corrected);
+}
 
 // Determinar la dirección del paso y la distancia inicial a los lados
 //falta control de errores de seno y conseno siempre es entre -1 y 1
@@ -92,7 +116,7 @@ void	dda_loop(t_mlx * mlx, t_ray *ray)
 	La compensacion cara es (1 - step) / 2 porque si el paso es hacia atras conseguimos sumarle 1 y si es hacia adelante le sumamos 0
 	Ladireccion de rayo es por los trianglos semenjantes con esto conseguimos la distancia perpendicular
 */
-float get_ray_distance_perpendicular(t_mlx *mlx, t_ray *ray)
+float get_ray_distance(t_mlx *mlx, t_ray *ray)
 {
 	float	dist;
 	float	wall_dist;
@@ -113,7 +137,11 @@ float get_ray_distance_perpendicular(t_mlx *mlx, t_ray *ray)
 	return (dist);
 }
 
-//trigonmetric calculus
+/*
+	Calcula la distancia euclidiana desde la posición del jugador hasta el punto de impacto en la pared
+	usando trifonometría básica (teorema de Pitágoras). Esta función no corrige el efecto de ojo de pez.
+	Hace que las apredes se vean concavas o convexas dependiendo de la posicion del jugador y el angulo del rayo.
+*/
 float get_ray_distance_euclidean(t_mlx *mlx, t_ray *ray)
 {
 	float fish_eye_dist;
@@ -123,12 +151,3 @@ float get_ray_distance_euclidean(t_mlx *mlx, t_ray *ray)
 	 return fish_eye_dist;
 }
 
-int	calculate_wall_height(float perpendicular_distance, int win_height)
-{
-	int wall_height;
-	
-	if (perpendicular_distance <= 0) 
-		return (win_height);
-	wall_height = (int)(win_height / perpendicular_distance);
-	return (wall_height);
-}

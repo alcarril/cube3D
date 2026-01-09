@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 22:31:15 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/08 14:08:33 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/09 23:17:15 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 */
 int	key_press(int keysym, t_mlx *mlx)
 {
+	if (mlx == NULL)
+		return (0);
 	if (keysym == XK_Escape)
 	{
 		close_handler(mlx);
@@ -32,6 +34,14 @@ int	key_press(int keysym, t_mlx *mlx)
 		toggle_rays(mlx);
 	if (keysym == XK_f)
 		toggle_fish_eye(mlx);
+	if (keysym == XK_e)
+		toogle_dist_calc(mlx);
+	if (keysym == XK_t)
+		toggle_textures(mlx);
+	if (keysym == XK_c)
+		toogle_floor_celling(mlx);
+	if (keysym == XK_z)
+		print_controls();
 	return (0);
 }
 
@@ -40,6 +50,8 @@ int	key_press(int keysym, t_mlx *mlx)
 */
 int	key_release(int keysym, t_mlx *mlx)
 {
+	if (mlx == NULL)
+		return (0);
 	if (keysym == XK_w)
 		mlx->player->move_up = false;
 	if (keysym == XK_s)
@@ -64,20 +76,6 @@ int	key_release(int keysym, t_mlx *mlx)
 }
 
 /*
-	Funcion que maneja el cierre de la ventana
-*/
-int	close_handler(t_mlx *mlx)
-{
-	mlx_destroy_image(mlx->mlx_var,
-		mlx->mlx_img);
-	mlx_destroy_window(mlx->mlx_var,
-		mlx->mlx_window);
-	mlx_destroy_display(mlx->mlx_var);
-	free(mlx->mlx_var);
-	exit(0);
-}
-
-/*
 	Funcion que activa o desactiva el raycasting
 */
 void	toogle_raycasting(t_mlx *mlx)
@@ -86,4 +84,34 @@ void	toogle_raycasting(t_mlx *mlx)
 		mlx->frame->raycasting_onoff = false;
 	else
 		mlx->frame->raycasting_onoff = true;
+}
+
+void	toggle_textures(t_mlx *mlx)
+{
+	if (mlx->frame->draw_walls == draw_wall_column)
+	{
+		mlx->frame->draw_walls = draw_wall_column_tex;
+		mlx->frame->fish_eye = false;
+		mlx->frame->euclidean = false;
+		printf("Textures enabled\n");
+	}
+	else
+	{
+		mlx->frame->draw_walls = draw_wall_column;
+		printf("Textures disabled\n");
+	}
+}
+
+void	toogle_floor_celling(t_mlx *mlx)
+{
+	if (mlx->frame->floor_celling == render_floor_and_ceiling)
+	{
+		mlx->frame->floor_celling = render_floor_and_ceiling_speed;
+		printf("Fast floor and ceiling rendering enabled\n");
+	}
+	else
+	{
+		mlx->frame->floor_celling = render_floor_and_ceiling;
+		printf("Accurate floor and ceiling rendering enabled\n");
+	}
 }

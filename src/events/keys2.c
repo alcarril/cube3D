@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 13:06:24 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/08 14:31:49 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/09 22:46:50 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ void	change_fov(t_mlx *mlx)
 	{
 		mlx->player->fov = 60.0f;
 		mlx->player->rad_fov = 60.0f * (PI / 180.0f);
-		
 	}
 }
 
@@ -63,6 +62,8 @@ void	change_fov(t_mlx *mlx)
 */
 void	toggle_minimap(t_mlx *mlx)
 {
+	if (mlx == NULL || mlx->frame == NULL)
+		return ;
 	if (mlx->frame->minimap_onoff == true)
 		mlx->frame->minimap_onoff = false;
 	else
@@ -85,9 +86,14 @@ void	toggle_rays(t_mlx *mlx)
 */
 void	toggle_fish_eye(t_mlx *mlx)
 {
-	if (mlx->frame->fish_eye == true)
-		mlx->frame->fish_eye = false;
+	if (mlx->frame->draw_walls == draw_wall_column)
+	{
+		if (mlx->frame->fish_eye == true)
+			mlx->frame->fish_eye = false;
+		else
+			mlx->frame->fish_eye = true;
+	}
 	else
-		mlx->frame->fish_eye = true;
+		perror("Textures must be off to toggle fish eye effect\n");
 }
 

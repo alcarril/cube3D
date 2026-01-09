@@ -6,11 +6,40 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 11:42:33 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/09 14:18:53 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/09 23:18:16 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/cube3D.h"
+
+/*
+	NOTA:Falta meter los valores del mapa que lo hace carbon
+	Inicializamos los componentes del juego:
+	- Cargamos las texturas del mapa en caso de error liberamos los componentes
+	  de la mlx y devolvemos false
+	- Inicializamos los colores del suelo y el techo en formato hexadecimal
+	  a partir de los valores RGB almacenados en el mapa
+	- Inicializamos los datos del jugador llamando a la funcion setup_player
+	- Inicializamos los datos del frame llamando a la funcion init_frame_data
+*/
+bool	setup_game(t_mlx *mlx, t_player *player, t_map *map, t_frame *frame)
+{
+	mlx->map = map;//quizas se quite
+	if (load_textures(mlx) == false)
+	{
+		destroy_mlx_componets(mlx_destroy_image, mlx_destroy_window, 
+			mlx_destroy_display, mlx);
+		return (false);
+	}
+	map->floor_color_hex = rgb_to_hex(map->floor_color[0], map->floor_color[1], map->floor_color[2]);
+	map->ceiling_color_hex = rgb_to_hex(map->ceiling_color[0], map->ceiling_color[1], map->ceiling_color[2]);
+	// init_floor_and_ceiling_colors(&map);
+	mlx->player = player;
+	setup_player(mlx);
+	mlx->frame = frame;
+	init_frame_data(mlx);
+	return (true);
+}
 
 /*
 	Inicializar los datos del jugador: 
@@ -87,6 +116,8 @@ void	init_frame_data( t_mlx *mlx)
 	mlx->frame->raycasting_onoff = true;
 	mlx->frame->fish_eye = false;
 	mlx->frame->euclidean = false;
+	mlx->frame->draw_walls = draw_wall_column_tex;
+	mlx->frame->floor_celling = render_floor_and_ceiling;
 	get_minimapscale(mlx, mlx->frame->mm_scale);
 	printf("Minimap scale X: %f, Y: %f\n", mlx->frame->mm_scale[X], mlx->frame->mm_scale[Y]);
 }

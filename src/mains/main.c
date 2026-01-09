@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 18:12:38 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/09 14:17:45 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/09 20:23:18 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@ int main (void)
 		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
 		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+		{1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
 		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -40,17 +40,31 @@ int main (void)
 		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 	};
 	memcpy(map.map_grids, map_data, sizeof(map_data));
-	mlx.map = &map;
-	if (!init_mlx_components(&mlx))
+	mlx.map = &map;//quizas osbre si no hay que escalar
+	map.floor_color[0] = 100;
+	map.floor_color[1] = 100;
+	map.floor_color[2] = 100;
+	map.ceiling_color[0] = 200;
+	map.ceiling_color[1] = 200;
+	map.ceiling_color[2] = 200;
+	char *texture_paths[4] = {
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/test/south.xpm", // NORTE -> SUR
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/test/north.xpm", // SUR -> NORTE
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/test/east.xpm",  // OESTE -> ESTE
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/test/west.xpm"  // ESTE -> OESTE
+	};
+	int i = 0;
+	while (i < 4)
+	{
+		map.texture_paths[i] = texture_paths[i];
+		i++;
+	}
+	//LO de antes de qui es la infomacion que tienes que cargar tu
+	if (init_mlx_components(&mlx) == false)
 		return (1);
-	mlx.player = &player;
-	mlx.frame = &frame;
-	setup_player(&mlx);
-	init_frame_data(&mlx);
-	printf("jose\n");
-	load_textures(&mlx);
-	create_hooks(&mlx);
-	// mlx_loop_hook(&mlx, render_frame2D, &mlx);
+	if (setup_game(&mlx, &player, &map, &frame) == false)
+		return (1);
+	start_hooks_and_game(&mlx);
 	mlx_loop(mlx.mlx_var);
 	return(0);
 }
