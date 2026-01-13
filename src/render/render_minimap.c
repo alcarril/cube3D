@@ -6,12 +6,14 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/30 14:45:15 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/08 12:48:43 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/13 15:12:18 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
 
+void	update_minimap_dinamic_offset(t_mlx *mlx);
+void	update_center_minimap_offset(t_mlx *mlx, float *escaled_zoom);
 
 /*
 	- Renderiza el minimapa en 2D recorriendo cada píxel de la ventana del minimapa.
@@ -27,14 +29,20 @@
 int	render_frame2D(t_mlx *mlx)
 {
 	int		win[2];
-
+	float	scaled_zoom[2];
+	
+	//esto solo en modo seguiemiento jugador va a ser un puntero a funcion cunado cambie se pondra
+	//tambienn el minimap scale diferente
+	// update_minimap_dinamic_offset(mlx);
+	update_center_minimap_offset(mlx, scaled_zoom);
 	win[Y] = 0;
 	while (win[Y] <= mlx->frame->mm_height)
 	{
 		win[X] = 0;
+		buffering_line(win[Y], 0xFFFFFFFF, mlx, mlx->frame->mm_widht);
 		while (win[X] <= mlx->frame->mm_widht)
 		{
-			draw_mini_pixel(mlx, win);
+			draw_mini_pixel_offset(mlx, win, scaled_zoom);
 			win[X]++;
 		}
 		win[Y]++;
@@ -44,36 +52,62 @@ int	render_frame2D(t_mlx *mlx)
 	return (1);
 }
 
+void	update_center_minimap_offset(t_mlx *mlx, float *escaled_zoom)
+{
+	t_frame		*f;
+	float	pl_pos[2];
+	float	zoom;
+
+	f = mlx->frame;
+	pl_pos[X] = mlx->player->pos_x;
+	pl_pos[Y] = mlx->player->pos_y;
+	zoom = mlx->frame->mm_zoom_factor;
+	escaled_zoom[X] = f->mm_scale[X] * zoom;
+	escaled_zoom[Y] = f->mm_scale[Y] * zoom;
+	f->mm_offset[X] = pl_pos[X] - (f->mm_widht / 2) / (f->mm_scale[X] * zoom);
+	f->mm_offset[Y] = pl_pos[Y] - (f->mm_height / 2) / (f->mm_scale[Y] * zoom);
+	
+}
+
 
 /*
 	- Dibuja un píxel del minimapa en función de su correspondencia con el mapa.
 	- Los valores del mapa en float para permitir un movimiento fluido del jugador 
 		(mov continuo) si quremos que sea celda a celda tiene que ser con ints.
-	- Escala las coordenadas de la ventana a las del mapa usando mm_scale.
-	- Si la posición corresponde a una pared, dibuja un píxel rojo.
-	- Si es suelo, dibuja un pixel negro
+	- Calculamos las traslacion del los puntos del minimapa respecto a la posicion
+	  del jugador, para eso restamos la posicon delorigen (cventro del minimapa) a
+	  la posicion del jugador
+	- Despues escalamos los puntos de la ventana a las posiciones del mapa con mm_scale
+	- y apicamos el factor de zoom del minimapa
+	- Si la posición escalada  y trasladadas corresponde a una pared, dibuja un píxel naranja.
+	- Si es suelo, dibuja un pixel negro/gris.
 */
-void	draw_mini_pixel(t_mlx *mlx, int *win)
+void	draw_mini_pixel_offset(t_mlx *mlx, int *win, float *scaled_zoom)
 {
-	float	map[2];
-
-	map[X] = (float)win[X] / mlx->frame->mm_scale[X];
-	map[Y] = (float)win[Y] / mlx->frame->mm_scale[Y];
+	t_frame		*f;
+	float		map[2];
+	
+	f = mlx->frame;
+	map[X] = f->mm_offset[X] + (float)win[X] / (scaled_zoom[X]);
+	map[Y] = f->mm_offset[Y] + (float)win[Y] / (scaled_zoom[Y]);
 	if ((unsigned int)map[Y] < mlx->map->max_rows &&
 			(unsigned int)map[X] < mlx->map->max_columns)
 	{
 		if (is_wall(mlx, map) == true)
-			buffering_pixel(win[X], win[Y], mlx, 0x00FF0000);
+			buffering_pixel(win[X], win[Y], mlx, 0xFF8C00);
 		else
-			buffering_pixel(win[X], win[Y], mlx, 0x00000000);
+			buffering_pixel(win[X], win[Y], mlx, 0x969696);
 		is_person2D(mlx, win, map);
 	}
 }
+
 
 /*
 	Con esta funcion comprobamos si una posicion del mapa es una pared o no
 	para pintarla en el minimapa.
 	Se puede sustituir por tpuch_wall pero asi es mas modular
+	Pasamos las posicion del pixel a int para saber si corresponde a una 
+	pared dentro del conjusnto de posiciones(i,j) del mapa (discretas)
 */
 bool is_wall(t_mlx *mlx, float *map)
 {
@@ -91,13 +125,19 @@ bool is_wall(t_mlx *mlx, float *map)
 	Con esta funcion comprobamso si el personaje esta en la region del mapa despues
 	de haberlo escalado teneindo en cuenta el volumen del mapa. La usamos para hacer
 	ls comporbacion en cada par de pixeles del minimapa.
+	Se hace la comprobacion en float para tener en cuenta el volumen (epsilon) del personaje
+	y que el personaje pueda estar en varias posiciones dentro de una celda del mapa. Si se
+	comparase con ints el moviento del persona no seria ocntinuo
+	Se comprueba en cada combinacion de punetos x,y de los pixeles escalados al minimapa (es menos
+	eficiente que hacer un draw person2D que dibujaria elpersonaje despues de renderizar
+	el minimaapa en la siguiente capa de renerizado)
 */
 void	is_person2D(t_mlx *mlx, int *window, float *map)
 {
-	if (fabs(mlx->player->pos_x - map[X]) < EPSILON &&
-			fabs(mlx->player->pos_y - map[Y]) < EPSILON)
+	if (fabs(mlx->player->pos_x - map[X]) < mlx->player->volume &&
+			fabs(mlx->player->pos_y - map[Y]) < mlx->player->volume)
 	{
-		buffering_pixel(window[X], window[Y], mlx, 0x0000FFFF);
+		buffering_pixel(window[X], window[Y], mlx, 0x000000);
 	}
 }
 
@@ -117,6 +157,70 @@ bool is_minimapzone(int win_x, int win_y, t_mlx *mlx)
 		win_y >= minimap_start_y && win_y <= mlx->frame->mm_height)
 			return (true);
 	return (false);
+}
+
+/*
+	- Dibuja un píxel del minimapa en función de su correspondencia con el mapa.
+	- Los valores del mapa en float para permitir un movimiento fluido del jugador 
+		(mov continuo) si quremos que sea celda a celda tiene que ser con ints.
+	- Escala las coordenadas de la ventana a las del mapa usando mm_scale.
+	- Si la posición escalada corresponde a una pared, dibuja un píxel naranja.
+	- Si es suelo, dibuja un pixel negro/gris.
+*/
+void	draw_mini_pixel(t_mlx *mlx, int *win)
+{
+	float	map[2];
+
+	map[X] = (float)win[X] / mlx->frame->mm_scale[X];
+	map[Y] = (float)win[Y] / mlx->frame->mm_scale[Y];
+	if ((unsigned int)map[Y] < mlx->map->max_rows &&
+			(unsigned int)map[X] < mlx->map->max_columns)
+	{
+		if (is_wall(mlx, map) == true)
+			buffering_pixel(win[X], win[Y], mlx, 0xFF8C00);
+		else
+			buffering_pixel(win[X], win[Y], mlx, 0x969696);
+		is_person2D(mlx, win, map);
+	}
+}
+
+void	update_minimap_dinamic_offset(t_mlx *mlx)
+{
+	static float offset[2] = {0, 0}; // offset persistente
+	float margin_x = 1.0f;          // margen horizontal en unidades de mapa
+	float margin_y = 1.0f;          // margen vertical en unidades de mapa
+
+	// Posición del jugador
+	float px = mlx->player->pos_x;
+	float py = mlx->player->pos_y;
+
+	// Dimensiones del minimapa en píxeles
+	int mini_width  = mlx->frame->mm_widht;
+	int mini_height = mlx->frame->mm_height;
+
+	// Posición central actual del minimapa
+	float center_x = offset[X] + mini_width / (2 * mlx->frame->mm_zoom_factor * mlx->frame->mm_scale[X]);
+	float center_y = offset[Y] + mini_height / (2 * mlx->frame->mm_zoom_factor * mlx->frame->mm_scale[Y]);
+
+	// Ajustamos offset solo si el jugador sale del margen
+	if (fabs(px - center_x) > margin_x)
+	{
+		if (px > center_x)
+			offset[X] += fabs(px - center_x) - margin_x;
+		else
+			offset[X] -= fabs(px - center_x) - margin_x;
+	}
+
+	if (fabs(py - center_y) > margin_y)
+	{
+		if (py > center_y)
+			offset[Y] += fabs(py - center_y) - margin_y;
+		else
+			offset[Y] -= fabs(py - center_y) - margin_y;
+	}
+
+	mlx->frame->mm_offset[X] = offset[X];
+	mlx->frame->mm_offset[Y] = offset[Y];
 }
 
 /*

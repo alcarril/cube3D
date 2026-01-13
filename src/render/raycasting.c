@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:04:35 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/12 22:05:51 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/13 03:54:40 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 	 la bufferización.
 	- La conversion a raadianes se hace en cada frame, podria optimizarse guardando el valor en la estructura del jugador
 	  pero no es un gran gasto computacional y mejora la legibilidad del código.
+	- Uso de variables locales para usar registros de CPY y optimizar el rendimiento.
 */
 void	throw_rays(t_mlx *mlx)
 {
@@ -49,6 +50,8 @@ void	throw_rays(t_mlx *mlx)
 	- Dibuja la columna de la pared en la posición correspondiente de la pantalla en dos modos:
 	  - Modo simple (color fijo)
 	  - Modo texturizado (textura aplicada)
+	- Declaramos el rayo y el wall en memoria stack para optimizar el acceso a memoria y el uso del caché.
+	 y evitar paginaciones de memoria lentas y que se tengan que liberar despues
 */
 void	cast_ray(t_mlx *mlx, unsigned int n_ray, float ray_angle)
 {
@@ -109,6 +112,8 @@ void scale_wall(t_wall *wall, float perpendicular_distance, int win_height, int 
 	Dibuja una columna de pared en la pantalla:
 	- Itera desde el inicio hasta el final de la pared en la pantalla
 	- Bufferiza cada píxel de la columna con un color fijo (rojo en este caso)
+	- Se podria usar buffering line para hacer lel dibujado por lineas y optimizar
+	  un poco mas el rendimiento pero es menos flexible
 */
 void	draw_wall_column(t_mlx *mlx, int column, t_wall *wall, t_ray *ray)
 {
@@ -118,7 +123,7 @@ void	draw_wall_column(t_mlx *mlx, int column, t_wall *wall, t_ray *ray)
 	i = wall->wall_start;
 	while (i <= wall->wall_end)
 	{
-		buffering_pixel(column, i, mlx, 0x00FFF00000);
+		buffering_pixel(column, i, mlx, 0xFF8C00);
 		i++;
 	}
 }

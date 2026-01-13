@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:07:51 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/10 15:09:04 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/13 00:36:15 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 	- Ejecuta el bucle DDA para encontrar la intersección con una pared
 	- Calcula la distancia al muro según la configuración del frame (euclidiana o no)
 	- Aplica corrección de efecto de ojo de pez si está desactivado en la configuración del frame
+	- Retirna la distancia a la pared para pintar la columna correspondiente (corregida o no)
 */
 float	get_distance_to_wall(t_mlx *mlx, t_ray *ray, float ray_angle)
 {
@@ -29,7 +30,6 @@ float	get_distance_to_wall(t_mlx *mlx, t_ray *ray, float ray_angle)
 		ray->wall_dist = get_ray_distance(mlx, ray);
 	else
 		ray->wall_dist = get_ray_distance_euclidean(mlx, ray);
-
 	if (mlx->frame->fish_eye == false)
 		wall_dist_corrected = ray->wall_dist * cos(ray_angle - (mlx->player->rad_angle));
 	else

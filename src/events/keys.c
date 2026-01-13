@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 22:31:15 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/12 21:00:27 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/13 14:50:08 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,10 @@ int	key_press(int keysym, t_mlx *mlx)
 		toogle_raycasting(mlx);
 	else if (keysym == XK_m)
 		toggle_minimap(mlx);
+	else if (keysym == XK_plus)
+		minimap_zoom(mlx, true);
+	else if (keysym == XK_minus)
+		minimap_zoom(mlx, false);
 	else if (keysym == XK_r)
 		toggle_rays(mlx);
 	else if (keysym == XK_f)

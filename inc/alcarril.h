@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/13 00:03:54 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/13 15:12:36 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,9 @@
 
 #define MINI_WIDTH 4
 #define MINI_HEIGHT 4
+# define MINI_ZOOM_FACTOR 1.75f
+# define MINIMAP_MAX_ZOOM 3.5f
+# define MINIMAP_MIN_ZOOM 0.5f
 
 #define WIN_SCALE 10
 
@@ -45,7 +48,7 @@
 #define HORIZONTAL 0
 
 # define PI 3.14159265
-# define EPSILON 0.15f
+# define EPSILON 0.20f
 # define FRICTION 0.5f
 
 //esto podria ir en enum
@@ -76,8 +79,11 @@ player controls and engine config Keys\n"
 
 
 /*
-	STRUCTS:
+	STRUCTS: Usamos el padrón de diseño "Data Oriented Design" para optimizar el acceso a memoria y el uso del caché.
+	Asi evitamos paginar estructuras muy grandes que provoquen fallos de caché (cache missing) y lentitud en el acceso a datos.
+	Ademas limitamos el padding de las estructuras para optimizar el uso de memoria.
 */
+
 
 /*
     DECLARACIONES ANTICIPADAS:
@@ -187,20 +193,18 @@ typedef struct	s_map
 	int 	ceiling_color_hex;	// Hexadecimal
 }	t_map;
 
-//crear la strcutura frame para cuidar la memeria en cada frame no usar memeria local
+
 typedef struct	s_frame_data
 {	
 	//minimap
 	float	mm_height;
 	float	mm_widht;
 	float	mm_scale[2];
+	float 	mm_offset[2];
+	float 	mm_zoom_factor;
 	bool	minimap_onoff;
 	bool	minimap_showrays;
-	//extras minimapa
-		//minimap zoom
-		//minimap traslation
-		//rotaciones minimapa
-		//rueda de raton para zoom minimapa
+
 
 	//Raycasting config
 	bool	raycasting_onoff;
@@ -213,13 +217,16 @@ typedef struct	s_frame_data
 }	t_frame;
 
 //esta se tendria ue llamar game y tener dentro mlx
+//las estrcuturas anidaddas que no requiran cambios
+//se pueden cambiar los punteros a estrcuturaas para 
+//optiim los accesos al cache de la memoria
 typedef struct	s_mlx_api_components
 {
 	//mlx components
 	void	*mlx_var;
 	void	*mlx_window;
 	void	*mlx_img;
-	char	*win_name;
+	char	*win_name;// se borra
 	
 	//window data
 	int		win_height;
@@ -285,6 +292,7 @@ void	toggle_fish_eye(t_mlx *mlx);
 void	toogle_dist_calc(t_mlx *mlx);
 void	toggle_minimap(t_mlx *mlx);
 void	toggle_rays(t_mlx *mlx);
+void	minimap_zoom(t_mlx *mlx, bool flag);
 int		mouse_init_manager(t_mlx *mlx);
 void	toogle_mouse(t_mlx *mlx);
 int		mouse_button_manager(int mouse_button, int x, int y, t_mlx *mlx);
@@ -309,11 +317,12 @@ void	reset_mouse_position(t_mlx *mlx, bool *is_move);
 
 //render
 int		game_engine(t_mlx *mlx);
-//fps counter
 
 //render utils
 void	buffering_pixel(int x, int y, t_mlx *mlx, int color);
-void	buffering_line(int y, int color, t_mlx *mlx);
+void	buffering_line(int y, int color, t_mlx *mlx, int width);
+void	fps_counter_average(t_mlx *mlx);
+void	fps_counter_realtime(t_mlx *mlx);
 
 //raycasting
 void	throw_rays(t_mlx *mlx);
@@ -347,15 +356,19 @@ void apply_fog(t_mlx *mlx, unsigned int fog_color, float max_distance);
 
 //render minimap 2D
 int		render_frame2D(t_mlx *mlx);
-void	draw_mini_pixel(t_mlx *mlx, int *win);
+void	draw_mini_pixel_offset(t_mlx *mlx, int *win, float *scaled_zoom);
 bool	is_wall(t_mlx *mlx, float *map);
 void	is_person2D(t_mlx *mlx, int *window, float *map);
-// void	draw_person2D(t_mlx *mlx);
 bool	is_minimapzone(int win_x, int win_y, t_mlx *mlx);
+// void	draw_person2D(t_mlx *mlx);
+
+//mnimapa dinamico
+// void	update_minimap_dinamic_offset(t_mlx *mlx);
+// void	draw_mini_pixel(t_mlx *mlx, int *win);
 
 //render rays 2D
 void	draw_rays2D(t_mlx *mlx);
-void	draw_ray2D(t_mlx *mlx, float *diferencial, float rad);
+void	draw_ray2D(t_mlx *mlx, float *differencial, float rad);
 bool	touch_wall(t_mlx *mlx, float x, float y);
 
 //debug

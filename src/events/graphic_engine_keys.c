@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 20:54:29 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/12 20:58:40 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/13 14:58:06 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,26 @@
 */
 void	toogle_raycasting(t_mlx *mlx)
 {
+	t_frame	*f;
+
+	f = mlx->frame;
 	if (mlx->frame->raycasting_onoff == true)
 	{
 		mlx->frame->raycasting_onoff = false;
+		f->mm_height *= MINI_HEIGHT;
+		f->mm_widht *= MINI_WIDTH;
+		f->minimap_onoff = true;
 		printf("RAYCASTING OFF\n");
 	}
 	else
 	{
 		mlx->frame->raycasting_onoff = true;
+		f->mm_height /= MINI_HEIGHT;
+		f->mm_widht /= MINI_WIDTH;
 		printf("RAYCASTING ON\n");
 	}
+	f->mm_scale[X] = (float)(f->mm_widht) / mlx->map->max_columns;
+	f->mm_scale[Y] = (float)(f->mm_height) / mlx->map->max_rows;
 }
 
 /*

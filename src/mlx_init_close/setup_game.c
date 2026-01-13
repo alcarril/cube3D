@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 11:42:33 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/13 00:00:54 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/13 14:51:00 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void setup_player_mouse(t_mlx *mlx)
 	pl->speed = 0.033f;
 	pl->fov = 60.0f;
 	pl->rad_fov = pl->fov * (PI / 180.0f);
-	ft_bzero((void *)(mlx->player->differencial), sizeof(mlx->player->differencial));
+	ft_bzero((void *)(pl->differencial), sizeof(pl->differencial));
 	pl->volume = EPSILON;
 	pl->pitch_pix = 0;
 	pl->pitch_factor = PITCH_FACTOR;
@@ -145,6 +145,7 @@ bool	init_frame_data( t_mlx *mlx)
 	f->mm_widht = mlx->win_width / MINI_WIDTH;
 	f->mm_scale[X] = (float)(f->mm_widht) / mlx->map->max_columns;
 	f->mm_scale[Y] = (float)(f->mm_height) / mlx->map->max_rows;
+	f->mm_zoom_factor = MINI_ZOOM_FACTOR;
 	f->minimap_onoff = false;
 	f->minimap_showrays = false;
 	f->raycasting_onoff = true;

@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 21:16:10 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/12 21:16:30 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/13 14:48:03 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,26 @@ void	toggle_rays(t_mlx *mlx)
 	{
 		mlx->frame->minimap_showrays = true;
 		printf("MINIMAP RAYS ON\n");
+	}
+}
+
+/*
+	Funcion para hacer zoom in o zoom out en el minimapa
+*/
+void	minimap_zoom(t_mlx *mlx, bool flag)
+{
+	if (flag == true)
+	{
+		mlx->frame->mm_zoom_factor += 0.25f;
+		if (mlx->frame->mm_zoom_factor > MINIMAP_MAX_ZOOM)
+		mlx->frame->mm_zoom_factor = MINIMAP_MAX_ZOOM;
+		printf("MINIMAP ZOOM  IN FACTOR: %.2f\n", mlx->frame->mm_zoom_factor);
+	}
+	else
+	{
+		mlx->frame->mm_zoom_factor -= 0.25f;
+		if (mlx->frame->mm_zoom_factor < MINIMAP_MIN_ZOOM)
+		mlx->frame->mm_zoom_factor = MINIMAP_MIN_ZOOM;
+		printf("MINIMAP ZOOM  OUT FACTOR: %.2f\n", mlx->frame->mm_zoom_factor);
 	}
 }
