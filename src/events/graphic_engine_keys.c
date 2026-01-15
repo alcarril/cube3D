@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 20:54:29 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/13 14:58:06 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/15 22:03:37 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,16 +44,22 @@ void	toogle_raycasting(t_mlx *mlx)
 */
 void	toggle_textures(t_mlx *mlx)
 {
-	if (mlx->frame->draw_walls == draw_wall_column)
+	if (mlx->frame->textures_onoff == OFF)
 	{
+		mlx->frame->textures_onoff = ON;
+		mlx->frame->ambiance_onoff = OFF;
 		mlx->frame->draw_walls = draw_wall_column_tex;
-		mlx->frame->fish_eye = false;
-		mlx->frame->euclidean = false;
+		mlx->frame->floor_celling = render_floor_and_ceiling;
+		mlx->frame->fish_eye = OFF;
+		mlx->frame->euclidean = OFF;
 		printf("TEXTURED ENABLED\n");
 	}
 	else
 	{
+		mlx->frame->textures_onoff = OFF;
+		mlx->frame->ambiance_onoff = OFF;
 		mlx->frame->draw_walls = draw_wall_column;
+		mlx->frame->floor_celling = render_floor_and_ceiling;
 		printf("TEXTURES DISABLED\n");
 	}
 }
@@ -64,6 +70,11 @@ void	toggle_textures(t_mlx *mlx)
 */
 void	toogle_floor_celling(t_mlx *mlx)
 {
+	if (mlx->frame->ambiance_onoff == ON)
+	{
+		printf("WARNING: Ambiance is on, cannot toggle floor and ceiling rendering method\n");
+		return ;
+	}
 	if (mlx->frame->floor_celling == render_floor_and_ceiling)
 	{
 		mlx->frame->floor_celling = render_floor_and_ceiling_speed;

@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 01:48:42 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/12 21:50:42 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/15 17:55:23 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ void	reset_mouse_position(t_mlx *mlx, bool *is_move)
 		mlx_mouse_move(mlx->mlx_var, mlx->mlx_window, m->axis_x, m->pos_y);
 	else if (is_move[X] == 0 && is_move[Y] == 1)
 		mlx_mouse_move(mlx->mlx_var, mlx->mlx_window, m->pos_x, m->axis_y);
-	if (is_mouse_in_window(mlx, m->axis_x, m->axis_y) == false)
-		mlx_mouse_move(mlx->mlx_var, mlx->mlx_window, m->axis_x, m->axis_y);
+	// if (is_mouse_in_window(mlx, m->axis_x, m->axis_y) == false)
+	// 	mlx_mouse_move(mlx->mlx_var, mlx->mlx_window, m->axis_x, m->axis_y);
 
 }

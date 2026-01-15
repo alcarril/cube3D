@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:07:51 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/13 00:36:15 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/15 14:44:41 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,13 +126,13 @@ float get_ray_distance(t_mlx *mlx, t_ray *ray)
 	if (ray->side_hit == VERTICAL)
 	{
 		wall_dist = ray->map[X] - mlx->player->pos_x;
-		face_compensation = (1 - ray->step[X]) / 2;
+		face_compensation = ((1 - ray->step[X]) >> 1);
 		dist = (wall_dist + face_compensation) / ray->raydir[X];
 	}
 	else
 	{
 		wall_dist = ray->map[Y] - mlx->player->pos_y;
-		face_compensation = (1 - ray->step[Y]) / 2;
+		face_compensation = ((1 - ray->step[Y]) >> 1);
 		dist = (wall_dist + face_compensation) / ray->raydir[Y];
 	}
 	return (dist);

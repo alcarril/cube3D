@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 16:45:21 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/13 19:55:15 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/15 22:00:52 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	render_floor_and_ceiling(t_mlx *mlx)
 	int	y;
 	int horizon;
 
-	horizon = mlx->win_height / 2 + mlx->player->pitch_pix;
+	horizon = (mlx->win_height >> 1) + mlx->player->pitch_pix;
 	y = -1;
 	while (++y < horizon)
 	{
@@ -43,7 +43,6 @@ void	render_floor_and_ceiling(t_mlx *mlx)
 		while (++x < mlx->win_width)
 			buffering_pixel(x, y, mlx, mlx->map->ceiling_color_hex);
 	}
-	y = horizon;
 	while (y < mlx->win_height)
 	{
 		x = -1;
@@ -60,168 +59,137 @@ void	render_floor_and_ceiling(t_mlx *mlx)
 	- Con esto se reduce la cantidad de llamadas a la función de biferiado
 	  y se mejora el rendimiento.
 	- Solo se puede usar cuando el renderizado del suelo y el techo no estan texturizados
+	Mejoras de microprocesador:
+	- Se reduce la sobrecarga de llamadas a funciones al pintar líneas completas
+	  en lugar de píxeles
+	- Se minimiza las indirecciones dentro del bucle para que puedan acceder a las variables
+	  de forma más eficiente (mediante registros en lugar de registro -> cache -> RAM)
 */
-void render_floor_and_ceiling_speed1(t_mlx *mlx)
-{
-	int y;
-	int horizon;
-
-	horizon = mlx->win_height / 2 + mlx->player->pitch_pix;
-	y = 0;
-	while (y < horizon)
-	{
-		buffering_line(y, mlx->map->ceiling_color_hex, mlx, mlx->win_width);
-		y++;
-	}
-	while (y < mlx->win_height)
-	{
-		buffering_line(y, mlx->map->floor_color_hex, mlx, mlx->win_width);
-		y++;
-	}
-}
-
-//version puesta de sol el techo se aclara hacai el horizonte detras del muro
-//es sulo si que esta mas claro ne us pies pero mas ocuro al horizonte
-//da sensacion de sombra
-void render_floor_and_ceiling_speed4(t_mlx *mlx)
-{
-	int y;
-	int horizon;
-	float dist_factor;
-	unsigned int color;
-	unsigned int fog_color = FOG_MEDIO_OSCURO; // niebla más oscura
-
-
-	horizon = mlx->win_height / 2 + mlx->player->pitch_pix;
-	// -------- Techo --------
-	y = 0;
-	while (y < horizon)
-	{
-		dist_factor = (float)(horizon - y) / horizon; // 0 (cerca) a 1 (horizonte)
-		
-		// Inverse shading ligero para techo
-		float k = 1.0f / mlx->map->max_distance;
-		color = apply_shade(mlx->map->ceiling_color_hex, 1.0f / (1.0f + dist_factor * mlx->map->max_distance * k));
-		
-		// Fog más oscura
-		float fog_distance = dist_factor * mlx->map->max_distance * 0.7f; // techo menos fog
-		 color = apply_fog_pixel(color, fog_color, fog_distance, mlx->map->max_distance);
-
-		buffering_line(y, color, mlx, mlx->win_width);
-		y++;
-	}
-
-	// -------- Suelo --------
-	y = horizon;
-	while (y < mlx->win_height)
-	{
-		dist_factor = (float)(y - horizon) / (mlx->win_height - horizon); // 0 (cerca) a 1 (horizonte)
-		
-		// Inverse shading fuerte para suelo
-		float k = 4.0f / mlx->map->max_distance;
-		color = apply_shade(mlx->map->floor_color_hex, 1.0f / (1.0f + dist_factor * mlx->map->max_distance * k));
-
-		// Aplicar fog usando tu función
-		float fog_distance = dist_factor * mlx->map->max_distance; // suelo más fog
-		color = apply_fog_pixel(color, fog_color, fog_distance, mlx->map->max_distance);
-
-		buffering_line(y, color, mlx, mlx->win_width);
-		y++;
-	}
-}
-
-//version no se como es 
-void render_floor_and_ceiling_speed5(t_mlx *mlx)
-{
-	int y;
-	int horizon;
-	float dist_factor;
-	unsigned int color;
-	unsigned int fog_color = FOG_MEDIO_OSCURO; // niebla más oscura
-
-
-	horizon = mlx->win_height / 2 + mlx->player->pitch_pix;
-	// -------- Techo --------
-	y = 0;
-	while (y < horizon)
-	{
-		dist_factor = (float)(horizon - y) / horizon; // 0 (cerca) a 1 (horizonte)
-		
-		// Inverse shading ligero para techo
-		float k = 1.0f / mlx->map->max_distance;
-		color = apply_shade(mlx->map->ceiling_color_hex, 1.0f / (1.0f + dist_factor * mlx->map->max_distance * k));
-		
-		// Fog más oscura
-		float fog_distance = dist_factor * mlx->map->max_distance * 0.7f; // techo menos fog
-		 color = apply_fog_pixel(color, fog_color, fog_distance, mlx->map->max_distance);
-
-		buffering_line(y, color, mlx, mlx->win_width);
-		y++;
-	}
-
-	// -------- Suelo --------
-	y = horizon;
-	while (y < mlx->win_height)
-	{
-		// dist_factor = (float)(y - horizon) / (mlx->win_height - horizon); // 0 (cerca) a 1 (horizonte)
-		dist_factor = 1.0f - (float)(horizon - y) / horizon; // 0 (horizonte) a 1 (cerca)
-		// Inverse shading fuerte para suelo
-		float k = 4.0f / mlx->map->max_distance;
-		color = apply_shade(mlx->map->floor_color_hex, 1.0f / (1.0f + dist_factor * mlx->map->max_distance * k));
-
-		// Aplicar fog usando tu función
-		float fog_distance = dist_factor * mlx->map->max_distance; // suelo más fog
-		color = apply_fog_pixel(color, fog_color, fog_distance, mlx->map->max_distance);
-
-		buffering_line(y, color, mlx, mlx->win_width);
-		y++;
-	}
-}
-
-//cersion profundidad
 void render_floor_and_ceiling_speed(t_mlx *mlx)
 {
 	int y;
 	int horizon;
-	float dist_factor;
-	unsigned int color;
-	unsigned int fog_color = FOG_MEDIO_OSCURO; // niebla más oscura
+	int ceiling_color;
+	int floor_color;
 
-
-	horizon = mlx->win_height / 2 + mlx->player->pitch_pix;
-	// -------- Techo --------
+	ceiling_color = mlx->map->ceiling_color_hex;
+	floor_color = mlx->map->floor_color_hex;
+	horizon = (mlx->win_height >> 1) + mlx->player->pitch_pix;
 	y = 0;
 	while (y < horizon)
 	{
-		// dist_factor = (float)(horizon - y) / horizon; // 0 (cerca) a 1 (horizonte)
-		dist_factor = 1.0f - (float)(horizon - y) / horizon; 
-		// Inverse shading ligero para techo
-		float k = 1.0f / mlx->map->max_distance;
-		color = apply_shade(mlx->map->ceiling_color_hex, 1.0f / (1.0f + dist_factor * mlx->map->max_distance * k));
-		
-		// Fog más oscura
-		float fog_distance = dist_factor * mlx->map->max_distance * 0.7f; // techo menos fog
-		 color = apply_fog_pixel(color, fog_color, fog_distance, mlx->map->max_distance);
-
-		buffering_line(y, color, mlx, mlx->win_width);
+		buffering_line(y, ceiling_color, mlx, mlx->win_width);
 		y++;
 	}
-
-	// -------- Suelo --------
-	y = horizon;
 	while (y < mlx->win_height)
 	{
-		// dist_factor = (float)(y - horizon) / (mlx->win_height - horizon); // 0 (cerca) a 1 (horizonte)
-		dist_factor = 1.0f - (float)(horizon - y) / horizon; // 0 (horizonte) a 1 (cerca)
-		// Inverse shading fuerte para suelo
-		float k = 4.0f / mlx->map->max_distance;
-		color = apply_shade(mlx->map->floor_color_hex, 1.0f / (1.0f + dist_factor * mlx->map->max_distance * k));
-
-		// Aplicar fog usando tu función
-		float fog_distance = dist_factor * mlx->map->max_distance; // suelo más fog
-		color = apply_fog_pixel(color, fog_color, fog_distance, mlx->map->max_distance);
-
-		buffering_line(y, color, mlx, mlx->win_width);
+		buffering_line(y, floor_color, mlx, mlx->win_width);
 		y++;
 	}
 }
+
+
+
+
+//cersion profundidad
+void render_floor_and_ceiling_amb(t_mlx *mlx)
+{
+	int y;
+	int horizon;
+	float dist_factor;
+	unsigned int color_ceiling;
+	unsigned int color_floor;
+
+
+	color_ceiling = mlx->map->ceiling_color_hex;
+	color_floor = mlx->map->floor_color_hex;
+	horizon = (mlx->win_height >> 1) + mlx->player->pitch_pix;
+	y = 0;
+	while (y < horizon)
+	{
+		dist_factor = dist_factor_ceiling(y, horizon, mlx->amb.ambiance);
+		color_ceiling =	shade_inverse(mlx->map->ceiling_color_hex, mlx->amb.k_factor_ceiling, dist_factor * mlx->amb.mult_shader_ceiling);
+		color_ceiling = apply_desaturation(color_ceiling, dist_factor * 0.6f);
+		color_ceiling = apply_fog_pixel(color_ceiling, mlx->amb.fog_color_fc, dist_factor * mlx->amb.mult_fog_ceiling);
+		buffering_line(y, color_ceiling, mlx, mlx->win_width);
+		y++;
+	}
+	while (y < mlx->win_height)
+	{
+		dist_factor = dist_factor_floor(mlx->win_height, y, horizon, mlx->amb.ambiance);
+		color_floor = shade_inverse(mlx->map->floor_color_hex, mlx->amb.k_factor_floor, dist_factor * mlx->amb.mult_shader_floor);
+		color_floor = apply_desaturation(color_floor, dist_factor * 0.6f);
+		color_floor = apply_fog_pixel(color_floor, mlx->amb.fog_color_fc, dist_factor * mlx->amb.mult_fog_floor	);
+		buffering_line(y, color_floor, mlx, mlx->win_width);
+		y++;
+	}
+}
+
+
+//cersion profundidad
+void render_floor_and_ceiling_speed2(t_mlx *mlx)
+{
+	int y;
+	int horizon;
+	float dist_factor;
+	unsigned int color_ceiling;
+	unsigned int color_floor;
+	unsigned int fog_color = FOG_MEDIO_CLARO; // niebla más oscura
+
+
+	color_ceiling = mlx->map->ceiling_color_hex;
+	color_floor = mlx->map->floor_color_hex;
+	horizon = (mlx->win_height >> 1) + mlx->player->pitch_pix;
+	y = 0;
+	while (y < horizon)
+	{
+		// dist_factor = 1.0f - (float)(y - horizon) / horizon; //NIEBLA TOTAL
+		dist_factor = (float)(horizon - y) / horizon; //AMBIENTE ABIERTO SOL DETRAS PAREDES
+		// dist_factor = 1.0f - (float)(horizon - y) / horizon; //-> NIEBLA CON SOL ARRIBA DESCARTADA
+		
+		if (dist_factor < 0.0f)
+			dist_factor = 0.0f;	
+		if (dist_factor > 1.0f)
+			dist_factor = 1.0f;
+		float k = 4.0f;//->ESTE VALOR ES AJUSTABLE
+		color_ceiling =	shade_inverse(mlx->map->ceiling_color_hex, k, dist_factor * 0.5f);// valores pequeñas en configuracions de ambiente queda bien y el configuracions de niebla grandes
+		// color_ceiling = apply_desaturation(color_ceiling, dist_factor * 0.6f);
+		color_ceiling = apply_fog_pixel(color_ceiling, fog_color, dist_factor * 0.2f);// valores pequeñas en configuracions de ambiente queda bien y el configuracions de niebla grandes
+		buffering_line(y, color_ceiling, mlx, mlx->win_width);
+		y++;
+	}
+	while (y < mlx->win_height)
+	{
+		//siemrep en eld enominador  hwight - horizon para que no crashee
+		//si poner horizon - y es mas grados pero con y - horizon es mas fucnoinal difuminado se funde mejor
+		
+		//al haber cambiado los de horizon - y si quito el 1.0f - rompe y se pone negro
+		// dist_factor = 1.0f - (float)( horizon - y) / (mlx->win_height - horizon); // NIEBLA TOTAL PERFECTO
+		dist_factor = 1.0f - (float)( y - horizon) / (mlx->win_height - horizon); // AMBIENTE ABIERTO SOL DETRAS PARAREDES (cerca claro lejos oscuro)
+		// dist_factor = (float)( y - horizon) / (mlx->win_height - horizon); // AMBIENTE ABOERTO SOL DERTAS JUGADOR SIEMPRE DESCARTADO
+		
+		if (dist_factor < 0.0f)
+			dist_factor = 0.0f;	
+		if (dist_factor > 1.0f)
+			dist_factor = 1.0f;
+		
+		// Inverse shading fuerte para suelo
+		
+		float k = 1.0f;
+		
+		color_floor = shade_inverse(mlx->map->floor_color_hex, k, dist_factor * 0.7f);
+		color_floor = apply_desaturation(color_floor, dist_factor * 0.6f);
+		// Aplicar fog usando tu función
+		color_floor = apply_fog_pixel(color_floor, FOG_MEDIO_CLARO, dist_factor * 0.3f);
+
+		buffering_line(y, color_floor, mlx, mlx->win_width);
+		y++;
+	}
+}
+
+
+
+
+
+
+

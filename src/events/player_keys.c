@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   keys2.c                                            :+:      :+:    :+:   */
+/*   player_keys.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 13:06:24 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/12 21:26:18 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/15 15:19:53 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,26 @@ void	change_fov(t_mlx *mlx)
 	}
 }
 
+/*
+	Funcion para aumentar el volumen del jugador
+*/
+void	change_player_volume(t_mlx *mlx, bool flag)
+{
+	if (flag == true && mlx->player->volume < 1.0f)
+	{
+		mlx->player->volume += 0.1f;
+		if (mlx->player->volume > 1.1f)
+			mlx->player->volume = 1.0f;
+		printf("Volume: %.1f\n", mlx->player->volume);
+	}
+	else if (flag == false && mlx->player->volume > 0.0f)
+	{
+		mlx->player->volume -= 0.1f;
+		if (mlx->player->volume < 0.2f)
+			mlx->player->volume = 0.2f;
+		printf("Volume: %.1f\n", mlx->player->volume);
+	}
+}
 
 
 

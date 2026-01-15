@@ -6,11 +6,14 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 11:42:33 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/13 18:11:16 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/15 21:47:36 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/cube3D.h"
+
+
+void	setup_default_ambiance(t_map *map, t_ambiance *amb);
 
 /*
 	NOTA:Falta meter los valores del mapa que lo hace carbon
@@ -39,9 +42,9 @@ bool	setup_game(t_mlx *mlx, t_player *player, t_map *map, t_frame *frame)
 		return (false);
 	}
 	init_floor_and_ceiling_colors(mlx->map);
-	map->max_distance = 
-		sqrtf((mlx->map->max_columns * mlx->map->max_columns) + 
+	map->max_distance = sqrtf((mlx->map->max_columns * mlx->map->max_columns) + 
 		(mlx->map->max_rows * mlx->map->max_rows));
+	setup_default_ambiance(mlx->map, &(mlx->amb));
 	mlx->player = player;
 	setup_player_mouse(mlx);
 	mlx->frame = frame;
@@ -154,6 +157,8 @@ bool	init_frame_data( t_mlx *mlx)
 	f->raycasting_onoff = true;
 	f->fish_eye = false;
 	f->euclidean = false;
+	f->textures_onoff = ON;
+	f->ambiance_onoff = OFF;
 	f->draw_walls = draw_wall_column_tex;
 	f->floor_celling = render_floor_and_ceiling;
 	f->fov_distances = NULL;
@@ -188,4 +193,26 @@ int	create_fps_logfile(void)
 	}
 	else
 		return (log_fd);
+}
+
+/*
+	Ambiente por defecto es el open quizas se borre
+*/
+void	setup_default_ambiance(t_map *map, t_ambiance *amb)
+{
+	amb->fog_color_walls = FOG_MEDIO_OSCURO;
+	amb->fog_color_fc = FOG_MEDIO_CLARO;
+	amb->v_max_distance_map = map->max_distance * 0.9f;
+	amb->vinv_max_diatance = 1.0f / amb->v_max_distance_map;
+	amb->mult_fog_walls = 0.2f;
+	amb->mult_fog_floor = 0.3f;
+	amb->mult_fog_ceiling = 0.2f;
+	
+	amb->k_factor_walls = 8.0f;
+	amb->k_factor_floor = 1.0f;
+	amb->k_factor_ceiling = 4.0f;
+	amb->mult_shader_walls = 1.0f;
+	amb->mult_shader_floor = 0.7f;
+	amb->mult_shader_ceiling = 0.5f;
+	amb->ambiance = OPEN;
 }

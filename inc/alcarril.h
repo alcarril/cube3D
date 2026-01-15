@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/13 19:22:42 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/15 22:34:45 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,12 @@
 # define X 1
 # define Y 0
 
+
 #define VERTICAL 1
 #define HORIZONTAL 0
+
+#define ON true
+#define OFF false
 
 # define PI 3.14159265
 # define EPSILON 0.20f
@@ -68,8 +72,6 @@ player controls and engine config Keys\n"
 #define MOUSE_DEADZONEX 4
 #define MOUSE_DEADZONEY 8
 #define MOUSE_MAX_MOV 60
-#define ON true
-#define OFF false
 #define MOUSE_MAX_SENSX 0.9f
 #define MOUSE_MIN_SENSX 0.05f
 #define MAX_MOUSE_PITCH_FACTOR 0.014f//
@@ -78,26 +80,23 @@ player controls and engine config Keys\n"
 #define MousePressMask 1L<<2//norminette
 
 
-//Factores de shade oara suelo, techo y paredes
-# define FLOR_K 4.0f
-# define WALL_K 3.0f
-# define CEILING_K 2.0f
-//Factores de densidad de shade para suelo, techo y paredes
-# define FLOR_DENS 3.0f
-# define WALL_DENS 2.0f
-# define CEILING_DENS 1.0f
 
-//factores de fog para suelo, techo y paredes
-# define FLOR_FOG_DENS 0.8f
-# define WALL_FOG_DENS 1.0f
-# define CEILING_FOG_DENS 1.2f
-
-# define MAX_DISTANCE_FACTOR 0.8f
-
+//colores de fog
 #define FOG_CLARO 0xA0A0A0
 #define FOG_MEDIO_CLARO 0xA0A0A0
 #define FOG_MEDIO_OSCURO 0x606060
 #define FOG_OSCURO 0x202020
+
+//define AMBIENTES esto puede ser un enum
+#define	ASTURIAS 1
+#define	CEMENTERY 2
+#define	OPEN 3
+
+//Distancia vision para fog
+# define CLOSE_DISTANCE 6.0f
+# define MEDIUM_DISTANCE 10.0f
+# define FAR_DISTANCE 14.0f
+
 
 
 
@@ -113,6 +112,7 @@ player controls and engine config Keys\n"
 */
 typedef struct s_mlx_api_components t_mlx;
 typedef struct s_texture_img t_texture;
+typedef struct	s_ambiance	t_ambiance;
 typedef struct s_wall	t_wall;
 typedef struct	s_mouse		t_mouse;
 typedef struct	s_player_controls	t_controls;
@@ -132,6 +132,31 @@ typedef struct	s_texture_img
 	int		endian;
 }	t_texture;
 
+typedef struct	s_ambiance
+{
+	//AMBIANCE CODE
+	int ambiance;
+	
+	//Fogs
+	int	fog_color_walls;
+	int	fog_color_fc;
+	float	mult_fog_walls;
+	float	mult_fog_ceiling;
+	float	mult_fog_floor;
+	
+	//shader
+	float	k_factor_walls;
+	float	k_factor_ceiling;
+	float	k_factor_floor;
+	float	mult_shader_walls;
+	float	mult_shader_ceiling;
+	float	mult_shader_floor;
+
+	//max_distace_factor walls
+	float	v_max_distance_map;
+	float	vinv_max_diatance;
+}	t_ambiance;
+
 typedef struct s_wall
 {
 	int		wall_height;      // Altura de la pared en píxeles
@@ -143,7 +168,6 @@ typedef struct s_wall
 	float	tex_pos;          // Posición inicial en la textura
 	double	wall_x;           // Posición de impacto en la pared (0-1)
 	t_texture *texture;       // Puntero a la textura seleccionada
-	int		mip_level[3];       // Nivel de mipmap seleccionado
 }	t_wall;
 
 typedef struct	s_ray
@@ -205,7 +229,7 @@ typedef struct	s_map
 {
 	unsigned int	max_columns; //x
 	unsigned int	max_rows; //y
-	char			map_grids[MAX_ROWS][MAX_COLUMS];
+	char			map_grids[MAX_ROWS][MAX_COLUMS]; //
 
 	//textures
 	t_texture	textures[4];
@@ -239,6 +263,22 @@ typedef struct	s_frame_data
 	bool	euclidean;
 	void	(*draw_walls)(t_mlx *mlx, int column, t_wall *wall, t_ray *ray); //renderizar con ntexturas o sin ellas
 	void	(*floor_celling)(t_mlx *mlx); //renderiza suelo y techo speed vs low speed
+
+	//textures on off
+	bool	textures_onoff;
+	//ambients on off
+	bool	ambiance_onoff;
+	//ESTO SE VA A BORRAR	
+	//fog
+	unsigned int	fog_color_walls;
+	unsigned int	fog_color_floor;
+	unsigned int	fog_color_ceiling;
+
+	//shaders
+	float			wall_shade_k;
+	float			floor_shade_k;
+	float			ceiling_shade_k;
+	unsigned int	(*shade_mode)(unsigned int color, float intensity_factor, float distance_factor);
 	
 	float	*fov_distances; // Array de distancias hasta las paredes quizas osbre
 }	t_frame;
@@ -270,6 +310,7 @@ typedef struct	s_mlx_api_components
 	t_player	*player;
 	t_map		*map;
 	t_frame		*frame;
+	t_ambiance	amb;
 	
 	//log file
 	int		log_fd;
@@ -318,6 +359,9 @@ void	toggle_textures(t_mlx *mlx);
 void	toogle_floor_celling(t_mlx *mlx);
 void	toggle_fish_eye(t_mlx *mlx);
 void	toogle_dist_calc(t_mlx *mlx);
+bool	ambiance_keypress(t_mlx *mlx, int keysym);
+void	select_ambiance(t_mlx *mlx, int ambiance);
+void	toogle_ambiance(t_mlx *mlx);
 void	toggle_minimap(t_mlx *mlx);
 void	toggle_rays(t_mlx *mlx);
 void	minimap_zoom(t_mlx *mlx, bool flag);
@@ -376,15 +420,27 @@ double			calculate_wall_x(t_mlx *mlx, t_ray *ray);
 void	calculate_tex(t_wall *wall, t_texture *texture, int win_height, int pitch);
 unsigned int	extract_color(t_texture *texture, int tex_x, int tex_y);
 
-//fog blur shaders
-unsigned int apply_fog_pixel(unsigned int color, unsigned int fog_color, float distance, float max_distance);
-void apply_fog(t_mlx *mlx, unsigned int fog_color, float max_distance);
-unsigned int apply_blur(t_mlx *mlx, int column, int row);
+//textured_floor_and_ceiling
+void render_floor_and_ceiling_amb(t_mlx *mlx);
 
+//fog blur shaders
+unsigned int apply_fog_pixel(unsigned int color, unsigned int fog_color, float proportion_dist);
+unsigned int apply_blur(t_mlx *mlx, int column, int row);
+unsigned int apply_desaturation(unsigned int color, float factor);
+void apply_fog(t_mlx *mlx, unsigned int fog_color, float max_distance);
+
+//shaders
 unsigned int apply_shade(unsigned int color, float shade);
 unsigned int shade_linear(unsigned int color, float dist, float max_dist);
-unsigned int shade_inverse(unsigned int color, float dist, float k, float max_dist);
-unsigned int shade_exponential(unsigned int color, float dist, float density, float max_dist);
+unsigned int shade_inverse(unsigned int color, float k, float proportion_dist);
+unsigned int shade_exponential(unsigned int color, float density, float proportion_dist);
+
+//ambiance
+void	config_ambiance_cementery(t_ambiance *amb);
+void	config_ambiance_asturias(t_map *map, t_ambiance *amb);
+void	config_ambiance_open(t_map *map, t_ambiance *amb);
+float	dist_factor_floor(int win_height, int win_y, int horizon, int ambient);
+float	dist_factor_ceiling(int win_y, int horizon, int ambient);
 
 //render minimap 2D
 int		render_frame2D(t_mlx *mlx);

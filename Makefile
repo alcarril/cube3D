@@ -33,6 +33,7 @@ SRC_FILES = mlx_init_close/init_mlx_game.c \
 			mlx_init_close/colors.c \
 			events/keys.c \
 			events/graphic_engine_keys.c \
+			events/ambiance_keys.c \
 			events/minimap_keys.c \
 			events/player_keys.c \
 			events/mouse_keys_buttons.c \
@@ -43,9 +44,11 @@ SRC_FILES = mlx_init_close/init_mlx_game.c \
 			render/dda_algorith.c \
 			render/floor_celling.c \
 			render/render_textures.c \
-			render/shaders_fog_blur.c \
 			render/render_minimap.c \
 			render/rays_2d.c \
+			ambiances/ambiance_configs.c \
+			ambiances/shaders_fog_blur.c \
+			ambiances/shaders.c \
 			mains/main.c
 
 SRCS = $(addprefix $(SRC_DIR), $(SRC_FILES))

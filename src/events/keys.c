@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 22:31:15 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/13 16:15:28 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/15 21:45:14 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,10 @@ bool	graphics_engine_keypress(t_mlx *mlx, int keysym)
 		toggle_textures(mlx);
 	else if (keysym == XK_c)
 		toogle_floor_celling(mlx);
+	else if (keysym == XK_u)
+		toogle_ambiance(mlx);
+	else if (ambiance_keypress(mlx, keysym))
+		return (true);
 	else
 		return (false);
 	return (true);

@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 15:44:58 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/13 19:13:15 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/15 21:57:23 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,26 @@
 	- column: Índice de la columna en la pantalla donde se dibujará la pared.
 	- wall: Puntero a la estructura de la pared que contiene información sobre la pared a dibujar.
 	- ray: Puntero a la estructura del rayo que contiene información sobre el rayo que golpeó la pared.
+	Optimizaciones de microporcesador:
+	+ Se calcula la proporción de distancia una sola vez fuera del bucle de cada columna
+	+ Se evita la división dentro del bucle hoot utilizando la multiplicación por el inverso:
+	  en lugar de dividir por la distancia máxima, se multiplica por su inverso precomputado:
+	  si proporcion_dist = ray->wall_dist / max_distance;
+	  se puede reescribir como:
+	  float inv_maxdistance = 1.0f / max_distance;
+	  proporcion_dist = ray->wall_dist * inv_max_distance;
+	  Esto reduce la carga computacional dentro del bucle crítico. (hoot loop)
+	- Fog color en variable local par ano hacer indireccion en cada iteracion del bucle y
+	 asi usar registros CPU  o cache directamente sin mas pasos intermedios
+	
 */
 void draw_wall_column_tex(t_mlx *mlx, int column, t_wall *wall, t_ray *ray)
 {
 	int i;
 	unsigned int color;
-	unsigned int fog_color = FOG_MEDIO_OSCURO; // Color del fog (negro)
-	float max_distance = mlx->map->max_distance * 0.8f; // Distancia máxima para aplicar el fog
-	// int mip;
+	float proporcion_dist;
 
+	proporcion_dist = ray->wall_dist * mlx->amb.vinv_max_diatance;
 	wall->texture = select_texture(mlx, ray);
 	wall->wall_x = calculate_wall_x(mlx, ray);
 	calculate_tex(wall, wall->texture, mlx->win_height, mlx->player->pitch_pix);
@@ -36,13 +47,12 @@ void draw_wall_column_tex(t_mlx *mlx, int column, t_wall *wall, t_ray *ray)
 	{			
 		wall->tex_y = (int)wall->tex_pos;
 		color = extract_color(wall->texture, wall->tex_x, wall->tex_y);
-		// color = apply_blur(mlx, column, i);
-		//aplicar el shade:
-			// color = shade_linear(color, ray->wall_dist, max_distance);
-			color = shade_inverse(color, ray->wall_dist, 4.0f, max_distance);
-			// color = shade_exponential(color, ray->wall_dist, 4.0f, max_distance);
-		// Aplicar el fog al color basado en la distancia -> se puede modificar
-			color = apply_fog_pixel(color, fog_color, ray->wall_dist, max_distance);
+		if (mlx->frame->ambiance_onoff == ON)
+		{
+			color = shade_inverse(color , mlx->amb.k_factor_walls, proporcion_dist * mlx->amb.mult_shader_walls);
+			color = apply_desaturation(color, proporcion_dist * 0.6f);
+			color = apply_fog_pixel(color, mlx->amb.fog_color_walls, proporcion_dist * mlx->amb.mult_fog_walls);
+		}
 		buffering_pixel(column, i, mlx, color);
 		wall->tex_pos += wall->text_v_step;
 		i++;
@@ -122,6 +132,10 @@ double	calculate_wall_x(t_mlx *mlx, t_ray *ray)
 	- win_height: Altura de la ventana.
 
 	No devuelve nada, actualiza directamente los valores en la estructura `wall`.
+	Mejoras microporcesador (pendiente):
+	- Se puede evitar la dicion de win height / 2 + pitch precalculando
+	  una variable horizon en el evento de cambio de ventana o pitch.
+
 */
 void	calculate_tex(t_wall *wall, t_texture *texture, int win_height, int pitch)
 {
@@ -130,8 +144,8 @@ void	calculate_tex(t_wall *wall, t_texture *texture, int win_height, int pitch)
 		wall->tex_x = 0;
 	if (wall->tex_x >= texture->width) 
 		wall->tex_x = texture->width - 1;
-	wall->text_v_step = (float)texture->height / (float)wall->wall_height;
-	wall->tex_pos = (wall->wall_start - (win_height / 2 + pitch) + wall->wall_height / 2) * wall->text_v_step;
+	wall->text_v_step = (float)texture->height / (float)wall->wall_height;//esta dicion no se puede evitar
+	wall->tex_pos = ((wall->wall_start - ((win_height >> 1) + pitch)) + (wall->wall_height >> 1)) * wall->text_v_step;//evitar estas diviones con variable horizon recalcularla en evento
 }
 
 /*
@@ -146,6 +160,9 @@ void	calculate_tex(t_wall *wall, t_texture *texture, int win_height, int pitch)
 	- tex_x, tex_y: Coordenadas del píxel en la textura.
 	Devuelve:
 	- El color como un entero (unsigned int).
+	Optimizaciones de microporcesador (pendiente):
+	- Se evita la división utilizando un desplazamiento de bits para calcular el tamaño del píxel en bytes.
+	  Se sustituye texture->bits_per_pixel / 8 por texture->bits_per_pixel >> 3
 */
 unsigned int	extract_color(t_texture *texture, int tex_x, int tex_y)
 {
@@ -157,7 +174,7 @@ unsigned int	extract_color(t_texture *texture, int tex_x, int tex_y)
 	if (tex_y >= texture->height)
 		tex_y = texture->height - 1;
 	pixel_address = texture->addr + (tex_y * texture->line_length) + 
-		(tex_x * (texture->bits_per_pixel / 8));
+		(tex_x * (texture->bits_per_pixel >> 3));
 	color = *(unsigned int *)pixel_address;
 	return (color);
 }

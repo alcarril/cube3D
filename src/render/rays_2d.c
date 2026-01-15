@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/07 13:26:17 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/13 16:08:25 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/15 15:06:42 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,15 +74,18 @@ void draw_rays2D(t_mlx *mlx, float *scal_z)
 void	draw_ray2D(t_mlx *mlx, float *differencial, float rad, float *scal_z)
 {
 	int		window[2];
+	float	frame_offset[2];
 	float	step;
 	
 	step = 0.1f;
+	frame_offset[X] = mlx->frame->mm_offset[X];
+	frame_offset[Y] = mlx->frame->mm_offset[Y];
 	while (!touch_wall(mlx, differencial[X], differencial[Y]))
 	{
 		differencial[X] += step * cos(rad);
 		differencial[Y] += step * -sin(rad);
-		window[X] = (differencial[X] - mlx->frame->mm_offset[X]) * scal_z[X];
-		window[Y] = (differencial[Y] - mlx->frame->mm_offset[Y]) * scal_z[Y];
+		window[X] = (differencial[X] - frame_offset[X]) * scal_z[X];
+		window[Y] = (differencial[Y] - frame_offset[Y]) * scal_z[Y];
 		if (window[X] >= 0 && window[X] < mlx->frame->mm_widht &&
 				window[Y] >= 0 && window[Y] < mlx->frame->mm_height)
 		{

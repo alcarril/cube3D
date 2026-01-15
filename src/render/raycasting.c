@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:04:35 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/13 03:54:40 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/15 15:04:32 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,8 +100,8 @@ void scale_wall(t_wall *wall, float perpendicular_distance, int win_height, int 
 		wall->wall_height = win_height;
 	else
 		wall->wall_height = (int)(win_height / perpendicular_distance);
-	wall->wall_start = (win_height / 2) - (wall->wall_height / 2) + pitch;
-	wall->wall_end = (win_height / 2) + (wall->wall_height / 2) + pitch;
+	wall->wall_start = (win_height >> 1) - (wall->wall_height >> 1) + pitch;
+	wall->wall_end = (win_height >> 1) + (wall->wall_height >> 1) + pitch;
 	if (wall->wall_start < 0)
 		wall->wall_start = 0;
 	if (wall->wall_end >= win_height)

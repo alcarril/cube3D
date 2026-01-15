@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 20:07:49 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/12 22:09:20 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/15 20:58:55 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ bool	init_mlx_components(t_mlx *mlx)
 		perror("X11 server disply conexion failed\n");
 		return (false);
 	}
-	mlx->win_height = mlx->map->max_rows * WIN_SCALE * 4;
+	mlx->win_height = mlx->map->max_rows * WIN_SCALE * 3;
 	mlx->win_width = mlx->map->max_columns * WIN_SCALE * 3;
 	mlx->mlx_window = mlx_new_window(mlx->mlx_var, mlx->win_width, mlx->win_height, "cub3D");
 	if (mlx->mlx_window == NULL)
