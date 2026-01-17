@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 01:48:42 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/16 18:45:40 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 01:42:17 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,15 @@
 	to del programa y s se puede evitar mejor. Ademas por el branch predictor el if del render no consume excesivos
 	ciclos de porcesado cuando el contador de programa ha pasado por ahi varias veces.
 
-	Al poner este ajuste el mouse cunado se activa con el puintero en la venta lo interpreta directamente y lo moeve 
-	como no quemos que esto pase en el manejador reseteamos su posicion al eje o no segun donde se encuentre
+	Al poner este ajuste el mouse cunado se activa con el puintero en la venta lo interpreta directamente y lo moeve,
+	como no quemos que esto pase, en el manejador reseteamos su posicion al eje o no segun donde se encuentre cunado se 
+	activa po rsi se activa dentro de la ventana que pase al centro y no haga el moviento bruco
+	
 	Mejora de microprocesador:
-	:Como es un funcion que se llama en cada frame se han optimizado el numero
-	de variables locales a un minimo necesario intentando hacer el motor lo mas eficiente
-	posible al igual que con en resto de funciones qu se ejutan dentro del loop de renderi
-	zado.
+	- Como es un funcion que se llama en cada frame se han optimizado el numero
+	 de variables locales a un minimo necesario intentando hacer el motor lo mas eficiente
+	 posible al igual que con en resto de funciones qu se ejutan dentro del loop de renderi
+	 zado.
 */
 void	get_mouse_pos_and_move(t_mlx *mlx)
 {

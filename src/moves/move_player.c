@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/06 12:30:42 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/12 23:08:12 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 04:36:15 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,15 @@
 		de la circunferencia (cada uno de los cuadrantes del plano)
 		- En ver de sumar 90 grados para los movimientos laterales se podria usar
 		la relacion de signos de la matriz de rotacion
+	Optimizacione sde procesasdor:
+	- Elimino funoperacinoes aritemetizza de division porque consument muxhocilos de CPU
 		
 */
 void	vectorization(t_player *player)
 {
 	float	angle_rad;
 	
-	bzero(player->differencial, sizeof(player->differencial));
+	ft_bzero(player->differencial, sizeof(player->differencial));
 	angle_rad = player->rad_angle;
 	if (player->keys.move_up)
 	{
@@ -45,13 +47,13 @@ void	vectorization(t_player *player)
 	}
 	if (player->keys.move_left)
 	{
-		player->differencial[X] += cos(angle_rad + (PI / 2)) * player->speed;
-		player->differencial[Y] += sin(angle_rad - (PI / 2)) * player->speed;
+		player->differencial[X] += cos(angle_rad + (PI * 0.5f)) * player->speed;
+		player->differencial[Y] += sin(angle_rad - (PI * 0.5f)) * player->speed;
 	}
 	if (player->keys.move_right)
 	{
-		player->differencial[X] += cos(angle_rad - (PI / 2)) * player->speed;
-		player->differencial[Y] += sin(angle_rad + (PI / 2)) * player->speed;
+		player->differencial[X] += cos(angle_rad - (PI * 0.5f)) * player->speed;
+		player->differencial[Y] += sin(angle_rad + (PI * 0.5f)) * player->speed;
 	}
 }
 
@@ -63,6 +65,13 @@ void	vectorization(t_player *player)
 	de 360 grados o menos aunque a la hora de hacer los calculos de los senos y los cosenos
 	esto no sea relevante porque no acambian pero evitamos que el float llegue a los limites y 
 	se haga overflow.
+	OPtimiacion de procesador:
+	- Se evita el uso de la función fmod para limitar el ángulo entre 0 y 360 grados,
+	  ya que fmod implica una operación de división que es costosa en términos de
+	  ciclos de CPU. En su lugar, se utilizan simples restas y sumas condicionales.
+	- Se podria cambiar ela oprrcion de onversion a radianes por una multiplicacion por una constante precalculada
+	- Se hace aqui la operacion para no tener que usar los radianes y hacer el calculo en el resto de funciones
+	de engine
 */
 void	rotate_player(t_player *player, float delta_grades)
 {
@@ -91,10 +100,10 @@ bool	is_collision(float x, float y, t_mlx *mlx, float e)
 	if (mx < 0 || my < 0 || mx >= (int)mlx->map->max_columns || my >= (int)mlx->map->max_rows)
 		return (true);
 	return (
-		mlx->map->map_grids[(int)(y + e)][(int)(x + e)] == WALL ||
-		mlx->map->map_grids[(int)(y - e)][(int)(x + e)] == WALL ||
-		mlx->map->map_grids[(int)(y + e)][(int)(x - e)] == WALL ||
-		mlx->map->map_grids[(int)(y - e)][(int)(x - e)] == WALL
+		is_wall_tile(mlx->map->map_grids[(int)(y + e)][(int)(x + e)]) ||
+		is_wall_tile(mlx->map->map_grids[(int)(y - e)][(int)(x + e)]) ||
+		is_wall_tile(mlx->map->map_grids[(int)(y + e)][(int)(x - e)]) ||
+		is_wall_tile(mlx->map->map_grids[(int)(y - e)][(int)(x - e)])
 	);
 }
 
