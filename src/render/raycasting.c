@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:04:35 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 18:11:49 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 18:12:22 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,9 +134,7 @@ void scale_wall_phisics(t_wall *wall, float perpendicular_distance, t_mlx *mlx)
 {
 	static int	win_height;
 	int			wallh_half;
-	int			pitch;//es la traslacion de los puntos en el palno
-	int			wmult;//si es uno esta todo igual si es mas pequeño que uno se hacen la paredes mas pequeñas (da sensacion de mundo mas grande o masz pequeño)
-	float		winv_mult;
+	int			pitch;
 	float		vertical_offset;
 	float		camz;
 
@@ -147,8 +145,6 @@ void scale_wall_phisics(t_wall *wall, float perpendicular_distance, t_mlx *mlx)
 	
 	//traslaciones y movientos del mapa con persespetivas para fisicas y simulaicon de eje y
 	pitch = mlx->player->pitch_pix;
-	wmult = mlx->frame->wmult;
-	winv_mult = 1.0f / wmult;
 	camz = mlx->player->camz;
 	vertical_offset = (camz * (win_height >> 1) / perpendicular_distance);
 

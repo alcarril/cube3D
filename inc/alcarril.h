@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 18:09:32 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 18:12:29 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,8 +278,6 @@ typedef struct	s_frame_data
 	float	mm_scale[2];
 	float 	mm_offset[2];
 	float 	mm_zoom_factor;
-	float	winv_mult;//
-	float		wmult;//
 	bool	minimap_onoff;
 	bool	minimap_showrays;
 	bool	raycasting_onoff;
