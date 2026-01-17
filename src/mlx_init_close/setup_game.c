@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 11:42:33 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 18:13:55 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 19:04:00 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,8 @@ void setup_player_mouse(t_mlx *mlx)
 	
 	pl = mlx->player;
 	init_player_orientation_pos(mlx->player, 'N', middle);
-	pl->camz = -0.5f;//
+	pl->camz = 1.0f;//
+	pl->vertical_offset = 0.0f;
 	pl->speed = 0.033f;
 	pl->fov = 60.0f;
 	pl->rad_fov = pl->fov * (PI / 180.0f);

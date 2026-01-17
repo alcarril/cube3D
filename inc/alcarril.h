@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 18:12:29 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 19:06:59 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,6 +229,7 @@ typedef struct	s_player_data
 	float	angle;
 	float	rad_angle;
 	float	camz;//
+	float	vertical_offset;
 	float	speed;
 	float	r_speed;
 	float	differencial[2];
@@ -428,7 +429,7 @@ void			render_floor_and_ceiling_speed(t_mlx *mlx);
 void			draw_wall_column_tex(t_mlx *mlx, int column, t_wall *wall, t_ray *ray);
 t_texture		*select_texture(t_mlx *mlx, t_ray *ray);
 double			calculate_wall_x(t_mlx *mlx, t_ray *ray);
-void			calculate_tex(t_wall *wall, t_texture *texture, int win_height, int pitch);
+void	calculate_tex(t_wall *wall, t_texture *texture, int win_height, t_player *player);
 unsigned int	extract_color(t_texture *texture, int tex_x, int tex_y);
 
 //textured_floor_and_ceiling

@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 18:12:38 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 17:44:55 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 18:43:28 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,13 +144,13 @@ int main (void)
 
 
 	//MEDIEVAL	
-	// char *texture_paths[5] = {
-	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
-	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
-	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
-	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // ESTE -> OESTE
-	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // ESTE -> OESTE
-	// 	};
+	char *texture_paths[5] = {
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // ESTE -> OESTE
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // ESTE -> OESTE
+		};
 
 
 	//CARBON
@@ -164,13 +164,13 @@ int main (void)
 
 
 	//neo
-	char *texture_paths[5] = {
-		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
-		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
-		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
-		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
-		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/carbon.xpm" // NORTE -> SUR
-	};
+	// char *texture_paths[5] = {
+	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
+	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
+	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
+	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
+	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/carbon.xpm" // NORTE -> SUR
+	// };
 
 	printf("hola\n");
 	//adolfodsad

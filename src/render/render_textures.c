@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 15:44:58 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/16 15:15:24 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 19:06:30 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void draw_wall_column_tex(t_mlx *mlx, int column, t_wall *wall, t_ray *ray)
 	proporcion_dist = ray->wall_dist * mlx->amb.vinv_max_diatance;
 	wall->texture = select_texture(mlx, ray);
 	wall->wall_x = calculate_wall_x(mlx, ray);
-	calculate_tex(wall, wall->texture, mlx->win_height, mlx->player->pitch_pix);
+	calculate_tex(wall, wall->texture, mlx->win_height, mlx->player);
 	i = wall->wall_start;
 	while (i <= wall->wall_end)
 	{			
@@ -61,6 +61,21 @@ void draw_wall_column_tex(t_mlx *mlx, int column, t_wall *wall, t_ray *ray)
 /*
 	Selecciona la textura adecuada en función de la dirección del rayo
 	y del lado de la pared que fue golpeada.
+	- Cunando la direccion del rayo es positiva el rayo ha chocado con una celda
+	vertitical signifaica que la ultima colision ha sido con un pared de los latera
+	les derecaha o izquierda del mapa, limite de grid del mapa. SEgun la pendiente la
+	componenete del vector unitario del rayo en el eje x sea positiva o negtiva significa
+	que ha sido co nuna pared del este o del oeste respectivamente.
+	- Cuando la direccion del rayo es negativa el rayo ha chocado con una celda
+	horizontal significa que la ultima colision ha sido con una pared de la parte
+	superior o inferior del mapa, limite de grid del mapa. SEgun la pendiente la
+	componenete del vector unitario del rayo en el eje y sea positiva o negtiva
+	significa que ha sido con una pared del norte o del sur respectivamente.
+	- Ademas si ha chocado con una pared especial (BONUS_WALL) se selecciona esa textura
+	de la bonus wall, esto lo sabemos el tipo de celda del mapa que hemos chocado. variable guardada
+	raydir simepre esta comprendida entre -1 y 1 porque es un vector unitario., circunferencia
+	gonimetrixa se podria usar tambien el angulo pero es mas costoso computacionalmente.
+	Tambien se podri usar delta_x e y en este caso pero la ligca es la misma
 	Parámetros:
 	- mlx: Puntero a la estructura principal que contiene toda la información del juego.
 	- ray: Puntero a la estructura del rayo que contiene información sobre la dirección del rayo y el lado golpeado.
@@ -98,10 +113,21 @@ t_texture *select_texture(t_mlx *mlx, t_ray *ray)
 	- Donde X0 e Y0 son las coordenadas del jugador
 	- DX y DY son las direcciones del rayo
 	- t es la distancia a la pared (hipotenusa aprox)
-	Ademas hay un ajuste para obtener solo la parte decimal (wall_x - floor(wall_x))
-	Se hace un ajuste para que no se inviertan las texturas en ciertas caras
+	- Ese porcentaje lo vamos a usar para calcular que porporcion del with de la textura
+	usamos para dibujar la pared. (saber su posicion en prporcion al with de la textura)
+	por eso hay un ajuste para obtener solo la parte decimal (wall_x - floor(wall_x))
+	- Se hace un ajuste para que no se inviertan las texturas en ciertas caras
 	wall x es un porcentaje (0-1) de donde el rayo golpea la pared en la baseo
-	eje x de la textura.
+	eje x de la textura. eso es por la inversion de las caras
+	Se podria decir que estamosacando la posicion escala 1 de la textura
+	
+	Retirno de a la funcion:
+	- wall_x: Porporcion (0-1) de donde el rayo golpea la pared en la baseo eje x de imagen
+	de  la textura with.
+	Parámetros:
+	- mlx: Puntero a la estructura principal que contiene toda la información del juego.
+	- ray: Puntero a la estructura del rayo que contiene información sobre el r
+	
 	Nota: se osa ala distancia de la hipotenisa (wall_dist) en ligar de la proyección
 	para evitar desplazamientos en las texturas debido al efecto de ojo de pez.
 */
@@ -124,23 +150,28 @@ double	calculate_wall_x(t_mlx *mlx, t_ray *ray)
 
 /*
 	Calcula los parámetros necesarios para renderizar la textura:
-	- tex_x: Coordenada X en la la matriz de pixeels de la textura
-	es decir el pixel horizontal de la textura que se va a usar.
+	- tex_x: Coordenada X en la la matriz de pixeels de la textura es decir el pixel horizontal de la textura que se va a usar.
+	  Se obtiene  multiplcando la porporcion del with de la textura wall_x por  el with de la textura. para sacar 
+	  la posicion exacta y escalarla al with de la textura
 	- text_v_step: text height to screen height ratio, es decir
 	  cuánto se debe avanzar en la textura por cada píxel dibujado en la pantalla. para que no se deforme
-	- tex_pos: Posición inicial en la textura.
+	  es un porporcion entre la altura de la textura y la altura de la pared en píxeles. escala vertical
+	- tex_pos: Posición inicial en la textura en el eje Y (vertical) desde donde se comenzará a muestrear la textura.
+	  Se calcula en función de la posición de inicio de la pared en la pantalla, la altura de la ventana
+	  y el pitch (desplazamiento vertical). Esto asegura que la textura se alinee correctamente con la pared
+	  renderizada en la pantalla.
 
 	Parámetros:
 	- wall: Estructura que contiene información sobre la pared.
 	- texture: Puntero a la textura.
 	- win_height: Altura de la ventana.
-
 	No devuelve nada, actualiza directamente los valores en la estructura `wall`.
 	Mejoras microporcesador (pendiente):
 	- Se puede evitar la dicion de win height / 2 + pitch precalculando
 	  una variable horizon en el evento de cambio de ventana o pitch
+	NOTA: tener en cuenta que wall_star esta invertido por eso se usa y no wall_end
 */
-void	calculate_tex(t_wall *wall, t_texture *texture, int win_height, int pitch)
+void	calculate_tex(t_wall *wall, t_texture *texture, int win_height, t_player *player)
 {
 	wall->tex_x = (int)(wall->wall_x * (double)texture->width);
 	if (wall->tex_x < 0) 
@@ -148,7 +179,7 @@ void	calculate_tex(t_wall *wall, t_texture *texture, int win_height, int pitch)
 	if (wall->tex_x >= texture->width) 
 		wall->tex_x = texture->width - 1;
 	wall->text_v_step = (float)texture->height / (float)wall->wall_height;//esta dicion no se puede evitar
-	wall->tex_pos = ((wall->wall_start - ((win_height >> 1) + pitch)) + (wall->wall_height >> 1)) * wall->text_v_step;//evitar estas diviones con variable horizon recalcularla en evento
+	wall->tex_pos = ((wall->wall_start - ((win_height >> 1) + player->pitch_pix + player->vertical_offset)) + (wall->wall_height >> 1)) * wall->text_v_step;//evitar estas diviones con variable horizon recalcularla en evento
 }
 
 /*

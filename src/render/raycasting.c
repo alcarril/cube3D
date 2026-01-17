@@ -6,14 +6,12 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:04:35 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 18:12:22 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 19:11:53 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
 
-void scale_wall_camz(t_wall *wall, float perpendicular_distance, int win_height, int pitch, float camZ);
-void scale_wall_mult_paredes(t_wall *wall, float perpendicular_distance, int win_height, int pitch);
 
 /*
 	- Función principal para lanzar los rayos y realizar la bufferización
@@ -68,9 +66,8 @@ void	cast_ray(t_mlx *mlx, unsigned int n_ray, float ray_angle)
 	set_ray(mlx, &ray, ray_angle);
 	ray.proyected_wall_dist = get_distance_to_wall(mlx, &ray, ray_angle);
 	mlx->frame->fov_distances[mlx->win_width - n_ray - 1] = ray.wall_dist;
-	// scale_wall(&wall, ray.proyected_wall_dist, mlx->win_height, mlx->player->pitch_pix);
-	scale_wall_phisics(&wall, ray.proyected_wall_dist, mlx);
-	// scale_wall_camz(&wall, ray.proyected_wall_dist, mlx->win_height, mlx->player->pitch_pix, -0.525f);
+	scale_wall(&wall, ray.proyected_wall_dist, mlx->win_height, mlx->player->pitch_pix);
+	// scale_wall_phisics(&wall, ray.proyected_wall_dist, mlx);
 	if (mlx->frame->textures_onoff == ON)
 		draw_wall_column_tex(mlx, n_ray, &wall, &ray);
 	else
@@ -146,7 +143,8 @@ void scale_wall_phisics(t_wall *wall, float perpendicular_distance, t_mlx *mlx)
 	//traslaciones y movientos del mapa con persespetivas para fisicas y simulaicon de eje y
 	pitch = mlx->player->pitch_pix;
 	camz = mlx->player->camz;
-	vertical_offset = (camz * (win_height >> 1) / perpendicular_distance);
+	mlx->player->vertical_offset = (camz * (win_height >> 1) / perpendicular_distance);
+	vertical_offset = mlx->player->vertical_offset;
 
 	//calculo de distancia
 	if (perpendicular_distance <= 0)
@@ -158,46 +156,6 @@ void scale_wall_phisics(t_wall *wall, float perpendicular_distance, t_mlx *mlx)
 	wall->wall_end = (win_height >> 1) + (wallh_half) + pitch + (int)vertical_offset;
 
 	//control de limites
-	if (wall->wall_start < 0)
-		wall->wall_start = 0;
-	if (wall->wall_end >= win_height)
-		wall->wall_end = win_height - 1;
-}
-
-
-void scale_wall_mult_paredes(t_wall *wall, float perpendicular_distance, int win_height, int pitch)
-{
-	if (perpendicular_distance <= 0)
-		wall->wall_height = win_height;
-	else
-		wall->wall_height = (int)(win_height / perpendicular_distance) * 2;
-	wall->wall_start = (win_height >> 1) - ((wall->wall_height >> 1)) + pitch;
-	//mirar si esto hace que vaya mas lento apriori no afecta al rendimiento
-	wall->wall_end = (win_height >> 1) + (wall->wall_height >> 1) / 3 + pitch;//tocando este valor elpersoje se puede hacer mas alto o mas pequeño
-	// wall->wall_end = (win_height >> 1) + (wall->wall_height * 2) + pitch;//tocando este valor elpersoje se puede hacer mas alto o mas pequeño
-	if (wall->wall_start < 0)
-		wall->wall_start = 0;
-	if (wall->wall_end >= win_height)
-		wall->wall_end = win_height - 1;
-}
-
-void scale_wall_camz(t_wall *wall, float perpendicular_distance, int win_height, int pitch, float camZ)
-{
-	int centerY = win_height >> 1;
-
-	if (perpendicular_distance <= 0.001f)
-		wall->wall_height = win_height;
-	else
-		wall->wall_height = (int)(win_height / perpendicular_distance);
-
-	float vertical_offset = (camZ * centerY) / perpendicular_distance;
-
-	wall->wall_start = centerY - (wall->wall_height >> 1)
-					   + pitch + (int)vertical_offset;
-
-	wall->wall_end   = centerY + (wall->wall_height >> 1)
-					   + pitch + (int)vertical_offset;
-
 	if (wall->wall_start < 0)
 		wall->wall_start = 0;
 	if (wall->wall_end >= win_height)
