@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/15 22:34:45 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/16 20:09:36 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,26 +19,34 @@
 
 # include <stdbool.h>
 # include <limits.h>
+#include <stddef.h>
 
 /*
 	DEFINES:
 */
 
+//deprecated
 # define WIDTH 720
 # define HEIGHT 720
+#define WIN_SCALE 15
+# define MAX_COLUMS 25
+# define MAX_ROWS 25
 
-# define MAX_COLUMS 20
-# define MAX_ROWS 15
+//windows minimun with height
+#define BASE_WIDTH 600
+#define BASE_HEIGHT 600
 
+
+//Minimap
 #define MINI_WIDTH 4
 #define MINI_HEIGHT 4
 # define MINI_ZOOM_FACTOR 1.75f
 # define MINIMAP_MAX_ZOOM 3.5f
 # define MINIMAP_MIN_ZOOM 0.5f
 
-#define WIN_SCALE 10
-
+//hits
 # define WALL 1
+# define BONUS_WALL 2
 # define FLOOR 0
 
 # define X 1
@@ -71,12 +79,13 @@ player controls and engine config Keys\n"
 # define MOUSE_PITCH_FACTOR 0.002f//
 #define MOUSE_DEADZONEX 4
 #define MOUSE_DEADZONEY 8
-#define MOUSE_MAX_MOV 60
+#define MOUSE_MAX_MOV 50
 #define MOUSE_MAX_SENSX 0.9f
-#define MOUSE_MIN_SENSX 0.05f
+#define MOUSE_MIN_SENSX 0.1f
 #define MAX_MOUSE_PITCH_FACTOR 0.014f//
 #define MIN_MOUSE_PITCH_FACTOR 0.0009f//
-
+#define OUT false
+#define IN true
 #define MousePressMask 1L<<2//norminette
 
 
@@ -179,6 +188,7 @@ typedef struct	s_ray
 	unsigned int	step[2];
 	bool			side_hit;
 	float			wall_dist;
+	int				wall_value;
 	float			proyected_wall_dist;
 }	t_ray;
 
@@ -191,6 +201,7 @@ typedef struct	s_mouse
 	float	sens_x; // grados por pixel del mouse
 	float	pitch_factor; // fractor de pitch por pixel del mouse (ajustable)
 	bool	onoff; //activar y desactivar mouse
+	bool	out_and_on;
 }	t_mouse;
 
 typedef struct	s_player_controls
@@ -227,14 +238,21 @@ typedef struct	s_player_data
 
 typedef struct	s_map
 {
-	unsigned int	max_columns; //x
-	unsigned int	max_rows; //y
-	char			map_grids[MAX_ROWS][MAX_COLUMS]; //
+	char			map_grids[14][25]; //esto va a ser un puntero doble a liberar pero la mmera de accader a el es igual
+	unsigned int	max_columns; //x lo rellena carbon con los valores del mapa y con esto se reserva memeria
+	unsigned int	max_rows; //y lo rrelena carbon cunado copie los valores del maap y con esto se reserva memeria
 
-	//textures
-	t_texture	textures[4];
-	char 		*texture_paths[4];
-	//floor ceilling colors
+	//textures (estos se van a tener que liberar)
+		//ahora es un array de texturas en memeria local de 5 posiciones tu vas a tenern que reservar memoria para n texturas se ocvnerita en un puntero simple //t_texture	*textures
+		t_texture	textures[5]; 
+		//esta variable es la que dice cunatas texturas hay en el mapa con ella reservamos memeria paa los paths y las texturas
+		//ahora esta por defecto en 5 y lo uso para reservar memeria pero la necesito
+		int n_textures;
+		//ahora esta en 5 en memria local pero tu vas a tener que reservar memeria para n texturas se convertira en un puntero doble char **teexture_paths
+		char *texture_paths[5];//Esto va a ser un puntero a linerar con los nombre que reserva carbon
+	//TODAS MEM ENCARGO DE LIBERARLAS YO NO TE PREOCUPES TU SOLO LIBERALA MEMRIA DE TUS STRCUTURSA DESOUES DE HACER LE EMPAALME
+	
+	//floor ceilling colors (estos no se tiene que liberar)
 	int		floor_color[3];		// R, G, B
 	int		ceiling_color[3];	// R, G, B
 	int 	floor_color_hex;	// Hexadecimal
@@ -334,10 +352,12 @@ void	init_player_orientation_pos(t_player *pl, char cardinal, int pos[2]);
 bool	init_frame_data( t_mlx *mlx);
 void	get_minimapscale(t_mlx *mlx, float *scale);
 int		create_fps_logfile(void);
+void	setup_default_ambiance(t_map *map, t_ambiance *amb);
 
 //Close and free
 void	destroy_mlx_componets(int (*f)(), int (*g)(), int (*t)(), t_mlx *mlx);
-void	free_loaded_textures(t_mlx *mlx, int loaded_count);
+void	free_loaded_textures(t_mlx *mlx, int loaded, int max_textures);
+void	free_map_data(t_mlx *mlx);//
 void	free_game(t_mlx *mlx);
 int		close_game_manager(t_mlx *mlx);
 
@@ -394,6 +414,8 @@ void	buffering_pixel(int x, int y, t_mlx *mlx, int color);
 void	buffering_line(int y, int color, t_mlx *mlx, int width);
 void	fps_counter_average(t_mlx *mlx);
 void	fps_counter_realtime(t_mlx *mlx);
+void	ft_memset_int(void *s, int c, size_t n);
+bool	is_wall_tile(char map_value);
 
 //raycasting
 void	throw_rays(t_mlx *mlx);

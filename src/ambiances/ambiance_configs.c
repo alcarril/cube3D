@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 19:14:29 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/15 22:08:18 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/16 11:57:11 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	config_ambiance_cementery(t_ambiance *amb)
 }
 
 
-void	config_ambiance_asturias(t_map *map, t_ambiance *amb)
+void	config_ambiance_asturias1(t_map *map, t_ambiance *amb)
 {
 	amb->fog_color_walls = FOG_MEDIO_CLARO;
 	amb->fog_color_fc = FOG_MEDIO_CLARO;
@@ -43,6 +43,28 @@ void	config_ambiance_asturias(t_map *map, t_ambiance *amb)
 	amb->mult_fog_walls = 1.7f;
 	amb->mult_fog_floor = 1.7f;
 	amb->mult_fog_ceiling = 1.0f;
+	
+	amb->k_factor_walls = 8.0f;
+	amb->k_factor_floor = 3.0f;
+	amb->k_factor_ceiling = 1.0f;
+	
+	amb->mult_shader_walls = 1.0f;
+	amb->mult_shader_floor = 1.3f;
+	amb->mult_shader_ceiling = 0.3f;
+	
+	amb->ambiance = ASTURIAS;
+}
+
+void	config_ambiance_asturias(t_map *map, t_ambiance *amb)//neo
+{
+	// amb->fog_color_walls = 0x437317;
+	amb->fog_color_walls = 0x71DB00;
+	amb->fog_color_fc = 0x71DB00;
+	amb->v_max_distance_map = map->max_distance * 0.7f;
+	amb->vinv_max_diatance = 1.0f / amb->v_max_distance_map;
+	amb->mult_fog_walls = 0.3f;
+	amb->mult_fog_floor = 0.4f;
+	amb->mult_fog_ceiling = 0.3f;
 	
 	amb->k_factor_walls = 8.0f;
 	amb->k_factor_floor = 3.0f;

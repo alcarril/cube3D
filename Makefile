@@ -45,10 +45,12 @@ SRC_FILES = mlx_init_close/init_mlx_game.c \
 			render/floor_celling.c \
 			render/render_textures.c \
 			render/render_minimap.c \
+			render/utils.c \
 			render/rays_2d.c \
 			ambiances/ambiance_configs.c \
 			ambiances/shaders_fog_blur.c \
 			ambiances/shaders.c \
+			testing/prueba.c \
 			mains/main.c
 
 SRCS = $(addprefix $(SRC_DIR), $(SRC_FILES))

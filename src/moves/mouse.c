@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/11 01:48:42 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/15 17:55:23 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/16 18:45:40 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,32 @@
 	estaoms limitados por la frecuencia de eventos del sistema operativo (suele ser
 	mas baja que la del frame rate del juego)
 	
-	NOTA: Como es un funcion que se llama en cada frame se han optimizado el numero
+	Ademas si da la casualidad de que se han cancelado mucho movientos en un eje
+	y se han ido sumando a la posicon del mouse hasta salirse de la ventana, se fuerza
+	la posicion del mouse a la posicion de referencia en ambos ejes. Ademas si se hacen
+	un movineto de pixxeles en patalla muy brusco, como esta funcion se ejecuta en cada
+	frame, la unica manera de hacer que m,use estuvieese eimpre en la ventan es resetearlo
+	en cada frame. pero esto tiene un coste claro por la como gestion la cola de eventos la mini
+	libx en conjunto con el kernell por lo que es mejor llamarla solo cuando se hace un moviento
+	efectivo (140 frames segundo seria n 140 llamadas independientemente de que el mouse se haya
+	movido + o menos veces en ese lapso de tiempo, siempre es menos es mejor detectar en cada frame
+	si se ha movido o no y resetear solo si se ha movido en algun eje o se ha salido de la ventana)
+
+	Ahora al meter esta mejora si apagamos el mouse movemos el raton y lo volvemos a encender fuera
+	de la pantalla automaticamente lo centra, para controlaer que eso no pase metemos una variable extra
+	que sirbe para saber si el mouse esta fuera de la ventana y encendido. nos sirve por
+	que asi si esto pasa simplemete se sale de la funcion a no ser que detecte el mouse dentro de la venta
+	que hace que esta variable se apage false (porque estaria encendido pero no duera de la pantalla). Conesta
+	variable se podria quitar motion NOtify para saber si el mouse ha entrado en la ventana en la primera iteracion
+	pero usando motion notify nos aseguramos de que en cada frame no se comprueb la posision del mouse si esta
+	y se saque la posioin que so n dos llamada a fucniones de la API de mlx que realentizan un poco el funcionamien
+	to del programa y s se puede evitar mejor. Ademas por el branch predictor el if del render no consume excesivos
+	ciclos de porcesado cuando el contador de programa ha pasado por ahi varias veces.
+
+	Al poner este ajuste el mouse cunado se activa con el puintero en la venta lo interpreta directamente y lo moeve 
+	como no quemos que esto pase en el manejador reseteamos su posicion al eje o no segun donde se encuentre
+	Mejora de microprocesador:
+	:Como es un funcion que se llama en cada frame se han optimizado el numero
 	de variables locales a un minimo necesario intentando hacer el motor lo mas eficiente
 	posible al igual que con en resto de funciones qu se ejutan dentro del loop de renderi
 	zado.
@@ -38,8 +63,14 @@ void	get_mouse_pos_and_move(t_mlx *mlx)
 	
 	m = &(mlx->player->mouse);
 	mlx_mouse_get_pos(mlx->mlx_var, mlx->mlx_window, &(m->pos_x), &(m->pos_y));
-	if (is_mouse_in_window(mlx, m->pos_x, m->pos_y) == false)
-		return ;
+	if (is_mouse_in_window(mlx, m->pos_x, m->pos_y) == OUT)
+	{
+		if (m->out_and_on == true)
+			return ;
+		mlx_mouse_move(mlx->mlx_var, mlx->mlx_window, m->axis_x, m->axis_y);
+	}
+	else
+		m->out_and_on = false;
 	ft_bzero((void*)is_move, sizeof(is_move));
 	pix_dif[X] =  m->pos_x - m->axis_x;
 	if (clamp_mouse_deltax(&pix_dif[X]) == true)
@@ -72,8 +103,8 @@ bool	is_mouse_in_window(t_mlx *mlx, int mouse_x, int mouse_y)
 {
 	if (mouse_x >= 0 && mouse_x < mlx->win_width &&
 		mouse_y >= 0 && mouse_y < mlx->win_height)
-		return (true);
-	return (false);
+		return (IN);
+	return (OUT);
 }
 
 /*
@@ -143,11 +174,6 @@ bool	clamp_mouse_deltay(int *pix_dif)
 	  queda en la posicion actual para evitar que un pequelo moviento
 	  del mouse en le eje x en el siguiente frame se tenga en cuenta
 	  con esto mantenemos la logica de la deadzone
-	Ademas si da la casualidad de que se han cancelado mucho movientos en un eje
-	y se han ido sumando a la posicon del mouse hasta salirse de la ventana, se fuerza
-	la posicion del mouse a la posicion de referencia en ambos ejes.
-	Con esta funccion conseguimos que por mucho el usario mueva la muñeca una vez que el 
-	mouse este en la venta y este activo nunca se va a salir a no ser que lo desactivemos
 */
 void	reset_mouse_position(t_mlx *mlx, bool *is_move)
 {
@@ -162,7 +188,4 @@ void	reset_mouse_position(t_mlx *mlx, bool *is_move)
 		mlx_mouse_move(mlx->mlx_var, mlx->mlx_window, m->axis_x, m->pos_y);
 	else if (is_move[X] == 0 && is_move[Y] == 1)
 		mlx_mouse_move(mlx->mlx_var, mlx->mlx_window, m->pos_x, m->axis_y);
-	// if (is_mouse_in_window(mlx, m->axis_x, m->axis_y) == false)
-	// 	mlx_mouse_move(mlx->mlx_var, mlx->mlx_window, m->axis_x, m->axis_y);
-
 }

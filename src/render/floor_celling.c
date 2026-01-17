@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 16:45:21 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/15 22:00:52 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/16 16:26:54 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	render_floor_and_ceiling(t_mlx *mlx)
 
 	horizon = (mlx->win_height >> 1) + mlx->player->pitch_pix;
 	y = -1;
-	while (++y < horizon)
+	while (++y < horizon && y < mlx->win_height)
 	{
 		x = -1;
 		while (++x < mlx->win_width)
@@ -76,7 +76,7 @@ void render_floor_and_ceiling_speed(t_mlx *mlx)
 	floor_color = mlx->map->floor_color_hex;
 	horizon = (mlx->win_height >> 1) + mlx->player->pitch_pix;
 	y = 0;
-	while (y < horizon)
+	while (y < horizon && y < mlx->win_height)
 	{
 		buffering_line(y, ceiling_color, mlx, mlx->win_width);
 		y++;
@@ -105,7 +105,7 @@ void render_floor_and_ceiling_amb(t_mlx *mlx)
 	color_floor = mlx->map->floor_color_hex;
 	horizon = (mlx->win_height >> 1) + mlx->player->pitch_pix;
 	y = 0;
-	while (y < horizon)
+	while (y < horizon && y < mlx->win_height)
 	{
 		dist_factor = dist_factor_ceiling(y, horizon, mlx->amb.ambiance);
 		color_ceiling =	shade_inverse(mlx->map->ceiling_color_hex, mlx->amb.k_factor_ceiling, dist_factor * mlx->amb.mult_shader_ceiling);
@@ -186,10 +186,3 @@ void render_floor_and_ceiling_speed2(t_mlx *mlx)
 		y++;
 	}
 }
-
-
-
-
-
-
-

@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 20:07:49 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/15 20:58:55 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/16 19:57:27 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,7 @@ bool	init_mlx_components(t_mlx *mlx)
 		perror("X11 server disply conexion failed\n");
 		return (false);
 	}
-	mlx->win_height = mlx->map->max_rows * WIN_SCALE * 3;
-	mlx->win_width = mlx->map->max_columns * WIN_SCALE * 3;
+	setup_window_wh(mlx);
 	mlx->mlx_window = mlx_new_window(mlx->mlx_var, mlx->win_width, mlx->win_height, "cub3D");
 	if (mlx->mlx_window == NULL)
 	{
@@ -78,20 +77,32 @@ bool	init_images_data(t_mlx *mlx)
 	  con la funcion load_single_texture
 	- En caso de error liberamos las texturas que se hayan cargado hasta el momento,
 	  mostramos un mensaje de error por stderr y devolvemos false
+
+	  NOTA:
+	  Usamos n_tectures (Numero de texturas encontradas en parseo) para saber
+	  cuantas texturas tenemos que cargar. Como no esta hecho la conexion entre el parseo
+	  y el la ejecucion del mortor todavia esta en 5 por defecto. Se compueba cunatas
+	  hay desde el texture paths que si que se puede poner a NULL en el main. El array
+	  de texturas no puede estar con vlaores en NULL porque es una rray de strcut. Mas
+	  rapido en memeoria
 */
 bool	load_textures(t_mlx *mlx)
 {
 	int	i;
 
 	i = 0;
-	while (i < 4)
+	while (i < mlx->map->n_textures)
 	{
+		//Esto se va a quitar cuand este hecho el mergero
+		if (mlx->map->texture_paths[i] == NULL)
+			break ;
 		if (load_single_texture(mlx, &mlx->map->textures[i],
 			mlx->map->texture_paths[i]) == false)
 		{
-			free_loaded_textures(mlx, i + 1);
+			free_loaded_textures(mlx, i + 1, mlx->map->n_textures);
 			return(false);		
 		}
+		printf("Cargando textura desde la ruta: %s\n", mlx->map->texture_paths[i]);
 		i++;
 	}
 	return (true);
@@ -109,14 +120,14 @@ bool	load_single_texture(t_mlx *mlx, t_texture *texture, char *path)
 		&texture->width, &texture->height);
 	if (texture->img == NULL)
 	{
-		perror("Xpm file to image fail\n");
+		perror("Xpm file to image fail");
 		return (false);
 	}
 	texture->addr = mlx_get_data_addr(texture->img,
 		&texture->bits_per_pixel, &texture->line_length, &texture->endian);
 	if (texture->addr == NULL || texture->width <= 0 || texture->height <= 0)
 	{
-		perror("Texture fail while creating image buffer components\n");
+		perror("Texture fail while creating image buffer components");
 		return (false);
 	}
 	return (true);

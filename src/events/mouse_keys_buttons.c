@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 22:59:20 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/13 16:08:49 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/16 18:44:44 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,11 @@ int	mouse_init_manager(t_mlx *mlx)
 	Funcion para activar o desactivar el mouse
 	- Cuando el mouse esta activado se esconde el cursor y lo desactiva
 	- Cuando el mouse esta desactivado se muestra el cursor y lo activa
+	- Cunado se activa se evalua si el mouse esta fuera de la ventana o dentro
+	  para moverlo a la posicion de referencia (axis_x, axis_y) o no y para ajustar la variables out_and_on
+	  que le indica a la fucnoin que usa el mouse cunado esta activado ymueve el jugador en cada frame que 
+	  rtenga ne cuenta al mouse en caso de qu eeste en la venana se resetea su posicion al eaxis x e y o que 
+	  no lo tenga en cuenta hasta que entre en la ventana.
 */
 void	toogle_mouse(t_mlx *mlx)
 {
@@ -46,6 +51,15 @@ void	toogle_mouse(t_mlx *mlx)
 	else
 	{
 		mlx->player->mouse.onoff = ON;
+		mlx_mouse_get_pos(mlx->mlx_var, mlx->mlx_window, &(mlx->player->mouse.pos_x), &(mlx->player->mouse.pos_y));
+		if (is_mouse_in_window(mlx, mlx->player->mouse.pos_x, mlx->player->mouse.pos_y) == IN)
+		{
+			mlx_mouse_move(mlx->mlx_var, mlx->mlx_window, mlx->player->mouse.axis_x, mlx->player->mouse.axis_y);
+			mlx->player->mouse.out_and_on = false;
+		}
+		else
+			mlx->player->mouse.out_and_on = true;
+		mlx->player->mouse.out_and_on = true;
 		mlx_mouse_hide(mlx->mlx_var, mlx->mlx_window);
 		printf("MOUSE ON\n");
 	}

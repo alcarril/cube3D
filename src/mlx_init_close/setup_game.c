@@ -6,14 +6,11 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 11:42:33 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/15 21:47:36 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 01:14:53 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/cube3D.h"
-
-
-void	setup_default_ambiance(t_map *map, t_ambiance *amb);
 
 /*
 	NOTA:Falta meter los valores del mapa que lo hace carbon
@@ -34,7 +31,7 @@ void	setup_default_ambiance(t_map *map, t_ambiance *amb);
 bool	setup_game(t_mlx *mlx, t_player *player, t_map *map, t_frame *frame)
 {
 	mlx->map = map;//quizas se quite
-	ft_bzero((void *)mlx->map->textures, sizeof(mlx->map->textures));
+	mlx->map->n_textures = 5;
 	if (load_textures(mlx) == false)
 	{
 		destroy_mlx_componets(mlx_destroy_image, mlx_destroy_window, 
@@ -83,8 +80,11 @@ void setup_player_mouse(t_mlx *mlx)
 	int	middle[2];//esto se va a borrar
 	t_player	*pl;
 	
-	middle[X] = mlx->map->max_columns / 2; //esto se va a borrar
-	middle[Y] = mlx->map->max_rows / 2; //esto se va a borrar
+	// middle[X] = mlx->map->max_columns / 2; //esto se va a borrar
+	// middle[Y] = mlx->map->max_rows / 2; //esto se va a borrar
+
+	middle[X] = 1; //esto se va a borrar
+	middle[Y] = 1; //esto se va a borra
 	
 	pl = mlx->player;
 	init_player_orientation_pos(mlx->player, 'N', middle);
@@ -106,6 +106,7 @@ void setup_player_mouse(t_mlx *mlx)
 	pl->mouse.sens_x = MOUSE_INIT_SENSX;
 	pl->mouse.pitch_factor = MOUSE_PITCH_FACTOR;
 	pl->mouse.onoff = OFF;
+	pl->mouse.out_and_on = true;
 }
 
 /*
@@ -152,15 +153,14 @@ bool	init_frame_data( t_mlx *mlx)
 	f->mm_scale[X] = (float)(f->mm_widht) / mlx->map->max_columns;
 	f->mm_scale[Y] = (float)(f->mm_height) / mlx->map->max_rows;
 	f->mm_zoom_factor = MINI_ZOOM_FACTOR;
-	f->minimap_onoff = false;
+	f->minimap_onoff = OFF;
 	f->minimap_showrays = false;
-	f->raycasting_onoff = true;
-	f->fish_eye = false;
-	f->euclidean = false;
+	f->raycasting_onoff = ON;
+	f->fish_eye = OFF;
+	f->euclidean = OFF;
+	f->boost = OFF;
 	f->textures_onoff = ON;
 	f->ambiance_onoff = OFF;
-	f->draw_walls = draw_wall_column_tex;
-	f->floor_celling = render_floor_and_ceiling;
 	f->fov_distances = NULL;
 	f->fov_distances = (float *)malloc(sizeof(float) * mlx->win_width);
 	if (!mlx->frame->fov_distances)
@@ -196,7 +196,7 @@ int	create_fps_logfile(void)
 }
 
 /*
-	Ambiente por defecto es el open quizas se borre
+	Cinfiguracion por defecto edel ambiente por is lo activamos
 */
 void	setup_default_ambiance(t_map *map, t_ambiance *amb)
 {

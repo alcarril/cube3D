@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 19:53:10 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/12 23:32:21 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/16 20:12:36 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,17 @@ void	destroy_mlx_componets(int (*f)(), int (*g)(), int (*t)(),
 	del mapa. Se le pasa el numero de texturas cargadas hasta el momento para
 	liberar en caso de error solo las que se han cargado.
 */
-void	free_loaded_textures(t_mlx *mlx, int loaded_count)
+void	free_loaded_textures(t_mlx *mlx, int loaded, int max_textures)
 {
 	int i;
-
+	int max;
+	
+	if (loaded < max_textures)
+		max = loaded;
+	else
+		max = max_textures;
 	i = 0;
-	while (i < loaded_count)
+	while (i < max)
 	{
 		if (mlx->map->textures[i].img)
 			mlx_destroy_image(mlx->mlx_var, mlx->map->textures[i].img);
@@ -77,7 +82,7 @@ void	free_loaded_textures(t_mlx *mlx, int loaded_count)
 int	close_game_manager(t_mlx *mlx)
 {
 	mlx_mouse_show(mlx->mlx_var, mlx->mlx_window);
-	free_loaded_textures(mlx, 4);
+	free_loaded_textures(mlx, 5, mlx->map->n_textures);
 	mlx_destroy_image(mlx->mlx_var,
 		mlx->mlx_img);
 	mlx_destroy_window(mlx->mlx_var,
@@ -87,6 +92,7 @@ int	close_game_manager(t_mlx *mlx)
 	if (mlx->frame->fov_distances != NULL)
 		free(mlx->frame->fov_distances);
 	close(mlx->log_fd);
+	// free_map_data(mlx);//
 	exit(1);
 }
 
@@ -97,7 +103,7 @@ int	close_game_manager(t_mlx *mlx)
 void	free_game(t_mlx *mlx)
 {
 	mlx_mouse_show(mlx->mlx_var, mlx->mlx_window);
-	free_loaded_textures(mlx, 4);
+	free_loaded_textures(mlx, 5, mlx->map->n_textures);
 	mlx_destroy_image(mlx->mlx_var,
 		mlx->mlx_img);
 	mlx_destroy_window(mlx->mlx_var,
@@ -106,5 +112,33 @@ void	free_game(t_mlx *mlx)
 	free(mlx->mlx_var);
 	if (mlx->frame->fov_distances != NULL)
 		free(mlx->frame->fov_distances);
+	free_map_data(mlx);
 	close(mlx->log_fd);
+}
+
+/*
+	Funcion para liberar los datos que hay en mi estrcutura reservados por el parser
+	(datos del mapa):
+	- Libera las ruttas de la texturas del mapa por si no siempre 4
+	- Libera estrxuturas para la limagen de cada textura alocadas dinamicamente por si hay mas de 4
+	- Libera la matriz del mapa (puntero doble)
+	NOTAS_: MAp textures comenda porque demomdento no es el puntero y el compilador se queja
+*/
+void	free_map_data(t_mlx *mlx)
+{
+	unsigned int i;
+
+	i = 0;
+	while (mlx->map->texture_paths[i] == NULL)
+	{
+		free(mlx->map->texture_paths[i]);
+		i++;
+	}
+	// free(mlx->map->textures);
+	i = 0;
+	while (i < mlx->map->max_rows)
+	{
+		free(mlx->map->map_grids[i]);
+		i++;
+	}
 }

@@ -6,11 +6,13 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 21:34:21 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/15 14:58:21 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/16 20:00:04 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
+
+void	ft_memset_int(void *s, int c, size_t n);
 
 /*
 	Función principal para manejar el ciclo de renderizado del motor del juego:
@@ -55,7 +57,7 @@ int	game_engine(t_mlx *mlx)
 	- Se sustituye mlx->bits_per_pixel / 8 por mlx->bits_per_pixel >> 3 para evitar
 	  la división y mejorar el rendimiento
 */
-void	buffering_pixel(int x, int y, t_mlx *mlx, int color)
+void	buffering_pixel1(int x, int y, t_mlx *mlx, int color)
 {
 	unsigned int	offset;
 
@@ -63,6 +65,31 @@ void	buffering_pixel(int x, int y, t_mlx *mlx, int color)
 		return ;
 	offset = (y * mlx->line_length) + (x * (mlx->bits_per_pixel >> 3));
 	*(unsigned int *)(mlx->bit_map_address + offset) = color;
+}
+
+//ESTA MEJORA MUCHO EL RENDIMIENTO POR LAS ESTATICAS MENOS ACCESOS DE MEMRIA
+void buffering_pixel(int x, int y, t_mlx *mlx, int color)
+{
+	unsigned int offset;
+	static char *bitmap_address;
+	static int line_length; 
+	static int bpp;
+	
+	if (bpp == 0)
+	{
+		bitmap_address = mlx->bit_map_address;
+		line_length = mlx->line_length;
+		bpp = mlx->bits_per_pixel >> 3;
+	}
+	// Verifica si las coordenadas están dentro de los límites de la ventana
+	// if (x < 0 || x >= mlx->win_width || y < 0 || y >= mlx->win_height)
+	// 	return;
+
+	// Calcula el offset en el buffer de la imagen
+	offset = (y * line_length) + (x * bpp);
+
+	// Asigna el color al píxel
+	*(unsigned int *)(bitmap_address + offset) = color;
 }
 
 /*
@@ -83,14 +110,21 @@ void	buffering_pixel(int x, int y, t_mlx *mlx, int color)
 */
 void	buffering_line(int y, int color, t_mlx *mlx, int width)
 {
-	int offset;
-	int	bits_per_pixel_bytes;
+	unsigned int offset;
+	static char *bitmap_address;
+	static int line_length; 
+	static int bpp;
 
-	if (y < 0 || y >= mlx->win_height)
-		return;
-	bits_per_pixel_bytes =  mlx->bits_per_pixel >> 3;
-	offset = y * mlx->line_length;
-	ft_memset(mlx->bit_map_address + offset, color, width * bits_per_pixel_bytes);
+	// if (y < 0 || y >= mlx->win_height)
+	// 	return;
+	if (bpp == 0)
+	{
+		bitmap_address = mlx->bit_map_address;
+		line_length = mlx->line_length;
+		bpp = mlx->bits_per_pixel >> 3;
+	}
+	offset = y * line_length;
+	ft_memset_int(bitmap_address + offset, color, width * bpp);
 }
 
 /*

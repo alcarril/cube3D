@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 18:12:38 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/15 23:00:38 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/16 20:01:46 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,42 +20,79 @@ int main (void)
 	t_player	player;
 	t_frame	frame;
 	
-	map.max_columns = MAX_COLUMS;
-	map.max_rows = MAX_ROWS;
-	char map_data[15][20] = {
-		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-	};
+
+
+// 	map.max_columns = 25;
+// 	map.max_rows = 25;
+// 	char map_data1[25][25] = {
+// 	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+// 	{1,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1},
+// 	{1,1,1,0,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,1,1,1,1,0,1},
+// 	{1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,1},
+// 	{1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,0,1},
+// 	{1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,1,0,1},
+// 	{1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1},
+// 	{1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1},
+// 	{1,0,1,1,0,1,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,1,1,0,1},
+// 	{1,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1},
+// 	{1,0,1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,1,1,0,1},
+// 	{1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,1},
+// 	{1,1,1,0,1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1},
+// 	{1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1},
+// 	{1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1},
+// 	{1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1},
+// 	{1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1},
+// 	{1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1},
+// 	{1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1},
+// 	{1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1},
+// 	{1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1},
+// 	{1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,3,1},
+// 	{1,0,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1},
+// 	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+// 	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+// };
+	map.max_columns = 25;
+	map.max_rows = 14;
+    char map_data[14][25] = {
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+    };
+	
+	
+	
 	memcpy(map.map_grids, map_data, sizeof(map_data));
 	mlx.map = &map;//quizas osbre si no hay que escalar
-
 	//TEST
 	// map.floor_color[0] = 100;
 	// map.floor_color[1] = 100;
 	// map.floor_color[2] = 100;
 
 	//GRIS
-	map.floor_color[0] = 170;
-	map.floor_color[1] = 170;
-	map.floor_color[2] = 170;
+	// map.floor_color[0] = 170;
+	// map.floor_color[1] = 170;
+	// map.floor_color[2] = 170;
+	
+	//MOLA PARA MAPA NEO
+	map.floor_color[0] = 27 / 10;
+	map.floor_color[1] = 29 / 5;
+	map.floor_color[2] = 43 / 10;
 
 	//GRIS MUY OSCURO
-	map.floor_color[0] = 0;  // Rojo
-	map.floor_color[1] = 5;  // Verde
-	map.floor_color[2] = 0;  // Azul
+	// map.floor_color[0] = 0;  // Rojo
+	// map.floor_color[1] = 5;  // Verde
+	// map.floor_color[2] = 0;  // Azul
 
 
 	//TEST
@@ -68,77 +105,99 @@ int main (void)
 	// map.ceiling_color[1] = 130;//200
 	// map.ceiling_color[2] = 180;//200
 
+	//MAP NEO
+	map.ceiling_color[0] = 60 / 6;//200
+	map.ceiling_color[1] = 68 / 3;//200
+	map.ceiling_color[2] = 92 / 6;//200<
+	
+
 	//AZUL MUY OSCURO
-	map.ceiling_color[0] = 0;  // Rojo
-	map.ceiling_color[1] = 0;  // Verde
-	map.ceiling_color[2] = 5; 
+	// map.ceiling_color[0] = 0;  // Rojo
+	// map.ceiling_color[1] = 0;  // Verde
+	// map.ceiling_color[2] = 5; 
 
 	//NEGRO
 	// map.ceiling_color[0] = 0; // Rojo
 	// map.ceiling_color[1] = 0; // Verde
 	// map.ceiling_color[2] = 0; // Azul
 
+	
 	//NORTE SUR ESTE OESTE
-	// char *texture_paths[4] = {
+	// char *texture_paths[5] = {
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/test/south.xpm", // NORTE -> SUR
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/test/north.xpm", // SUR -> NORTE
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/test/east.xpm",  // OESTE -> ESTE
-	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/test/west.xpm"  // ESTE -> OESTE
+	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/test/west.xpm" , // ESTE -> OESTE
+	// 	NULL
 	// };
+
+	
 	//MATRIX
-	// char *texture_paths[4] = {
+	// char *texture_paths[5] = {
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/matrix.xpm", // NORTE -> SUR
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/matrix.xpm", // NORTE -> SUR
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/matrix.xpm", // NORTE -> SUR
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/matrix.xpm", // NORTE -> SUR
+	// 	NULL
 	// };
+	
+
 
 	//MEDIEVAL	
-	// char *texture_paths[4] = {
+	// char *texture_paths[5] = {
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
-	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm"  // ESTE -> OESTE
-	// };
-	
+	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // ESTE -> OESTE
+	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // ESTE -> OESTE
+	// 	};
+
+
 	//CARBON
-	// char *texture_paths[4] = {
+	// char *texture_paths[5] = {
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/carbon.xpm", // NORTE -> SUR
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/carbon.xpm", // NORTE -> SUR
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/carbon.xpm", // NORTE -> SUR
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/carbon.xpm", // NORTE -> SUR
+	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
 	// };
+
 
 	//neo
-	// char *texture_paths[4] = {
-	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
-	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
-	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
-	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
-	// };
-
-	//adolfo
-	char *texture_paths[4] = {
-		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/adolfo.xpm", // NORTE -> SUR
+	char *texture_paths[5] = {
 		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
 		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
 		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/neo.xpm", // NORTE -> SUR
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/self/carbon.xpm" // NORTE -> SUR
 	};
 
-	
+	printf("hola\n");
+	//adolfodsad
+	// char *texture_paths[5] = {
+	// 	"assets/textures/self/adolfo.xpm", // NORTE -> SUR
+	// 	"assets/textures/self/adolfo.xpm", // NORTE -> SUR
+	// 	"assets/textures/self/adolfo.xpm", // NORTE -> SUR
+	// 	"assets/textures/self/adolfo.xpm", // NORTE -> SUR
+	// 	"assets/textures/self/adolfo.xpm", // NORTE -> SUR
+	// };
+
+
 	// char *texture_paths[4] = {
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/simonkraft/wet_sponge.xpm",  // OESTE -> ESTE
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/simonkraft/wet_sponge.xpm",  // OESTE -> ESTE
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/simonkraft/wet_sponge.xpm",  // OESTE -> ESTE
 	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/simonkraft/wet_sponge.xpm",  // OESTE -> ESTE
-	// };
+	// NULL};
 
-	int i = 0;
-	while (i < 4)
-	{
-		map.texture_paths[i] = texture_paths[i];
-		i++;
-	}
+
+	//copiar los pathsa al array de texturas del mapa
+	map.n_textures = 5; //lo ponemos a cinco siempre por ahora este dato dependera del parseo peor lo encesito para liberar los buffers de que usa para laas imagenes la mlx
+	bzero(map.texture_paths, sizeof(map.texture_paths));
+	memcpy(map.texture_paths, texture_paths, sizeof(texture_paths));
+	// int i;
+	
+	
 	//LO de antes de qui es la infomacion que tienes que cargar tu
 	if (init_mlx_components(&mlx) == false)
 		return (1);

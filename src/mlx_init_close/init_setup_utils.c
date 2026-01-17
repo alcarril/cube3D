@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   setup_game2.c                                      :+:      :+:    :+:   */
+/*   init_setup_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 23:20:39 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/12 23:43:20 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 01:50:59 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,15 +40,27 @@ void	init_floor_and_ceiling_colors(t_map *map)
 }
 
 /*
-	Setup de las dimensiones de la ventana en funcion del tamaño del mapa
-	- La altura de la ventana se calcula como el numero de filas del mapa
-	  por una constante de escala (WIN_SCALE) por 4
-	- La anchura de la ventana se calcula como el numero de columnas del mapa
-	  por una constante de escala (WIN_SCALE) por 3
+	Asi solo estiro el lado que sea mas grande en relacion al mapa pero no mantengo
+	una escala fija. Si no lamantengo hace core dumped
+	NOTA:
+	Si se quiere cambiar se pone el row pr col con factor dedivision
+	rows_per_col = (float)mlx->map->max_rows / (float)mlx->map->max_columns;
 */
 void	setup_window_wh(t_mlx *mlx)
 {
-	mlx->win_height = mlx->map->max_rows * WIN_SCALE * 4;
-	mlx->win_width = mlx->map->max_columns * WIN_SCALE * 3;
+	float	rows_per_col;
+
+	rows_per_col = 1;
+	if (rows_per_col > 1)
+	{
+		mlx->win_width = BASE_WIDTH * rows_per_col;
+		mlx->win_height = BASE_HEIGHT;
+	}
+	else
+	{
+		mlx->win_height = BASE_HEIGHT / rows_per_col;
+		mlx->win_width = BASE_WIDTH;
+	}
+	printf("El elato y el largo es: %d %d\n", mlx->win_height, mlx->win_width);
 }
 

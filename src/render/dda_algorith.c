@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:07:51 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/15 14:44:41 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/16 20:00:44 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,8 +98,11 @@ void	dda_loop(t_mlx * mlx, t_ray *ray)
 			ray->map[Y] += ray->step[Y];
 			ray->side_hit = HORIZONTAL;
 		}
-		if (mlx->map->map_grids[ray->map[Y]][ray->map[X]] == WALL)
+		if (is_wall_tile(mlx->map->map_grids[ray->map[Y]][ray->map[X]]))
+		{
 			hit = 1;
+			ray->wall_value = mlx->map->map_grids[ray->map[Y]][ray->map[X]];
+		}
 	}
 }
 

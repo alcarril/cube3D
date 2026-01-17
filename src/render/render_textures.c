@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 15:44:58 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/15 21:57:23 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/16 15:15:24 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@
 	  Esto reduce la carga computacional dentro del bucle crítico. (hoot loop)
 	- Fog color en variable local par ano hacer indireccion en cada iteracion del bucle y
 	 asi usar registros CPU  o cache directamente sin mas pasos intermedios
-	
 */
 void draw_wall_column_tex(t_mlx *mlx, int column, t_wall *wall, t_ray *ray)
 {
@@ -71,20 +70,25 @@ void draw_wall_column_tex(t_mlx *mlx, int column, t_wall *wall, t_ray *ray)
 t_texture *select_texture(t_mlx *mlx, t_ray *ray)
 {
 	t_texture *texture;
-
+	
+	if (ray->wall_value == BONUS_WALL)
+	{
+		texture = &(mlx->map->textures)[4];
+		return (texture);
+	}
 	if (ray->side_hit == VERTICAL)
 	{
 		if (ray->raydir[X] > 0)
-			texture = &mlx->map->textures[E];
+			texture = &(mlx->map->textures)[E];
 		else
-			texture = &mlx->map->textures[W];
+			texture = &(mlx->map->textures)[W];
 	}
 	else
 	{
 		if (ray->raydir[Y] > 0)
-			texture = &mlx->map->textures[N];
+			texture = &(mlx->map->textures)[N];
 		else
-			texture = &mlx->map->textures[S];
+			texture = &(mlx->map->textures)[S];
 	}
 	return texture;
 }
@@ -134,8 +138,7 @@ double	calculate_wall_x(t_mlx *mlx, t_ray *ray)
 	No devuelve nada, actualiza directamente los valores en la estructura `wall`.
 	Mejoras microporcesador (pendiente):
 	- Se puede evitar la dicion de win height / 2 + pitch precalculando
-	  una variable horizon en el evento de cambio de ventana o pitch.
-
+	  una variable horizon en el evento de cambio de ventana o pitch
 */
 void	calculate_tex(t_wall *wall, t_texture *texture, int win_height, int pitch)
 {
@@ -178,4 +181,3 @@ unsigned int	extract_color(t_texture *texture, int tex_x, int tex_y)
 	color = *(unsigned int *)pixel_address;
 	return (color);
 }
-

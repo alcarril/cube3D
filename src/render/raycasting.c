@@ -6,11 +6,14 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:04:35 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/15 15:04:32 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/16 15:15:42 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
+
+void scale_wall_camz(t_wall *wall, float perpendicular_distance, int win_height, int pitch, float camZ);
+void scale_wall_mult_paredes(t_wall *wall, float perpendicular_distance, int win_height, int pitch);
 
 /*
 	- Función principal para lanzar los rayos y realizar la bufferización
@@ -62,6 +65,7 @@ void	cast_ray(t_mlx *mlx, unsigned int n_ray, float ray_angle)
 	ray.proyected_wall_dist = get_distance_to_wall(mlx, &ray, ray_angle);
 	mlx->frame->fov_distances[mlx->win_width - n_ray - 1] = ray.wall_dist;
 	scale_wall(&wall, ray.proyected_wall_dist, mlx->win_height, mlx->player->pitch_pix);
+	// scale_wall_camz(&wall, ray.proyected_wall_dist, mlx->win_height, mlx->player->pitch_pix, -0.525f);
 	mlx->frame->draw_walls(mlx, n_ray, &wall, &ray);
 }
 
@@ -93,6 +97,10 @@ void	set_ray(t_mlx *mlx, t_ray *ray, float ray_angle)
 	- Calcula la altura de la pared en píxeles basada en la distancia perpendicular
 	- Calcula las posiciones de inicio y fin de la pared en pixeles de la matriz de la ventana
 	- Asegura que las posiciones estén dentro de los límites de la matriz de pixeles de la ventana
+	- Usa desplazamiento vertical (pitch) para ajustar la posición vertical de la pared a la traslacion
+	 del conjunto de puntos del mapa segun la inclinacion (simulada) de la camara a traves de este metdodo
+	- wall star y wall end se tendrian que llamar alreves porque el sistema de coordenadas de mlx es invertido
+	  respecto al minimapa, pero es mas facil de entender asi
 */
 void scale_wall(t_wall *wall, float perpendicular_distance, int win_height, int pitch)
 {
@@ -100,13 +108,56 @@ void scale_wall(t_wall *wall, float perpendicular_distance, int win_height, int 
 		wall->wall_height = win_height;
 	else
 		wall->wall_height = (int)(win_height / perpendicular_distance);
-	wall->wall_start = (win_height >> 1) - (wall->wall_height >> 1) + pitch;
-	wall->wall_end = (win_height >> 1) + (wall->wall_height >> 1) + pitch;
+	wall->wall_start = (win_height >> 1) - ((wall->wall_height >> 1)) + pitch;
+	//mirar si esto hace que vaya mas lento apriori no afecta al rendimiento
+	wall->wall_end = (win_height >> 1) + (wall->wall_height >> 1) + pitch;//tocando este valor elpersoje se puede hacer mas alto o mas pequeño
+	// wall->wall_end = (win_height >> 1) + (wall->wall_height * 2) + pitch;//tocando este valor elpersoje se puede hacer mas alto o mas pequeño
 	if (wall->wall_start < 0)
 		wall->wall_start = 0;
 	if (wall->wall_end >= win_height)
 		wall->wall_end = win_height - 1;
 }
+
+
+void scale_wall_mult_paredes(t_wall *wall, float perpendicular_distance, int win_height, int pitch)
+{
+	if (perpendicular_distance <= 0)
+		wall->wall_height = win_height;
+	else
+		wall->wall_height = (int)(win_height / perpendicular_distance) * 2;
+	wall->wall_start = (win_height >> 1) - ((wall->wall_height >> 1)) + pitch;
+	//mirar si esto hace que vaya mas lento apriori no afecta al rendimiento
+	wall->wall_end = (win_height >> 1) + (wall->wall_height >> 1) / 3 + pitch;//tocando este valor elpersoje se puede hacer mas alto o mas pequeño
+	// wall->wall_end = (win_height >> 1) + (wall->wall_height * 2) + pitch;//tocando este valor elpersoje se puede hacer mas alto o mas pequeño
+	if (wall->wall_start < 0)
+		wall->wall_start = 0;
+	if (wall->wall_end >= win_height)
+		wall->wall_end = win_height - 1;
+}
+
+void scale_wall_camz(t_wall *wall, float perpendicular_distance, int win_height, int pitch, float camZ)
+{
+	int centerY = win_height >> 1;
+
+	if (perpendicular_distance <= 0.001f)
+		wall->wall_height = win_height;
+	else
+		wall->wall_height = (int)(win_height / perpendicular_distance);
+
+	float vertical_offset = (camZ * centerY) / perpendicular_distance;
+
+	wall->wall_start = centerY - (wall->wall_height >> 1)
+					   + pitch + (int)vertical_offset;
+
+	wall->wall_end   = centerY + (wall->wall_height >> 1)
+					   + pitch + (int)vertical_offset;
+
+	if (wall->wall_start < 0)
+		wall->wall_start = 0;
+	if (wall->wall_end >= win_height)
+		wall->wall_end = win_height - 1;
+}
+
 
 /*
 	Dibuja una columna de pared en la pantalla:
