@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:04:35 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 04:40:09 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 18:11:49 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,14 @@ void scale_wall_mult_paredes(t_wall *wall, float perpendicular_distance, int win
 	- Hace el barrido de rayos desde la izquierda hasta la derecha del campo de visión.
 	 Lo hace asi porque los ejes de la ventana en mlx estan invertidos respecto al minimapa.
 	 Sino ocurriria un efecto espejo en la visualización 3D. y es mejor hacerlo asi que corregir desde
-	 la bufferización.
-	- La conversion a raadianes se hace en cada frame, podria optimizarse guardando el valor en la estructura del jugador
-	  pero no es un gran gasto computacional y mejora la legibilidad del código.
-	- Uso de variables locales para usar registros de CPY y optimizar el rendimiento.
+	 la bufferización..
+	 
+	Mejoras de rendimiento:
+	- La conversiones a radianes se hacen desde los eventos de movientos para no tener que recalcular en cada paso del
+	  raycasting (menos cilos ya que son diviones y multiplicaciones).
+	- Uso de variables locales para optimizar el acceso a memoria y el uso del caché y registros.
+	- Lass variables de delta_rays y fov_half se precalculan en la estructura del frame y jugador respectivamente
+	  para evitar recalculos en cada frame.
 */
 void	throw_rays(t_mlx *mlx)
 {
@@ -32,8 +36,8 @@ void	throw_rays(t_mlx *mlx)
 	float			fov_half;
 	unsigned int	n_ray;
 
-	fov_half = mlx->player->rad_fov / 2;
-	rad_dif = (mlx->player->rad_fov) / mlx->win_width;
+	fov_half = mlx->player->fov_half;
+	rad_dif = mlx->frame->delta_rays;
 	ray_angle = (mlx->player->rad_angle) + fov_half;
 	n_ray = 0;
 	while ((int)n_ray < mlx->win_width)
@@ -64,7 +68,8 @@ void	cast_ray(t_mlx *mlx, unsigned int n_ray, float ray_angle)
 	set_ray(mlx, &ray, ray_angle);
 	ray.proyected_wall_dist = get_distance_to_wall(mlx, &ray, ray_angle);
 	mlx->frame->fov_distances[mlx->win_width - n_ray - 1] = ray.wall_dist;
-	scale_wall(&wall, ray.proyected_wall_dist, mlx->win_height, mlx->player->pitch_pix);
+	// scale_wall(&wall, ray.proyected_wall_dist, mlx->win_height, mlx->player->pitch_pix);
+	scale_wall_phisics(&wall, ray.proyected_wall_dist, mlx);
 	// scale_wall_camz(&wall, ray.proyected_wall_dist, mlx->win_height, mlx->player->pitch_pix, -0.525f);
 	if (mlx->frame->textures_onoff == ON)
 		draw_wall_column_tex(mlx, n_ray, &wall, &ray);
@@ -77,7 +82,8 @@ void	cast_ray(t_mlx *mlx, unsigned int n_ray, float ray_angle)
 	- Dirección del rayo en los ejes X e Y
 	- Ajuste de norte-sur en el seno
 	- Posición del mapa basada en la posición del jugador
-	- Ajuste de delta distancia para evitar divisiones por cero Porque
+	- Ajuste de delta distancia para evitar divisiones por cero
+	- Uso de valores muy grandes (1e30) para representar distancias infinitas
 */
 void	set_ray(t_mlx *mlx, t_ray *ray, float ray_angle)
 {
@@ -102,8 +108,10 @@ void	set_ray(t_mlx *mlx, t_ray *ray, float ray_angle)
 	- Asegura que las posiciones estén dentro de los límites de la matriz de pixeles de la ventana
 	- Usa desplazamiento vertical (pitch) para ajustar la posición vertical de la pared a la traslacion
 	 del conjunto de puntos del mapa segun la inclinacion (simulada) de la camara a traves de este metdodo
+	NOTA:
 	- wall star y wall end se tendrian que llamar alreves porque el sistema de coordenadas de mlx es invertido
 	  respecto al minimapa, pero es mas facil de entender asi
+	- 
 */
 void scale_wall(t_wall *wall, float perpendicular_distance, int win_height, int pitch)
 {
@@ -115,6 +123,45 @@ void scale_wall(t_wall *wall, float perpendicular_distance, int win_height, int 
 	//mirar si esto hace que vaya mas lento apriori no afecta al rendimiento
 	wall->wall_end = (win_height >> 1) + (wall->wall_height >> 1) + pitch;//tocando este valor elpersoje se puede hacer mas alto o mas pequeño
 	// wall->wall_end = (win_height >> 1) + (wall->wall_height * 2) + pitch;//tocando este valor elpersoje se puede hacer mas alto o mas pequeño
+	if (wall->wall_start < 0)
+		wall->wall_start = 0;
+	if (wall->wall_end >= win_height)
+		wall->wall_end = win_height - 1;
+}
+
+
+void scale_wall_phisics(t_wall *wall, float perpendicular_distance, t_mlx *mlx)
+{
+	static int	win_height;
+	int			wallh_half;
+	int			pitch;//es la traslacion de los puntos en el palno
+	int			wmult;//si es uno esta todo igual si es mas pequeño que uno se hacen la paredes mas pequeñas (da sensacion de mundo mas grande o masz pequeño)
+	float		winv_mult;
+	float		vertical_offset;
+	float		camz;
+
+	//valores estaticos para eficiencia y memeria local
+	if (win_height == 0)
+		win_height = mlx->win_height;
+	wallh_half = wall->wall_height >> 1;
+	
+	//traslaciones y movientos del mapa con persespetivas para fisicas y simulaicon de eje y
+	pitch = mlx->player->pitch_pix;
+	wmult = mlx->frame->wmult;
+	winv_mult = 1.0f / wmult;
+	camz = mlx->player->camz;
+	vertical_offset = (camz * (win_height >> 1) / perpendicular_distance);
+
+	//calculo de distancia
+	if (perpendicular_distance <= 0)
+		wall->wall_height = win_height;
+	else
+		wall->wall_height = (int)(win_height / perpendicular_distance);
+
+	wall->wall_start = (win_height >> 1) - (wallh_half) + pitch + (int)vertical_offset;
+	wall->wall_end = (win_height >> 1) + (wallh_half) + pitch + (int)vertical_offset;
+
+	//control de limites
 	if (wall->wall_start < 0)
 		wall->wall_start = 0;
 	if (wall->wall_end >= win_height)

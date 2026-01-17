@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 13:06:24 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/15 15:19:53 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 16:05:32 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,16 @@ void	change_fov(t_mlx *mlx)
 	{
 		mlx->player->fov = 90.0f;
 		mlx->player->rad_fov = 90.0f * (PI / 180.0f);
+		mlx->player->fov_half = mlx->player->rad_fov / 2.0f;
+		mlx->frame->delta_rays = (mlx->player->rad_fov) / mlx->win_width;
 		printf("FOV 90\n");
 	}
 	else
 	{
 		mlx->player->fov = 60.0f;
 		mlx->player->rad_fov = 60.0f * (PI / 180.0f);
+		mlx->player->fov_half = mlx->player->rad_fov / 2.0f;
+		mlx->frame->delta_rays = (mlx->player->rad_fov) / mlx->win_width;
 		printf("FOV 60\n");
 	}
 }

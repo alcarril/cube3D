@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 11:42:33 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 01:14:53 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 18:11:15 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,9 +88,11 @@ void setup_player_mouse(t_mlx *mlx)
 	
 	pl = mlx->player;
 	init_player_orientation_pos(mlx->player, 'N', middle);
+	pl->camz = 0.0f;//
 	pl->speed = 0.033f;
 	pl->fov = 60.0f;
 	pl->rad_fov = pl->fov * (PI / 180.0f);
+	pl->fov_half = pl->rad_fov / 2.0f;
 	ft_bzero((void *)(pl->differencial), sizeof(pl->differencial));
 	pl->volume = EPSILON;
 	pl->pitch_pix = 0;
@@ -161,6 +163,9 @@ bool	init_frame_data( t_mlx *mlx)
 	f->boost = OFF;
 	f->textures_onoff = ON;
 	f->ambiance_onoff = OFF;
+	f->delta_rays = (mlx->player->rad_fov) / mlx->win_width;
+	f->wmult = 2;
+	f->winv_mult = 1 / f->wmult;
 	f->fov_distances = NULL;
 	f->fov_distances = (float *)malloc(sizeof(float) * mlx->win_width);
 	if (!mlx->frame->fov_distances)

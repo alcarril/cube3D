@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 21:34:21 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 04:27:05 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 17:45:11 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	game_engine(t_mlx *mlx)
 	if (mlx->player->mouse.onoff == ON)
 		get_mouse_pos_and_move(mlx);
 	move_player(mlx);
-	// ft_bzero(mlx->bit_map_address, mlx->win_height * mlx->line_length);
+	ft_bzero(mlx->bit_map_address, mlx->win_height * mlx->line_length);
 	if (mlx->frame->raycasting_onoff == ON)
 	{
 		if (mlx->frame->textures_onoff == ON && mlx->frame->ambiance_onoff == ON)
@@ -124,8 +124,6 @@ void	buffering_line(int y, int color, t_mlx *mlx, int width)
 	static int line_length; 
 	static int bpp;
 
-	if (y < 0 || y >= mlx->win_height)
-		return;
 	if (bpp == 0)
 	{
 		bitmap_address = mlx->bit_map_address;

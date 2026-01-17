@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 02:20:31 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/17 18:09:32 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,14 +228,16 @@ typedef struct	s_player_data
 	float	pos_y;
 	float	angle;
 	float	rad_angle;
+	float	camz;//
 	float	speed;
 	float	r_speed;
 	float	differencial[2];
 	float	volume;
 	float	fov;
 	float	rad_fov;
+	float	fov_half;
 	float	pitch_factor;
-	float	pitch_pix;
+	float	pitch_pix;//
 	int		max_pitch_pix;
 	t_controls	keys;
 	t_mouse		mouse;
@@ -270,11 +272,14 @@ typedef struct	s_map
 typedef struct	s_frame_data
 {	
 	float	*fov_distances;
+	float	delta_rays;
 	float	mm_height;
 	float	mm_widht;
 	float	mm_scale[2];
 	float 	mm_offset[2];
 	float 	mm_zoom_factor;
+	float	winv_mult;//
+	float		wmult;//
 	bool	minimap_onoff;
 	bool	minimap_showrays;
 	bool	raycasting_onoff;
@@ -405,48 +410,49 @@ bool	is_wall_tile(char map_value);
 void	throw_rays(t_mlx *mlx);
 void	cast_ray(t_mlx *mlx, unsigned int n_ray, float ray_angle);
 void	set_ray(t_mlx *mlx, t_ray *ray, float ray_angle);
-void	scale_wall(t_wall *wall, float perpendicular_distance, int win_height, int pitch);
 void	draw_wall_column(t_mlx *mlx, int column, t_wall *wall, t_ray *ray);
 
+void	scale_wall(t_wall *wall, float perpendicular_distance, int win_height, int pitch);
+void	scale_wall_phisics(t_wall *wall, float perpendicular_distance, t_mlx *mlx);
+
 //dda algorithm
-float	get_distance_to_wall(t_mlx *mlx, t_ray *ray, float ray_angle);
-void	calc_side_dist(t_mlx * mlx, t_ray *ray);
-void	dda_loop(t_mlx * mlx, t_ray *ray);
-float	get_ray_distance(t_mlx *mlx, t_ray *ray);
-float	get_ray_distance_euclidean(t_mlx *mlx, t_ray *ray);
+float			get_distance_to_wall(t_mlx *mlx, t_ray *ray, float ray_angle);
+void			calc_side_dist(t_mlx * mlx, t_ray *ray);
+void			dda_loop(t_mlx * mlx, t_ray *ray);
+float			get_ray_distance(t_mlx *mlx, t_ray *ray);
+float			get_ray_distance_euclidean(t_mlx *mlx, t_ray *ray);
 
 //floor and ceiling
-void	render_floor_and_ceiling(t_mlx *mlx);
-void	render_floor_and_ceiling_speed(t_mlx *mlx);
+void			render_floor_and_ceiling(t_mlx *mlx);
+void			render_floor_and_ceiling_speed(t_mlx *mlx);
 
 //textured walls
 void			draw_wall_column_tex(t_mlx *mlx, int column, t_wall *wall, t_ray *ray);
 t_texture		*select_texture(t_mlx *mlx, t_ray *ray);
 double			calculate_wall_x(t_mlx *mlx, t_ray *ray);
-void	calculate_tex(t_wall *wall, t_texture *texture, int win_height, int pitch);
+void			calculate_tex(t_wall *wall, t_texture *texture, int win_height, int pitch);
 unsigned int	extract_color(t_texture *texture, int tex_x, int tex_y);
 
 //textured_floor_and_ceiling
-void render_floor_and_ceiling_amb(t_mlx *mlx);
+void			render_floor_and_ceiling_amb(t_mlx *mlx);
 
 //fog blur shaders
-unsigned int apply_fog_pixel(unsigned int col, unsigned int fog_color, float p);
-unsigned int apply_desaturation(unsigned int color, float factor);
-void apply_fog(t_mlx *mlx, unsigned int fog_color, float max_distance);
+unsigned int	apply_fog_pixel(unsigned int col, unsigned int fog_color, float p);
+unsigned int	apply_desaturation(unsigned int color, float factor);
 
 //shaders
-unsigned int apply_shade(unsigned int color, float shade);
-unsigned int shade_linear(unsigned int color, float dist, float max_dist);
-unsigned int shade_inverse(unsigned int color, float k, float proportion_dist);
-unsigned int shade_exponential(unsigned int color, float density, float proportion_dist);
+unsigned int	apply_shade(unsigned int color, float shade);
+unsigned int	shade_linear(unsigned int color, float dist, float max_dist);
+unsigned int	shade_inverse(unsigned int color, float k, float proportion_dist);
+unsigned int	shade_exponential(unsigned int color, float density, float proportion_dist);
 
 //ambiance
-void	config_ambiance_cementery(t_ambiance *amb);
-void	config_ambiance_asturias(t_map *map, t_ambiance *amb);
-void	config_ambiance_open(t_map *map, t_ambiance *amb);
-void	config_ambiance_matrix(t_map *map, t_ambiance *amb);
-float	dist_factor_floor(int win_height, int win_y, int horizon, int ambient);
-float	dist_factor_ceiling(int win_y, int horizon, int ambient);
+void			config_ambiance_cementery(t_ambiance *amb);
+void			config_ambiance_asturias(t_map *map, t_ambiance *amb);
+void			config_ambiance_open(t_map *map, t_ambiance *amb);
+void			config_ambiance_matrix(t_map *map, t_ambiance *amb);
+float			dist_factor_floor(int win_height, int win_y, int horizon, int ambient);
+float			dist_factor_ceiling(int win_y, int horizon, int ambient);
 unsigned int	apllyamb_ceiling(t_ambiance *a, float df, unsigned int rcol);
 unsigned int	apllyamb_floor(t_ambiance *a, float df, unsigned int rcol);
 
