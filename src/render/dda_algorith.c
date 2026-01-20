@@ -6,15 +6,15 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:07:51 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/16 20:00:44 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/18 17:32:32 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
 
 /*
-	Función principal para calcular la distancia hasta la pared utilizando el algoritmo DDA
-	- Calcula la distancia inicial a los lados
+	Función principal para calcular la distancia de cada rayo hasta la pared utilizando el algoritmo DDA
+	- Calcula la distancia inicial a los lados hast ala primera interseccion con el limite de una celda (olineas horizontales y verticales)
 	- Ejecuta el bucle DDA para encontrar la intersección con una pared
 	- Calcula la distancia al muro según la configuración del frame (euclidiana o no)
 	- Aplica corrección de efecto de ojo de pez si está desactivado en la configuración del frame

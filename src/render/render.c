@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 21:34:21 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 19:10:06 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/19 19:04:04 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ int	game_engine(t_mlx *mlx)
 {
 	if (mlx->player->mouse.onoff == ON)
 		get_mouse_pos_and_move(mlx);
-	move_player(mlx);
-	ft_bzero(mlx->bit_map_address, mlx->win_height * mlx->line_length);
+	move_player1(mlx);
+	bzero(mlx->bit_map_address, mlx->win_height * mlx->line_length);
 	if (mlx->frame->raycasting_onoff == ON)
 	{
 		if (mlx->frame->textures_onoff == ON && mlx->frame->ambiance_onoff == ON)
@@ -140,6 +140,8 @@ void	buffering_line(int y, int color, t_mlx *mlx, int width)
 	- Cuenta los frames renderizados desde el inicio
 	- Cada segundo (1000 ms) calcula y muestra los FPS promedio en el log file
 	- Solo muestra el FPS cada 140 frames para evitar saturar el log
+	- Guarda la marca de tiempo actual (now_timestamp) y la diferencia de timepo en frames entre
+	  frame y frame (del_timestamp) en la estrcutura porncipal del juego (mlx).
 */
 void	fps_counter_average(t_mlx *mlx)
 {
@@ -150,21 +152,23 @@ void	fps_counter_average(t_mlx *mlx)
 	long long			delta_time;
 
 	gettimeofday(&time, NULL);
-	if (init_timestamp == 0)
+	if (init_timestamp == 0 || ++frames == LLONG_MAX)
 	{
 		init_timestamp = (long long)time.tv_sec * 1000 + (time.tv_usec / 1000);
 		frames = 0;
 		return;
 	}
-	frames++;
 	now_timestamp = (long long)time.tv_sec * 1000 + (time.tv_usec / 1000);
+	mlx->now_timestamp = now_timestamp;
+	mlx->del_timestamp = now_timestamp - mlx->bef_timestamp;
 	delta_time = now_timestamp - init_timestamp;
-	if (delta_time >= 1000 && (frames % 200) == 0)
+	if (delta_time >= 1000 && (frames % 140) == 0)
 	{
 		write(mlx->log_fd, "[Average] FPS: ", 15);
 		ft_putnbr_fd((int)(frames * 1000 / delta_time), mlx->log_fd);
 		write(mlx->log_fd, "\n", 1);
 	}
+	mlx->bef_timestamp = now_timestamp;
 }
 
 /*
@@ -182,9 +186,10 @@ void fps_counter_realtime(t_mlx *mlx)
 	long				delta_time;
 
 	gettimeofday(&time, NULL);
-	if (init_timestamp == 0)
+	if (init_timestamp == 0 || frames == LLONG_MAX)
 	{
 		init_timestamp = time.tv_sec * 1000 + (time.tv_usec / 1000);
+		frames = 0;
 		return;
 	}
 	frames++;

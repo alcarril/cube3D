@@ -33,12 +33,15 @@ SRC_FILES = mlx_init_close/init_mlx_game.c \
 			mlx_init_close/colors.c \
 			events/keys.c \
 			events/graphic_engine_keys.c \
+			events/phisics_keys.c \
 			events/ambiance_keys.c \
 			events/minimap_keys.c \
 			events/player_keys.c \
+			events/player_keys2.c \
 			events/mouse_keys_buttons.c \
 			moves/move_player.c \
 			moves/mouse.c \
+			moves/phisics.c \
 			render/render.c \
 			render/raycasting.c \
 			render/dda_algorith.c \
@@ -58,6 +61,8 @@ SRCS = $(addprefix $(SRC_DIR), $(SRC_FILES))
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
 OBJS = $(addprefix $(OBJ_DIR), $(OBJ_FILES))
+
+HEADERS_FILES = inc/cube3D.h inc/alcarril.h inc/carbon.h
 
 LIBFT = $(LIB_DIR)/libft/libft.a
 MINI_LIBX = $(LIB_DIR)/minilibx-linux/libmlx.a
@@ -79,7 +84,7 @@ $(LOG_DIR):
 $(NAME): $(OBJS) $(LIBFT) $(MINI_LIBX)
 	$(CC) $(CC_FLAGS) $(OBJS) $(LIBFT_FLAGS) $(MLX_FLAGS) -o $(NAME)
 
-$(OBJ_DIR)%.o: $(SRC_DIR)%.c
+$(OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADERS_FILES)
 	$(MKDIR) $(dir $@)
 	$(CC) $(CC_FLAGS) $(HEADERS) -c $< -o $@
 

@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 18:12:38 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 18:43:28 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/20 03:28:14 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,9 @@ int main (void)
 	memcpy(map.map_grids, map_data, sizeof(map_data));
 	mlx.map = &map;//quizas osbre si no hay que escalar
 	//TEST
-	// map.floor_color[0] = 100;
-	// map.floor_color[1] = 100;
-	// map.floor_color[2] = 100;
+	map.floor_color[0] = 100;
+	map.floor_color[1] = 100;
+	map.floor_color[2] = 100;
 
 	//GRIS
 	// map.floor_color[0] = 170;
@@ -85,9 +85,9 @@ int main (void)
 	// map.floor_color[2] = 170;
 	
 	//MOLA PARA MAPA NEO
-	map.floor_color[0] = 27 / 10;
-	map.floor_color[1] = 29 / 5;
-	map.floor_color[2] = 43 / 10;
+	// map.floor_color[0] = 27 / 10;
+	// map.floor_color[1] = 29 / 5;
+	// map.floor_color[2] = 43 / 10;
 
 	//GRIS MUY OSCURO
 	// map.floor_color[0] = 0;  // Rojo
@@ -96,9 +96,9 @@ int main (void)
 
 
 	//TEST
-	// map.ceiling_color[0] = 200;//200
-	// map.ceiling_color[1] = 200;//200
-	// map.ceiling_color[2] = 200;//200
+	map.ceiling_color[0] = 200;//200
+	map.ceiling_color[1] = 200;//200
+	map.ceiling_color[2] = 200;//200
 
 	//AZUL CLARO
 	// map.ceiling_color[0] = 70;//200
@@ -106,9 +106,9 @@ int main (void)
 	// map.ceiling_color[2] = 180;//200
 
 	//MAP NEO
-	map.ceiling_color[0] = 60 / 6;//200
-	map.ceiling_color[1] = 68 / 3;//200
-	map.ceiling_color[2] = 92 / 6;//200<
+	// map.ceiling_color[0] = 60 / 6;//200
+	// map.ceiling_color[1] = 68 / 3;//200
+	// map.ceiling_color[2] = 92 / 6;//200<
 	
 
 	//AZUL MUY OSCURO
@@ -133,24 +133,24 @@ int main (void)
 
 	
 	//MATRIX
-	// char *texture_paths[5] = {
-	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/matrix.xpm", // NORTE -> SUR
-	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/matrix.xpm", // NORTE -> SUR
-	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/matrix.xpm", // NORTE -> SUR
-	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/matrix.xpm", // NORTE -> SUR
-	// 	NULL
-	// };
+	char *texture_paths[5] = {
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/matrix.xpm", // NORTE -> SUR
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/matrix.xpm", // NORTE -> SUR
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/matrix.xpm", // NORTE -> SUR
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/matrix.xpm", // NORTE -> SUR
+		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/matrix.xpm", // NORTE -> SUR
+	};
 	
 
 
 	//MEDIEVAL	
-	char *texture_paths[5] = {
-		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
-		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
-		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
-		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // ESTE -> OESTE
-		"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // ESTE -> OESTE
-		};
+	// char *texture_paths[5] = {
+	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
+	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
+	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
+	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // ESTE -> OESTE
+	// 	"/home/alejandro/42Universe/42Proyects/cube3D/assets/textures/other/wolfenstein/grey_stone.xpm", // ESTE -> OESTE
+	// 	};
 
 
 	//CARBON

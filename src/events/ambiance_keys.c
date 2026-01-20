@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 15:20:17 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 01:13:42 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/20 08:28:08 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,6 @@ void	toogle_ambiance(t_mlx *mlx)
 
 bool	ambiance_keypress(t_mlx *mlx, int keysym)
 {
-	if (mlx->frame->ambiance_onoff == false)
-	{
-		printf("WARNING: Ambiance is off, cannot change ambiance\n");
-		return (false);
-	}
 	if (keysym == XK_1)
 		select_ambiance(mlx, ASTURIAS);
 	else if (keysym == XK_2)
@@ -53,6 +48,11 @@ bool	ambiance_keypress(t_mlx *mlx, int keysym)
 
 void	select_ambiance(t_mlx *mlx, int ambiance)
 {
+	if (mlx->frame->ambiance_onoff == false)
+	{
+		printf("WARNING: Ambiance is off, cannot change ambiance\n");
+		return ;
+	}
 	if (ambiance == ASTURIAS)
 	{
 		config_ambiance_asturias(mlx->map, &(mlx->amb));

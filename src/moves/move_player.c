@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/06 12:30:42 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 16:15:25 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/19 19:04:37 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,35 +25,37 @@
 		de la circunferencia (cada uno de los cuadrantes del plano)
 		- En ver de sumar 90 grados para los movimientos laterales se podria usar
 		la relacion de signos de la matriz de rotacion
+	//strafing movimiento latera
+	
 	Optimizacione sde procesasdor:
 	- Elimino funoperacinoes aritemetizza de division porque consument muxhocilos de CPU
 		
 */
-void	vectorization(t_player *player)
+void	vectorization(t_player *pl, long long dt, float speed)
 {
 	float	angle_rad;
 	
-	ft_bzero(player->differencial, sizeof(player->differencial));
-	angle_rad = player->rad_angle;
-	if (player->keys.move_up)
+	ft_bzero(pl->diff, sizeof(pl->diff));
+	angle_rad = pl->rad_angle;
+	if (pl->keys.move_up)
 	{
-		player->differencial[X] += cos(angle_rad) * player->speed;
-		player->differencial[Y] -= sin(angle_rad) * player->speed;
+		pl->diff[X] += cos(angle_rad) * speed * dt;
+		pl->diff[Y] -= sin(angle_rad) * speed * dt;
 	}
-	if (player->keys.move_down)
+	if (pl->keys.move_down)
 	{
-		player->differencial[X] -= cos(angle_rad) * player->speed;
-		player->differencial[Y] += sin(angle_rad) * player->speed;
+		pl->diff[X] -= cos(angle_rad) * speed * dt;
+		pl->diff[Y] += sin(angle_rad) * speed * dt;
 	}
-	if (player->keys.move_left)
+	if (pl->keys.move_left)
 	{
-		player->differencial[X] += cos(angle_rad + (PI * 0.5f)) * player->speed;
-		player->differencial[Y] += sin(angle_rad - (PI * 0.5f)) * player->speed;
+		pl->diff[X] += cos(angle_rad + (PI * 0.5f)) * speed * dt;
+		pl->diff[Y] += sin(angle_rad - (PI * 0.5f)) * speed * dt;
 	}
-	if (player->keys.move_right)
+	if (pl->keys.move_right)
 	{
-		player->differencial[X] += cos(angle_rad - (PI * 0.5f)) * player->speed;
-		player->differencial[Y] += sin(angle_rad + (PI * 0.5f)) * player->speed;
+		pl->diff[X] += cos(angle_rad - (PI * 0.5f)) * speed * dt;
+		pl->diff[Y] += sin(angle_rad + (PI * 0.5f)) * speed * dt;
 	}
 }
 
@@ -108,6 +110,25 @@ bool	is_collision(float x, float y, t_mlx *mlx, float e)
 }
 
 /*
+	Falta comnetario
+*/
+void	axis_y_pitch(t_player *player)
+{
+	t_player	*pl;
+	
+	pl = player;
+	if (pl->keys.look_up == true)
+		pl->pitch_pix += pl->pitch_factor * pl->max_pitch_pix;
+	if (pl->keys.look_down == true)
+		pl->pitch_pix -= pl->pitch_factor * pl->max_pitch_pix;
+	if (pl->pitch_pix > pl->max_pitch_pix)
+		pl->pitch_pix = pl->max_pitch_pix;
+	if (pl->pitch_pix < -pl->max_pitch_pix)
+		pl->pitch_pix = -pl->max_pitch_pix;
+	return ;
+}
+
+/*
 	Con esta funcion actualizamos la posiscion del juahador dentro del plano
 	segun el vector de movimitento en el que se mueva. Antes de moverlo calculamos
 	la nueva posicion en cada eje (movimeinto descompuesto) asi podemos calcular si hay
@@ -125,9 +146,9 @@ void	move_player(t_mlx *mlx)
 	player = mlx->player;
 	rotate_player(player, 1.1f);
 	axis_y_pitch(player);
-	vectorization(player);
-	new_pos[X] = player->pos_x + player->differencial[X];
-	new_pos[Y] = player->pos_y + player->differencial[Y];
+	vectorization(player, 1, mlx->player->speed);
+	new_pos[X] = player->pos_x + player->diff[X];
+	new_pos[Y] = player->pos_y + player->diff[Y];
 	colision[X] = is_collision(new_pos[X], player->pos_y, mlx, player->volume);
 	colision[Y] = is_collision(player->pos_x, new_pos[Y], mlx, player->volume);
 	if (!colision[X] && !colision[Y])
@@ -138,24 +159,37 @@ void	move_player(t_mlx *mlx)
 	else
 	{
 		if (!colision[X])
-			player->pos_x += player->differencial[X] * FRICTION;
+			player->pos_x += player->diff[X] * WALL_FRICTION;
 		if (!colision[Y])
-			player->pos_y += player->differencial[Y] * FRICTION;
+			player->pos_y += player->diff[Y] * WALL_FRICTION;
 	}
 }
 
-void	axis_y_pitch(t_player *player)
+void	move_player1(t_mlx *mlx)
 {
-	t_player	*pl;
+	t_player	*player;
+	float		new_pos[2];
+	bool		colision[2];
 	
-	pl = player;
-	if (pl->keys.look_up == true)
-		pl->pitch_pix += pl->pitch_factor * pl->max_pitch_pix;
-	if (pl->keys.look_down == true)
-		pl->pitch_pix -= pl->pitch_factor * pl->max_pitch_pix;
-	if (pl->pitch_pix > pl->max_pitch_pix)
-		pl->pitch_pix = pl->max_pitch_pix;
-	if (pl->pitch_pix < -pl->max_pitch_pix)
-		pl->pitch_pix = -pl->max_pitch_pix;
-	return ;
+	player = mlx->player;
+	rotate_player(player, 1.1f);
+	axis_y_pitch(player);
+	speed_and_vectorization(mlx);
+	new_pos[X] = player->pos_x + player->diff[X];
+	new_pos[Y] = player->pos_y + player->diff[Y];
+	colision[X] = is_collision(new_pos[X], player->pos_y, mlx, player->volume);
+	colision[Y] = is_collision(player->pos_x, new_pos[Y], mlx, player->volume);
+	if (!colision[X] && !colision[Y])
+	{
+		player->pos_x = new_pos[X];
+		player->pos_y = new_pos[Y];
+	}
+	else
+	{
+		if (!colision[X])
+			player->pos_x += player->diff[X] * WALL_FRICTION;
+		if (!colision[Y])
+			player->pos_y += player->diff[Y] * WALL_FRICTION;
+	}
 }
+

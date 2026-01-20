@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 13:06:24 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 16:05:32 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/20 05:54:48 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,10 @@ bool	player_keypress(t_mlx *mlx, int keysym)
 */
 bool	player_keypres2(t_mlx *mlx, int keysym)
 {
-	if (keysym == XK_Shift_L && mlx->player->keys.sprint == false)
+	if (keysym == XK_Shift_L)
 	{
-		mlx->player->speed += 0.05;
-		mlx->player->keys.sprint = true;
-		printf("SPRINT ON\n");
+		if (mlx->player->keys.sprint == OFF)
+			player_sprint_keypress(mlx);
 	}
 	else if (keysym == XK_v)
 		change_fov(mlx);

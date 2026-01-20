@@ -6,11 +6,13 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 11:42:33 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 19:04:00 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/20 08:34:39 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/cube3D.h"
+
+void	setup_default_phisics(t_phisics *phisics);
 
 /*
 	NOTA:Falta meter los valores del mapa que lo hace carbon
@@ -42,6 +44,7 @@ bool	setup_game(t_mlx *mlx, t_player *player, t_map *map, t_frame *frame)
 	map->max_distance = sqrtf((mlx->map->max_columns * mlx->map->max_columns) + 
 		(mlx->map->max_rows * mlx->map->max_rows));
 	setup_default_ambiance(mlx->map, &(mlx->amb));
+	setup_default_phisics(&(mlx->phisics));
 	mlx->player = player;
 	setup_player_mouse(mlx);
 	mlx->frame = frame;
@@ -88,17 +91,35 @@ void setup_player_mouse(t_mlx *mlx)
 	
 	pl = mlx->player;
 	init_player_orientation_pos(mlx->player, 'N', middle);
-	pl->camz = 1.0f;//
-	pl->vertical_offset = 0.0f;
-	pl->speed = 0.033f;
+	pl->speed = SPEED_DIGITAL;
 	pl->fov = 60.0f;
 	pl->rad_fov = pl->fov * (PI / 180.0f);
 	pl->fov_half = pl->rad_fov / 2.0f;
-	ft_bzero((void *)(pl->differencial), sizeof(pl->differencial));
+	ft_bzero((void *)(pl->diff), sizeof(pl->diff));
 	pl->volume = EPSILON;
 	pl->pitch_pix = 0;
 	pl->pitch_factor = PITCH_FACTOR;
 	pl->max_pitch_pix = mlx->win_height * MAX_PIXELS_PITCH;
+	//phisics
+	pl->camz = 1.0f;//
+	pl->vertical_offset = 0.0f;
+	
+	pl->aceleration[FRONT] = ACCELERATION_FRONT_FACTOR * mlx->phisics.floor_friction;
+	pl->aceleration[BACK] = ACCELERATION_BACK_FACTOR * mlx->phisics.floor_friction;
+	pl->aceleration[SIDES] = ACCELERATION_SIDES_FACTOR * mlx->phisics.floor_friction;
+	
+	pl->traccion_k = TRACCION_K;
+	pl->speed_dt = 0.0f;
+	pl->max_speed_dt = MAX_PLAYER_SPEED;
+	pl->speed_a[X] = 0.0f;
+	pl->speed_a[Y] = 0.0f;
+	pl->max_speed_a[X] = MAX_PLAYER_SPEED;
+	pl->max_speed_a[Y] = MAX_PLAYER_SPEED;
+
+	pl->min_dt[FRONT] = SPEEDMIN_MS / pl->aceleration[FRONT];
+	pl->min_dt[BACK] = SPEEDMIN_MS / pl->aceleration[BACK];
+	pl->min_dt[SIDES] = SPEEDMIN_MS / pl->aceleration[SIDES];
+	
 	//keys
 	ft_bzero((void *)&(pl->keys), sizeof(pl->keys));
 	//map
@@ -165,6 +186,8 @@ bool	init_frame_data( t_mlx *mlx)
 	f->textures_onoff = ON;
 	f->ambiance_onoff = OFF;
 	f->delta_rays = (mlx->player->rad_fov) / mlx->win_width;
+	f->phisics_onoff = OFF;
+	f->dukedoom_mode = OFF;
 	f->fov_distances = NULL;
 	f->fov_distances = (float *)malloc(sizeof(float) * mlx->win_width);
 	if (!mlx->frame->fov_distances)
@@ -219,4 +242,13 @@ void	setup_default_ambiance(t_map *map, t_ambiance *amb)
 	amb->mult_shader_floor = 0.7f;
 	amb->mult_shader_ceiling = 0.5f;
 	amb->ambiance = OPEN;
+}
+
+void	setup_default_phisics(t_phisics *phisics)
+{
+	phisics->gravity = GRAVITY_MS;
+	phisics->air_friction = AIR_FRICTION_MS;
+	phisics->floor_friction = FLOOR_FRICTION_MS;
+	printf("Phisics initialized: gravity=%f, air_friction=%f, floor_friction=%f\n",
+		phisics->gravity, phisics->air_friction, phisics->floor_friction);
 }

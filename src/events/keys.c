@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 22:31:15 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/15 21:45:14 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/20 06:07:31 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ int	key_press(int keysym, t_mlx *mlx)
 		return (0);
 	if (graphics_engine_keypress(mlx, keysym))
 		return (0);
+	if (phisics_engine_keypress(mlx, keysym))
+		return (0);	
 	else if (keysym == XK_m)
 		toggle_minimap(mlx);
 	else if (keysym == XK_plus)
@@ -63,10 +65,7 @@ int	key_release(int keysym, t_mlx *mlx)
 	if (keysym == XK_Down)
 		mlx->player->keys.look_down = false;
 	if (keysym == XK_Shift_L && mlx->player->keys.sprint == true)
-	{
-		mlx->player->speed -= 0.05;
-		mlx->player->keys.sprint = false;
-	}
+		player_sprint_keyrelease(mlx);
 	return (0);
 }
 
