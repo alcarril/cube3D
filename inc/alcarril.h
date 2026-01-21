@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/21 18:56:32 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/21 19:56:41 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -562,8 +562,10 @@ double			calculate_wall_x(t_mlx *mlx, t_ray *ray);
 void			calculate_tex(t_wall *wall, t_texture *texture, int win_height, t_player *player);
 unsigned int	extract_color(t_texture *texture, int tex_x, int tex_y);
 
-//textured_floor_and_ceiling
+//floor_and_ceiling amiances
 void			render_floor_and_ceiling_amb(t_mlx *mlx);
+//wall ambiance
+void			drawinglopp_tex_amb(t_mlx *mlx, int column, t_wall *wall, t_ray *ray);
 
 //fog blur shaders
 unsigned int	apply_fog_pixel(unsigned int col, unsigned int fog_color, float p);

@@ -55,6 +55,7 @@ SRC_FILES = mlx_init_close/init_mlx_game.c \
 			render/dda_algorith.c \
 			render/floor_celling.c \
 			render/render_textures.c \
+			render/drawing_textures.c \
 			render/render_minimap.c \
 			render/utils.c \
 			render/rays_2d.c \

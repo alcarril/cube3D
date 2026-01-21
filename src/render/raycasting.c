@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:04:35 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/21 18:55:51 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/21 20:50:55 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,14 @@ void	cast_ray(t_mlx *mlx, unsigned int n_ray, float ray_angle)
 	set_ray(mlx, &ray, ray_angle);
 	ray.proyected_wall_dist = get_distance_to_wall(mlx, &ray, ray_angle);
 	mlx->frame->fov_distances[mlx->win_width - n_ray - 1] = ray.wall_dist;
-	// scale_wall(&wall, ray.proyected_wall_dist, mlx->win_height, mlx->player->pitch_pix);
 	scale_wall_phisics(&wall, ray.proyected_wall_dist, mlx);
 	if (mlx->frame->textures_onoff == ON)
-		draw_wall_column_tex(mlx, n_ray, &wall, &ray);
+	{
+		if (mlx->frame->ambiance_onoff == OFF)
+			draw_wall_column_tex(mlx, n_ray, &wall, &ray);
+		else
+			drawinglopp_tex_amb(mlx, n_ray, &wall, &ray);
+	}
 	else
 		draw_wall_column(mlx, n_ray, &wall, &ray);
 }
@@ -121,7 +125,6 @@ void scale_wall_phisics(t_wall *wall, float perpendicular_distance, t_mlx *mlx)
 	//valores estaticos para eficiencia y memeria local
 	if (win_height == 0)
 		win_height = mlx->win_height;
-	wallh_half = wall->wall_height >> 1;
 	
 	//traslaciones y movientos del mapa con persespetivas para fisicas y simulaicon de eje y
 	pitch = mlx->player->pitch_pix;
@@ -134,6 +137,7 @@ void scale_wall_phisics(t_wall *wall, float perpendicular_distance, t_mlx *mlx)
 		wall->wall_height = win_height;
 	else
 		wall->wall_height = (int)(win_height / perpendicular_distance);
+	wallh_half = wall->wall_height >> 1;
 
 	wall->wall_start = (win_height >> 1) - (wallh_half) + pitch + (int)vertical_offset;
 	wall->wall_end = (win_height >> 1) + (wallh_half) + pitch + (int)vertical_offset;

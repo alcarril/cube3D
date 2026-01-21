@@ -6,57 +6,11 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 15:44:58 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/17 19:06:30 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/21 20:56:11 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
-
-/*
-	Dibuja una columna de pared texturizada en la pantalla.
-	Parámetros:
-	- mlx: Puntero a la estructura principal que contiene toda la información del juego.
-	- column: Índice de la columna en la pantalla donde se dibujará la pared.
-	- wall: Puntero a la estructura de la pared que contiene información sobre la pared a dibujar.
-	- ray: Puntero a la estructura del rayo que contiene información sobre el rayo que golpeó la pared.
-	Optimizaciones de microporcesador:
-	+ Se calcula la proporción de distancia una sola vez fuera del bucle de cada columna
-	+ Se evita la división dentro del bucle hoot utilizando la multiplicación por el inverso:
-	  en lugar de dividir por la distancia máxima, se multiplica por su inverso precomputado:
-	  si proporcion_dist = ray->wall_dist / max_distance;
-	  se puede reescribir como:
-	  float inv_maxdistance = 1.0f / max_distance;
-	  proporcion_dist = ray->wall_dist * inv_max_distance;
-	  Esto reduce la carga computacional dentro del bucle crítico. (hoot loop)
-	- Fog color en variable local par ano hacer indireccion en cada iteracion del bucle y
-	 asi usar registros CPU  o cache directamente sin mas pasos intermedios
-*/
-void draw_wall_column_tex(t_mlx *mlx, int column, t_wall *wall, t_ray *ray)
-{
-	int i;
-	unsigned int color;
-	float proporcion_dist;
-
-	proporcion_dist = ray->wall_dist * mlx->amb.vinv_max_diatance;
-	wall->texture = select_texture(mlx, ray);
-	wall->wall_x = calculate_wall_x(mlx, ray);
-	calculate_tex(wall, wall->texture, mlx->win_height, mlx->player);
-	i = wall->wall_start;
-	while (i <= wall->wall_end)
-	{			
-		wall->tex_y = (int)wall->tex_pos;
-		color = extract_color(wall->texture, wall->tex_x, wall->tex_y);
-		if (mlx->frame->ambiance_onoff == ON)
-		{
-			color = shade_inverse(color , mlx->amb.k_factor_walls, proporcion_dist * mlx->amb.mult_shader_walls);
-			color = apply_desaturation(color, proporcion_dist * 0.6f);
-			color = apply_fog_pixel(color, mlx->amb.fog_color_walls, proporcion_dist * mlx->amb.mult_fog_walls);
-		}
-		buffering_pixel(column, i, mlx, color);
-		wall->tex_pos += wall->text_v_step;
-		i++;
-	}
-}
 
 /*
 	Selecciona la textura adecuada en función de la dirección del rayo
@@ -150,36 +104,46 @@ double	calculate_wall_x(t_mlx *mlx, t_ray *ray)
 
 /*
 	Calcula los parámetros necesarios para renderizar la textura:
-	- tex_x: Coordenada X en la la matriz de pixeels de la textura es decir el pixel horizontal de la textura que se va a usar.
-	  Se obtiene  multiplcando la porporcion del with de la textura wall_x por  el with de la textura. para sacar 
-	  la posicion exacta y escalarla al with de la textura
-	- text_v_step: text height to screen height ratio, es decir
-	  cuánto se debe avanzar en la textura por cada píxel dibujado en la pantalla. para que no se deforme
-	  es un porporcion entre la altura de la textura y la altura de la pared en píxeles. escala vertical
-	- tex_pos: Posición inicial en la textura en el eje Y (vertical) desde donde se comenzará a muestrear la textura.
-	  Se calcula en función de la posición de inicio de la pared en la pantalla, la altura de la ventana
-	  y el pitch (desplazamiento vertical). Esto asegura que la textura se alinee correctamente con la pared
-	  renderizada en la pantalla.
-
+	- tex_x: Coordenada X en la matriz de píxeles de la textura. Representa la posición horizontal
+	  en la textura que corresponde al punto de impacto del rayo en la pared.
+	  Se calcula multiplicando la proporción de la posición del impacto en la pared (wall_x)
+	  por el ancho de la textura. Esto escala la posición relativa (0-1) al rango de píxeles de la textura.
+	- text_v_step: Proporción entre la altura de la textura y la altura de la pared en píxeles.
+	  Esto determina cuánto se debe avanzar en la textura por cada píxel dibujado en la pantalla,
+	  asegurando que la textura no se deforme.
+	- tex_pos: Posición inicial en la textura en el eje Y (vertical) desde donde se comenzará
+	  a muestrear la textura. Esto se calcula en función de la posición de inicio de la pared
+	  en la pantalla (`wall_start`), el centro de la pantalla (`horizon`), y el desplazamiento
+	  vertical del jugador (`pitch` y `vertical_offset`). Este cálculo asegura que la textura
+	  esté alineada correctamente con la pared renderizada en la pantalla.
+	Variables:
+	- horizon: Representa el centro de la pantalla ajustado por el pitch (desplazamiento vertical del jugador)
+	  y el desplazamiento vertical adicional (vertical_offset). Es el punto de referencia para alinear la textura.
+	- ws_offset: Diferencia entre el inicio de la pared (`wall_start`) y el horizonte (`horizon`).
+	  Indica cuánto se debe desplazar la textura verticalmente para alinearla con la pared.
+	- wall_height_half: Mitad de la altura de la pared en píxeles. Se usa para centrar la textura en la pared.
 	Parámetros:
 	- wall: Estructura que contiene información sobre la pared.
 	- texture: Puntero a la textura.
 	- win_height: Altura de la ventana.
-	No devuelve nada, actualiza directamente los valores en la estructura `wall`.
-	Mejoras microporcesador (pendiente):
-	- Se puede evitar la dicion de win height / 2 + pitch precalculando
-	  una variable horizon en el evento de cambio de ventana o pitch
-	NOTA: tener en cuenta que wall_star esta invertido por eso se usa y no wall_end
+	- player: Puntero a la estructura del jugador.
+	NOTA:
+	- `wall_start` está invertido debido al sistema de coordenadas de la librería gráfica utilizada.
+	- Se pueden optimizar algunos cálculos precalculando valores constantes como el horizonte
+	  en eventos de cambio de ventana o ajustes de `pitch`.
 */
-void	calculate_tex(t_wall *wall, t_texture *texture, int win_height, t_player *player)
+void	calculate_tex(t_wall *wall, t_texture *texture, int winh, t_player *pl)
 {
+	int	horizon;
+	int ws_offset;
+	int wall_height_half;
+	
 	wall->tex_x = (int)(wall->wall_x * (double)texture->width);
-	if (wall->tex_x < 0) 
-		wall->tex_x = 0;
-	if (wall->tex_x >= texture->width) 
-		wall->tex_x = texture->width - 1;
-	wall->text_v_step = (float)texture->height / (float)wall->wall_height;//esta dicion no se puede evitar
-	wall->tex_pos = ((wall->wall_start - ((win_height >> 1) + player->pitch_pix + player->vertical_offset)) + (wall->wall_height >> 1)) * wall->text_v_step;//evitar estas diviones con variable horizon recalcularla en evento
+	wall->text_v_step = (float)texture->height / (float)wall->wall_height;
+	horizon = (winh >> 1) + pl->pitch_pix + pl->vertical_offset;
+	ws_offset = wall->wall_start - horizon;
+	wall_height_half = wall->wall_height >> 1;
+	wall->tex_pos = (ws_offset + wall_height_half) * wall->text_v_step;
 }
 
 /*
@@ -197,6 +161,8 @@ void	calculate_tex(t_wall *wall, t_texture *texture, int win_height, t_player *p
 	Optimizaciones de microporcesador (pendiente):
 	- Se evita la división utilizando un desplazamiento de bits para calcular el tamaño del píxel en bytes.
 	  Se sustituye texture->bits_per_pixel / 8 por texture->bits_per_pixel >> 3
+	- Nose pueden usarvariable slocales estaicas porque la imagen de las texturas pueden cambiar en tiempo de ejecucion
+	  si se cargan nuevas texturas o se liberan de memoria.
 */
 unsigned int	extract_color(t_texture *texture, int tex_x, int tex_y)
 {
