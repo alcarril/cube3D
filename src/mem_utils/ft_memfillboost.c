@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memset_boost.c                                  :+:      :+:    :+:   */
+/*   ft_memfillboost.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/22 00:43:30 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/22 20:26:07 by alejandro        ###   ########.fr       */
+/*   Created: 2026/01/22 20:25:34 by alejandro         #+#    #+#             */
+/*   Updated: 2026/01/22 20:48:58 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 		motores de memoria
 		
 */
-void ft_memsetboost(void *s, int c, size_t n)
+void ft_memfillboost(void *s, int c, size_t n)
 {
 	while (n > 0 && ((uintptr_t)s % sizeof(unsigned long long)) != 0)
 	{
@@ -42,16 +42,16 @@ void ft_memsetboost(void *s, int c, size_t n)
 		n--;
 	}
 	if (n >= sizeof(unsigned long long))
-		ft_memsetlonglong(s, c, n);
-	else if (n >= sizeof(unsigned long))
-		ft_memsetlong(s, c, n);
-	else if (n >= sizeof(int))
-		ft_memsetint(s, c, n);
+		ft_memfilllonglong(&s, c, &n);
+	if (n >= sizeof(unsigned long))
+		ft_memfilllong(&s, c, &n);
+	if (n >= sizeof(int))
+		ft_memfillint(&s, c, &n);
 	else
-		ft_memsetchar(s, c, n);
+		ft_memfillchar(s, c, n);
 }
 
-void ft_memsetlonglong(void *s, int c, size_t n)
+void ft_memfilllonglong(void **s, int c, size_t *n)
 {
 	unsigned long long data;
 	unsigned long long *ptr;
@@ -59,60 +59,60 @@ void ft_memsetlonglong(void *s, int c, size_t n)
 
 	data = (unsigned int)c;
 	data |= data << 32;
-	ptr = (unsigned long long *)s;
-	// jumps = n / sizeof(unsigned long long);
-	jumps = n >> 3; // optimizacion bitwise
+	ptr = (unsigned long long *)(*s);
+	jumps = *n / sizeof(unsigned long long);
+	// jumps = *n >> 3; // optimizacion bitwise
 	i = 0;
 	while (i < jumps)
 		ptr[i++] = data;
-	s = (void *)(ptr + i);
-	n -= jumps * sizeof(unsigned long long);
-	ft_memsetboost(s, c, n);
+	*s = (void *)(ptr + i);
+	*n -= jumps * sizeof(unsigned long long);
 }
 
 /*
 	#if ULONG_MAX > 0xFFFFFFFFUL
 	data |= data << 32;   // Si long es 8 bytes
 	#endif
+	Este comentario lo dejams porque hay que comporbar
+	si al arquitectura de So es de 64 bits o 32 bits
+	en los ordenadores de 42. Cundo lo pucliquemos podemos
+	poner las directivas del preporcesador dentro de la fuuncion in
+	dicando que nos estamos saltando la norma por compatibilidad
 */
-void ft_memsetlong(void *s, int c, size_t n)
+void ft_memfilllong(void **s, int c, size_t *n)
 {
 	unsigned long data;
 	unsigned long *ptr;
 	size_t jumps, i;
 
 	data = (unsigned int)c;
-	data |= data << 8;
-	data |= data << 16;
-	ptr = (unsigned long *)s;
-	// jumps = n / sizeof(unsigned long);
-	jumps = n >> 3;
+	data |= data << 32;
+	ptr = (unsigned long *)(*s);
+	jumps = *n >> 3;
 	i = 0;
 	while (i < jumps)
 		ptr[i++] = data;
-	s = (void *)(ptr + i);
-	n -= jumps * sizeof(unsigned long);
-	ft_memsetboost(s, c, n);
+	*s = (void *)(ptr + i);
+	*n -= jumps * sizeof(unsigned long);
 }
 
-void ft_memsetint(void *s, int c, size_t n)
+void ft_memfillint(void **s, int c, size_t *n)
 {
 	int *ptr;
 	size_t jumps, i;
 
-	ptr = (int *)s;
-	// jumps = n / sizeof(int);
-	jumps = n >> 2;
+	ptr = (int *)(*s);
+	jumps = *n / sizeof(int);
+	// jumps = *n >> 2;
 	i = 0;
 	while (i < jumps)
 		ptr[i++] = c;
-	s = (void *)(ptr + i);
-	n -= jumps * sizeof(int);
-	ft_memsetboost(s, c, n);
+	*s = (void *)(ptr + i);
+	*n -= jumps * sizeof(int);
 }
 
 
-void ft_memsetchar(void *s, int c, size_t n)
+void ft_memfillchar(void *s, int c, size_t n)
 {
 	unsigned char *ptr;
 	size_t i;

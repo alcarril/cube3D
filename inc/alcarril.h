@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/22 19:59:37 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/22 20:36:22 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@
 # define MAX_ROWS 25
 
 //windows minimun with height
-#define BASE_WIDTH 600
-#define BASE_HEIGHT 600
+#define BASE_WIDTH 1280 // 3456x1080 // 600 // 1536x864
+#define BASE_HEIGHT 720
 
 //map axis
 # define X 1
@@ -609,7 +609,11 @@ void	ft_memsetint(void *s, int c, size_t n);
 void	ft_memsetchar(void *s, int c, size_t n);
 void	ft_bzeroboost(void *s, size_t n);
 
-void ft_memsetboost_safe(void *s, int c, size_t n);
+void ft_memfillboost(void *s, int c, size_t n);
+void ft_memfilllonglong(void **s, int c, size_t *n);
+void ft_memfilllong(void **s, int c, size_t *n);
+void ft_memfillint(void **s, int c, size_t *n);
+void ft_memfillchar(void *s, int c, size_t n);
 
 
 //debug

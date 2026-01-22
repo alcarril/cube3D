@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 21:34:21 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/22 20:02:08 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/22 20:30:02 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ int	game_engine(t_mlx *mlx)
 	if (mlx->player->mouse.onoff == ON)
 		get_mouse_pos_and_move(mlx);
 	move_player(mlx);
-	bzero(mlx->bit_map_address, mlx->line_length * mlx->win_height);
 	if (mlx->frame->raycasting_onoff == ON)
 	{
 		if (mlx->frame->textures_onoff == ON && mlx->frame->ambiance_onoff == ON)
@@ -137,7 +136,7 @@ void	buffering_line(int y, int color, t_mlx *mlx, int width)
 		bpp = mlx->bits_per_pixel >> 3;
 	}
 	offset = y * line_length;
-	ft_memsetboost(bitmap_address + offset, color, width * bpp);
+	ft_memfillboost(bitmap_address + offset, color, width * bpp);
 }
 
 /*
