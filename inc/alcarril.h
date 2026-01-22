@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/21 19:56:41 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/22 03:24:39 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,15 @@
 # include <stdbool.h>
 # include <limits.h>
 #include <stddef.h>
+#include <stdint.h>
 
 /*
 	DEFINES:
 */
 
 //deprecated
-# define WIDTH 1280
-# define HEIGHT 720
+# define WIDTH 600
+# define HEIGHT 600
 # define WIN_SCALE 15
 # define MAX_COLUMS 25
 # define MAX_ROWS 25
@@ -598,6 +599,15 @@ void			is_person2D(t_mlx *mlx, int *window, float *map);
 void			draw_rays2D(t_mlx *mlx, float *scal_z);
 void			draw_ray2D(t_mlx *mlx, float *differencial, float rad, float *scal_z);
 bool			touch_wall(t_mlx *mlx, float x, float y);
+
+//mem utils
+void	ft_memsetboost(void *s, int c, size_t n);
+void	ft_memsetlonglong(void *s, int c, size_t n);
+void	ft_memsetlong(void *s, int c, size_t n);
+void	ft_memsetint(void *s, int c, size_t n);
+void	ft_memsetchar(void *s, int c, size_t n);
+void	ft_bzeroboost(void *s, size_t n);
+
 
 //debug
 void			print_texture_values(t_mlx *mlx);

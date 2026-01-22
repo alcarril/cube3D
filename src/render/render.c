@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 21:34:21 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/21 19:28:52 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/22 03:26:44 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,18 @@ void	ft_memset_int(void *s, int c, size_t n);
 	 que los fps se dispare. Mejora de eficionecia bufferizacion menos accesos de memeria
 	 winth * sizeo(int) * filas menos accesos de memria que cunado usas ft_bzero que escribe
 	 de char en char pone romcparacion de ejemplo
+	 - Se podria meter la bzero porque aunque se escriba en memeria por el tema de las paginas
+	   de memria virtual y demas el sistema operativo optimiza las escrituras en memria
+	   y no se escriben todas las paginas hasta que se leen o se escriben realmente pero replica la progina
+	   se muy complicado y con memsetboost la mjora no se nota tanto como con bzero. Esto es porque
+	   marca las paginas de memeria como dirty y no tene que leer datos viejos depsues antes de escribir
+	   nuevos datos en ellas
 */
 int	game_engine(t_mlx *mlx)
 {
 	if (mlx->player->mouse.onoff == ON)
 		get_mouse_pos_and_move(mlx);
 	move_player(mlx);
-	ft_bzero(mlx->bit_map_address, mlx->win_height * mlx->line_length);
 	if (mlx->frame->raycasting_onoff == ON)
 	{
 		if (mlx->frame->textures_onoff == ON && mlx->frame->ambiance_onoff == ON)
@@ -131,7 +136,7 @@ void	buffering_line(int y, int color, t_mlx *mlx, int width)
 		bpp = mlx->bits_per_pixel >> 3;
 	}
 	offset = y * line_length;
-	ft_memset_int(bitmap_address + offset, color, width * bpp);
+	ft_memsetboost(bitmap_address + offset, color, width * bpp);
 }
 
 /*

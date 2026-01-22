@@ -63,6 +63,8 @@ SRC_FILES = mlx_init_close/init_mlx_game.c \
 			ambiances/ambiance_configs1.c \
 			ambiances/fog_desaturation.c \
 			ambiances/shaders.c \
+			mem_utils/ft_memset_boost.c \
+			mem_utils/ft_bzero_boost.c \
 			testing/prueba.c \
 			mains/main.c
 

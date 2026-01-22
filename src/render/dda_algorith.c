@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:07:51 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/18 17:32:32 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/21 21:03:19 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ float get_ray_distance(t_mlx *mlx, t_ray *ray)
 	float	dist;
 	float	wall_dist;
 	int		face_compensation;
-	
+
 	if (ray->side_hit == VERTICAL)
 	{
 		wall_dist = ray->map[X] - mlx->player->pos_x;

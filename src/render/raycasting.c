@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:04:35 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/21 20:50:55 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/21 21:10:31 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,27 +122,19 @@ void scale_wall_phisics(t_wall *wall, float perpendicular_distance, t_mlx *mlx)
 	float		vertical_offset;
 	float		camz;
 
-	//valores estaticos para eficiencia y memeria local
 	if (win_height == 0)
 		win_height = mlx->win_height;
-	
-	//traslaciones y movientos del mapa con persespetivas para fisicas y simulaicon de eje y
 	pitch = mlx->player->pitch_pix;
 	camz = mlx->player->camz;
 	mlx->player->vertical_offset = (camz * (win_height >> 1) / perpendicular_distance);
 	vertical_offset = mlx->player->vertical_offset;
-
-	//calculo de distancia
 	if (perpendicular_distance <= 0)
 		wall->wall_height = win_height;
 	else
 		wall->wall_height = (int)(win_height / perpendicular_distance);
 	wallh_half = wall->wall_height >> 1;
-
 	wall->wall_start = (win_height >> 1) - (wallh_half) + pitch + (int)vertical_offset;
 	wall->wall_end = (win_height >> 1) + (wallh_half) + pitch + (int)vertical_offset;
-
-	//control de limites
 	if (wall->wall_start < 0)
 		wall->wall_start = 0;
 	if (wall->wall_end >= win_height)
