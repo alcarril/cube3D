@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/24 00:16:53 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/24 00:23:13 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -388,12 +388,15 @@ typedef struct s_mlx_api_components
 bool			init_mlx_components(t_mlx *mlx);
 bool			init_images_data(t_mlx *mlx);
 bool			load_textures(t_mlx *mlx);
-bool			load_single_texture(t_mlx *mlx, t_texture *texture, char *path);
+bool			load_single_texture(t_mlx *mlx, t_texture *texture,
+					char *path);
 void			start_hooks_and_game(t_mlx *mlx);
 //setup game
-bool			setup_game(t_mlx *mlx, t_player *player, t_map *map, t_frame *frame);
+bool			setup_game(t_mlx *mlx, t_player *player, t_map *map,
+					t_frame *frame);
 void			setup_player_mouse(t_mlx *mlx);//
-void			init_player_orientation_pos(t_player *pl, char cardinal, int pos[2]);
+void			init_player_orientation_pos(t_player *pl, char cardinal,
+					int pos[2]);
 void			init_player_phisics(t_player *pl, t_phisics *ph);
 void			init_player_mouse(t_player *pl, t_mlx *mlx);
 bool			init_frame_data( t_mlx *mlx);
@@ -402,7 +405,8 @@ int				create_fps_logfile(void);
 void			setup_default_ambiance(t_map *map, t_ambiance *amb);
 void			setup_default_phisics(t_phisics *phisics);
 //Close and free
-void			destroy_mlx_componets(int (*f)(), int (*g)(), int (*t)(), t_mlx *mlx);
+void			destroy_mlx_componets(int (*f)(), int (*g)(), int (*t)(),
+					t_mlx *mlx);
 void			free_loaded_textures(t_mlx *mlx, int loaded, int max_textures);
 void			free_map_data(t_mlx *mlx);//
 void			free_game(t_mlx *mlx);
@@ -443,41 +447,52 @@ void			player_control_keypress(t_mlx *mlx);
 void			player_blockmayus_keypress(t_mlx *mlx);
 void			player_q_keypress(t_mlx *mlx);
 bool			select_gravity_modes(t_mlx *mlx, int keysym);
-void			selectearth_mode(t_phisics *phisics, t_player *pl, t_mlx* mlx);
+void			selectearth_mode(t_phisics *phisics, t_player *pl, t_mlx *mlx);
 void			selectmoon_mode(t_phisics *phisics, t_player *pl, t_mlx *mlx);
-void			selecthulker_mode(t_phisics *phisics, t_player *pl, t_mlx *mlx);
-void			selectspectr_mode(t_phisics *phisics, t_player *pl, t_mlx *mlx);
-void			selectjetpack_mode(t_phisics *phisics, t_player *pl, t_mlx *mlx);
+void			selecthulker_mode(t_phisics *phisics, t_player *pl,
+					t_mlx *mlx);
+void			selectspectr_mode(t_phisics *phisics, t_player *pl,
+					t_mlx *mlx);
+void			selectjetpack_mode(t_phisics *phisics, t_player *pl,
+					t_mlx *mlx);
 void			minimap_zoom(t_mlx *mlx, bool flag);
 int				mouse_init_manager(t_mlx *mlx);
 void			toogle_mouse(t_mlx *ml);
-int				mouse_button_manager(int mouse_button, int x, int y, t_mlx *mlx);
+int				mouse_button_manager(int mouse_button, int x, int y,
+					t_mlx *mlx);
 //player move
 bool			is_collision(float x, float y, t_mlx *mlx, float e);
 void			rotate_player(t_player *player, float delta_grades);
-void			vectorization(t_player *pl, long long dt, float speed, float angle);
+void			vectorization(t_player *pl, long long dt, float speed,
+					float angle);
 void			move_player(t_mlx *mlx);
 void			axis_y_pitch(t_player *player);
 void			jump_speed_vecmove(t_mlx *mlx);
 //move player phisics
 void			difspeed_and_vecmove(t_mlx *mlx, long long delta_time);
-void			difvspeed_and_vecmove_nukedoom(t_mlx *mlx, long long delta_time);
-void			acelerate_player(t_mlx *mlx, unsigned int vi, long long dt, bool *mo);
+void			difvspeed_and_vecmove_nukedoom(t_mlx *mlx,
+					long long delta_time);
+void			acelerate_player(t_mlx *mlx, unsigned int vi, long long dt,
+					bool *mo);
 void			decelerate_player(t_mlx *mlx, long long dt, bool mo);
-void			acelerate_dukedoom(t_mlx *mlx, unsigned int vi, long long dt, bool *mo);
+void			acelerate_dukedoom(t_mlx *mlx, unsigned int vi, long long dt,
+					bool *mo);
 void			normalize_vector(float *v_speed, float *max_speed);
 void			decelerate_dukedoom(t_mlx *mlx, long long dt, bool mo);
-void			vectorization_dukedoom(t_player *pl, long long dt, float angle);
+void			vectorization_dukedoom(t_player *pl, long long dt,
+					float angle);
 //moveplayer air
 void			decelerate_player_air(t_mlx *mlx, long long dt);
 void			decelerate_dukedoom_air(t_mlx *mlx, long long dt);
-void			airborne_vectorization(t_player *pl, long long dt, bool is_dukedoom);
+void			airborne_vectorization(t_player *pl, long long dt,
+					bool is_dukedoom);
 void			jump(t_mlx *mlx, long long dt_ms);
 void			check_altitude(t_player	*pl);
 //mouse move
 void			get_mouse_pos_and_move(t_mlx *mlx);
 bool			is_mouse_in_window(t_mlx *mlx, int mouse_x, int mouse_y);
-void			move_player_with_mouse(t_mlx *mlx, int *pix_dif, bool *is_move);
+void			move_player_with_mouse(t_mlx *mlx, int *pix_dif,
+					bool *is_move);
 bool			clamp_mouse_deltax(int *pix_dif);
 bool			clamp_mouse_deltay(int *pix_dif);
 void			reset_mouse_position(t_mlx *mlx, bool *is_move);
@@ -494,28 +509,32 @@ bool			is_wall_tile(char map_value);
 void			throw_rays(t_mlx *mlx);
 void			cast_ray(t_mlx *mlx, unsigned int n_ray, float ray_angle);
 void			set_ray(t_mlx *mlx, t_ray *ray, float ray_angle);
-void			draw_wall_column(t_mlx *mlx, int column, t_wall *wall, t_ray *ray);
+void			draw_wall_column(t_mlx *mlx, int column, t_wall *wall,
+					t_ray *ray);
 void			scale_wall_phisics(t_wall *wall, float perp_dist, t_mlx *mlx);
 //dda algorithm
 float			get_distance_to_wall(t_mlx *mlx, t_ray *ray, float ray_angle);
-void			calc_side_dist(t_mlx * mlx, t_ray *ray);
-void			dda_loop(t_mlx * mlx, t_ray *ray);
+void			calc_side_dist(t_mlx *mlx, t_ray *ray);
+void			dda_loop(t_mlx *mlx, t_ray *ray);
 float			get_ray_distance(t_mlx *mlx, t_ray *ray);
 float			get_ray_distance_euclidean(t_mlx *mlx, t_ray *ray);
 //floor and ceiling
 void			render_floor_and_ceiling(t_mlx *mlx);
 void			render_floor_and_ceiling_speed(t_mlx *mlx);
 //textured walls
-void			draw_wall_column_tex(t_mlx *mlx, int column, t_wall *wall, t_ray *ray);
+void			draw_wall_column_tex(t_mlx *mlx, int column, t_wall *wall,
+					t_ray *ray);
 t_texture		*select_texture(t_mlx *mlx, t_ray *ray);
 double			calculate_wall_x(t_mlx *mlx, t_ray *ray);
-void			calculate_tex(t_wall *wall, t_texture *texture, int win_height, t_player *player);
+void			calculate_tex(t_wall *wall, t_texture *texture, int win_height,
+					t_player *player);
 
 unsigned int	extract_color(t_texture *texture, int tex_x, int tex_y);
 //floor_and_ceiling amiances
 void			render_floor_and_ceiling_amb(t_mlx *mlx);
 //wall ambiance
-void			drawinglopp_tex_amb(t_mlx *mlx, int column, t_wall *wall, t_ray *ray);
+void			drawinglopp_tex_amb(t_mlx *mlx, int column, t_wall *wall,
+					t_ray *ray);
 //fog blur shaders
 unsigned int	apply_fog_pixel(unsigned int col, unsigned int fog_c, float p);
 unsigned int	apply_desaturation(unsigned int color, float factor);
@@ -529,19 +548,22 @@ void			config_ambiance_cementery(t_ambiance *amb);
 void			config_ambiance_asturias(t_map *map, t_ambiance *amb);
 void			config_ambiance_open(t_map *map, t_ambiance *amb);
 void			config_ambiance_matrix(t_map *map, t_ambiance *amb);
-float			dist_factor_floor(int win_height, int win_y, int horizon, int ambient);
+float			dist_factor_floor(int win_height, int win_y, int horizon,
+					int ambient);
 float			dist_factor_ceiling(int win_y, int horizon, int ambient);
 unsigned int	apllyamb_ceiling(t_ambiance *a, float df, unsigned int rcol);
 unsigned int	apllyamb_floor(t_ambiance *a, float df, unsigned int rcol);
 //render minimap 2D
 int				render_frame2d(t_mlx *mlx);
 void			update_center_minimap_offset(t_mlx *mlx, float *escaled_zoom);
-void			draw_mini_pixel_offset(t_mlx *mlx, int *win, float *scaled_zoom);
+void			draw_mini_pixel_offset(t_mlx *mlx, int *win,
+					float *scaled_zoom);
 bool			is_wall(t_mlx *mlx, float *map);
 void			is_person2d(t_mlx *mlx, int *window, float *map);
 //render rays 2D
 void			draw_rays2d(t_mlx *mlx, float *scal_z);
-void			draw_ray2d(t_mlx *mlx, float *differencial, float rad, float *scal_z);
+void			draw_ray2d(t_mlx *mlx, float *differencial, float rad,
+					float *scal_z);
 bool			touch_wall(t_mlx *mlx, float x, float y);
 //mem utils
 void			ft_memsetboost(void *s, int c, size_t n);
