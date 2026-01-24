@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/24 18:55:03 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/24 21:12:51 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,9 @@
 # define OPEN 3
 # define MATRIX 4
 
+//hud color
+#define COLOR_HUD 0x47704CFF
+
 //messages
 # define CONTROLS_INFO "Press \"z\" on your keyboard to show \
 player controls and engine config Keys\n"
@@ -270,6 +273,8 @@ typedef struct s_frame_data
 	float	mm_scale[2];
 	float	mm_offset[2];
 	float	mm_zoom_factor;
+	int		ceiling_limit;
+	int		floor_limit;
 	bool	minimap_onoff;
 	bool	minimap_showrays;
 	bool	raycasting_onoff;
@@ -596,5 +601,7 @@ void			ft_memfillint(void **s, int c, size_t *n);
 void			ft_memfillchar(void *s, int c, size_t n);
 //debug
 void			print_texture_values(t_mlx *mlx);
+
+void			draw_hud_mlx(t_mlx *mlx, t_texture *hud);
 
 #endif
