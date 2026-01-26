@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/26 15:43:59 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/26 15:56:57 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,9 +265,9 @@ typedef struct s_ray
 	int				map_x[WIDTH];
 	int				map_y[WIDTH];
 	int				wall_value[WIDTH];
-	int	step_x[WIDTH];
-	int	step_y[WIDTH];
-	bool			side_hit[WIDTH];
+	unsigned int	step_x[WIDTH];
+	unsigned int	step_y[WIDTH];
+	bool			side_hit[WIDTH]; 
 }	t_ray;
 
 typedef struct s_frame_data
