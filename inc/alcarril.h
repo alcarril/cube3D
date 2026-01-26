@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/24 21:15:14 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/26 11:46:03 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,11 +196,12 @@ typedef struct s_player_phisics
 
 typedef struct s_locals
 {
-	int	i;
-	int	wall_end;
-	int	tex_y;
-	int	tex_stride;
-	int	unused;
+	float	text_v_step;
+	float	tex_pos;
+	int		i;
+	int		wall_end;
+	int		tex_y;
+	int		tex_stride;
 }	t_locals;
 
 typedef struct s_ptrs

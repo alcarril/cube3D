@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:04:35 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/24 19:45:00 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/26 11:28:35 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	throw_rays(t_mlx *mlx)
 	float			ray_angle;
 	float			rad_dif;
 	float			fov_half;
-	unsigned int	n_ray;
+	int				n_ray;
 	int				win_width;
 
 	win_width = mlx->win_width;
@@ -43,7 +43,7 @@ void	throw_rays(t_mlx *mlx)
 	rad_dif = mlx->frame->delta_rays;
 	ray_angle = (mlx->player->rad_angle) + fov_half;
 	n_ray = 0;
-	while ((int)n_ray < win_width)
+	while (n_ray < win_width)
 	{
 		cast_ray(mlx, n_ray, ray_angle);
 		ray_angle -= rad_dif;

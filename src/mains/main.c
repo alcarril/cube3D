@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 18:12:38 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/24 20:48:00 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/26 01:26:27 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,13 +144,13 @@ int main (void)
 
 
 	//MEDIEVAL	
-	// char *texture_paths[5] = {
-	// 	"assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
-	// 	"assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
-	// 	"assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
-	// 	"assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
-	// 	"assets/textures/self/futuristic_hud.xpm" // NORTE -> SUR
-	// 	};
+	char *texture_paths[5] = {
+		"assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
+		"assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
+		"assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
+		"assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
+		"assets/textures/other/wolfenstein/grey_stone.xpm", // NORTE -> SUR
+		};
 
 
 
@@ -183,14 +183,23 @@ int main (void)
 	// 	"assets/textures/self/adolfo.xpm", // NORTE -> SUR
 	// };
 
-	//futurista
-	char *texture_paths[5] = {
-		"assets/textures/self/futuristic-256x256_1.xpm", // NORTE -> SUR
-		"assets/textures/self/futuristic-256x256_1.xpm", // NORTE -> SUR
-		"assets/textures/self/futuristic-256x256_1.xpm", // NORTE -> SUR
-		"assets/textures/self/futuristic-256x256_1.xpm", // NORTE -> SUR
-		"assets/textures/self/futuristic_hud.xpm"
-	};
+	//futurista ajsutasdo
+	// char *texture_paths[5] = {
+	// 	"assets/textures/self/futuristic-256x256_1.xpm", // NORTE -> SUR
+	// 	"assets/textures/self/futuristic-256x256_1.xpm", // NORTE -> SUR
+	// 	"assets/textures/self/futuristic-256x256_1.xpm", // NORTE -> SUR
+	// 	"assets/textures/self/futuristic-256x256_1.xpm", // NORTE -> SUR
+	// 	"assets/textures/self/futuristic-256x256_1.xpm", // NORTE -> SUR
+	// };
+
+	//furista si ajustar
+	// char *texture_paths[5] = {
+	// 	"assets/textures/self/futuristic.xpm"
+	// 	"assets/textures/self/futuristic.xpm"
+	// 	"assets/textures/self/futuristic.xpm"
+	// 	"assets/textures/self/futuristic.xpm"
+	// 	"assets/textures/self/futuristic.xpm"
+	// };
 
 
 	// char *texture_paths[4] = {

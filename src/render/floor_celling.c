@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 16:45:21 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/24 17:18:41 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/26 06:24:00 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ void	render_floor_and_ceiling(t_mlx *mlx)
 	Esta función es ideal para mejorar el rendimiento en escenas donde el 
 	renderizado del suelo y el techo no requieren texturas ni efectos avanzados
 */
-void	render_floor_and_ceiling_speed(t_mlx *mlx)
+void	render_floor_and_ceiling_speed1(t_mlx *mlx)
 {
 	int	y;
 	int	ceiling_color;
@@ -125,6 +125,50 @@ void	render_floor_and_ceiling_speed(t_mlx *mlx)
 		y++;
 	}
 }
+
+
+void	render_floor_and_ceiling_speed(t_mlx *mlx)
+{
+	int			y;
+	int			width;
+	int			height;
+	int			horizon;
+	char		*bitmap;
+	int			line_len;
+	int			bpp;
+	unsigned int	ceiling_color;
+	unsigned int	floor_color;
+	unsigned int	offset;
+	int			line_bytes; // <<<<< precálculo
+
+	width  = mlx->win_width;
+	height = mlx->win_height;
+	horizon = (height >> 1) + mlx->player->pitch_pix;
+	bitmap = mlx->bit_map_address;
+	line_len = mlx->line_length;
+	bpp = mlx->bits_per_pixel >> 3;
+	ceiling_color = mlx->map->ceiling_color_hex;
+	floor_color   = mlx->map->floor_color_hex;
+
+	line_bytes = width * bpp; // <<< precalculado
+
+	offset = 0;
+
+	// Dibujamos el techo
+	for (y = 0; y < horizon && y < height; y++)
+	{
+		ft_memfillboost(bitmap + offset, ceiling_color, line_bytes);
+		offset += line_len;
+	}
+
+	// Dibujamos el suelo
+	for (; y < height; y++)
+	{
+		ft_memfillboost(bitmap + offset, floor_color, line_bytes);
+		offset += line_len;
+	}
+}
+
 
 /*
 	Función para renderizar el suelo y el techo con efectos de ambiente.
