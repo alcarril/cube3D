@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bridge_copy.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/26 00:00:00 by carbon-m          #+#    #+#             */
-/*   Updated: 2026/01/26 01:15:18 by carbon-m         ###   ########.fr       */
+/*   Updated: 2026/01/27 19:52:11 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,19 @@
 void	copy_textures(t_carbon_map *cmap, t_parse_bridge *bridge)
 {
 	if (cmap->textures.north)
-		ft_strlcpy(bridge->texture_paths[0], cmap->textures.north, 256);
+		ft_strlcpy(bridge->texture_paths[0], cmap->textures.south, 256);
 	else
 		bridge->texture_paths[0][0] = '\0';
 	if (cmap->textures.south)
-		ft_strlcpy(bridge->texture_paths[1], cmap->textures.south, 256);
+		ft_strlcpy(bridge->texture_paths[1], cmap->textures.north, 256);
 	else
 		bridge->texture_paths[1][0] = '\0';
 	if (cmap->textures.west)
-		ft_strlcpy(bridge->texture_paths[2], cmap->textures.west, 256);
+		ft_strlcpy(bridge->texture_paths[2], cmap->textures.east, 256);
 	else
 		bridge->texture_paths[2][0] = '\0';
 	if (cmap->textures.east)
-		ft_strlcpy(bridge->texture_paths[3], cmap->textures.east, 256);
+		ft_strlcpy(bridge->texture_paths[3], cmap->textures.west, 256);
 	else
 		bridge->texture_paths[3][0] = '\0';
 	if (cmap->textures.bonus)
