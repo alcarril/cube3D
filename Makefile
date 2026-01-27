@@ -6,7 +6,7 @@
 #    By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/19 00:00:00 by carbon-m          #+#    #+#              #
-#    Updated: 2026/01/27 06:23:35 by alejandro        ###   ########.fr        #
+#    Updated: 2026/01/27 06:35:56 by alejandro        ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -83,12 +83,11 @@ ALCARRIL_FILES = mlx_init_close/init_mlx_game.c \
 			mem_utils/ft_memset_boost.c \
 			mem_utils/ft_memfillboost.c \
 			mem_utils/ft_bzero_boost.c \
-			testing/prueba.c
 
 # Archivos puente (integración)
-PUENTE_FILES = puente/bridge.c \
-			puente/bridge_copy.c \
-			puente/bridge_memory.c \
+PUENTE_FILES = bridge/bridge.c \
+			bridge/bridge_copy.c \
+			bridge/bridge_memory.c \
 			mains/main.c
 
 # Todos los archivos fuente

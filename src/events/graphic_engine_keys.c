@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 20:54:29 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/22 21:27:27 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/27 19:12:05 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,11 +103,13 @@ void	toogle_floor_celling(t_mlx *mlx)
 	{
 		mlx->frame->boost = ON;
 		printf("FAST floor and ceiling rendering enabled\n");
+		write(mlx->log_fd, "BOOST MODE ENABLED\n", 19);
 	}
 	else
 	{
 		mlx->frame->boost = OFF;
 		printf("ACURATED floor and ceiling rendering enabled\n");
+		write(mlx->log_fd, "BOOST MODE DISABLED\n", 20);
 	}
 }
 

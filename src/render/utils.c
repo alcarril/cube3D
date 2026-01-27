@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 00:11:37 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/27 03:35:18 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/27 19:10:32 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,12 +90,12 @@ void	fps_counter_realtime(t_mlx *mlx)
 	gettimeofday(&time, NULL);
 	if (init_timestamp == 0 || frames == LLONG_MAX)
 	{
-		init_timestamp = time.tv_sec * 1000 + (time.tv_usec / 1000);
+		init_timestamp = time.tv_sec * 1000 + (time.tv_usec * 0.001);
 		frames = 0;
 		return ;
 	}
 	frames++;
-	now_timestamp = time.tv_sec * 1000 + (time.tv_usec / 1000);
+	now_timestamp = time.tv_sec * 1000 + (time.tv_usec * 0.001);
 	delta_time = now_timestamp - init_timestamp;
 	if (delta_time >= 500)
 	{

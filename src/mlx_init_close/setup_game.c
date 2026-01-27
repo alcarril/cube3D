@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 11:42:33 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/27 01:36:13 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/27 19:09:23 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,22 +86,12 @@ bool	setup_game(t_mlx *mlx, t_player *player, t_map *map, t_frame *frame)
 	Parámetros:
 	- mlx: Puntero a la estructura principal del motor gráfico que contiene 
 	  toda la información del juego.
-
-	NOTA:
-	- Actualmente, se utilizan valores de prueba para la posición inicial del 
-	  jugador (`middle[X]` y `middle[Y]`), que serán reemplazados por los 
-	  valores reales del parser.
 */
 void	setup_player_mouse(t_mlx *mlx)
 {
 	t_player	*pl;
-	int			middle[2];//esto se va a borrar
-	// middle[X] = mlx->map->max_columns / 2; //esto se va a borrar
-	// middle[Y] = mlx->map->max_rows / 2; //esto se va a borrar
-	middle[X] = 2; //esto se va a borrar
-	middle[Y] = 2; //esto se va a borra
+
 	pl = mlx->player;
-	init_player_orientation_pos(mlx->player, 'N', middle);//esta quizas se quita
 	pl->speed = SPEED_DIGITAL;
 	pl->fov = 60.0f;
 	pl->rad_fov = pl->fov * (PI / 180.0f);

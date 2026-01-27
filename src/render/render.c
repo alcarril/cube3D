@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 21:34:21 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/27 03:52:24 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/27 19:09:33 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ int	game_engine(t_mlx *mlx)
 	if (mlx->frame->minimap_onoff == ON)
 		render_frame2d(mlx);
 	mlx_put_image_to_window(mlx->mlx_var, mlx->mlx_window, mlx->mlx_img, 0, 0);
-	fps_counter_average(mlx);
 	fps_counter_realtime(mlx);
 	return (0);
 }
