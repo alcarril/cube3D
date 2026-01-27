@@ -6,7 +6,7 @@
 /*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:14:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/27 04:09:10 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/27 06:16:33 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -377,7 +377,7 @@ typedef struct s_player_data
 
 typedef struct s_map
 {
-	char			map_grids[14][25]; //esto va a ser un puntero doble a liberar pero la mmera de accader a el es igual
+	char			**map_grids; //esto va a ser un puntero doble a liberar pero la mmera de accader a el es igual
 	unsigned int	max_columns; //x lo rellena carbon con los valores del mapa y con esto se reserva memeria
 	unsigned int	max_rows; //y lo rrelena carbon cunado copie los valores del maap y con esto se reserva memeria
 	//textures (estos se van a tener que liberar)
