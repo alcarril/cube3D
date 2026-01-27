@@ -1,11 +1,16 @@
 # Compilados y binarios
-cube3D
+cub3D
 a.out
 *.o
 *.a
 /obj/
+/log/*
 /libs/libft/*.o
 /libs/libft/*.a
+
+# env
+/venv/*
+/venv/
 
 # IDE configs
 .vscode/

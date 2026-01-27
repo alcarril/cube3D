@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_setup_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/12 23:20:39 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/25 19:01:47 by carbon-m         ###   ########.fr       */
+/*   Updated: 2026/01/23 23:05:51 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,9 @@ void	setup_window_wh(t_mlx *mlx)
 		mlx->win_height = BASE_HEIGHT / rows_per_col;
 		mlx->win_width = BASE_WIDTH;
 	}
+}
+
+int	rgb_to_hex(int r, int g, int b)
+{
+	return ((r << 16) | (g << 8) | b);
 }

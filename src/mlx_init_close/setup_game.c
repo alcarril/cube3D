@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   setup_game.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 11:42:33 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/26 00:21:47 by carbon-m         ###   ########.fr       */
+/*   Updated: 2026/01/27 01:36:13 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,13 +95,13 @@ bool	setup_game(t_mlx *mlx, t_player *player, t_map *map, t_frame *frame)
 void	setup_player_mouse(t_mlx *mlx)
 {
 	t_player	*pl;
-	// int			middle[2];//esto se va a borrar
+	int			middle[2];//esto se va a borrar
 	// middle[X] = mlx->map->max_columns / 2; //esto se va a borrar
 	// middle[Y] = mlx->map->max_rows / 2; //esto se va a borrar
-	// middle[X] = 1; //esto se va a borrar
-	// middle[Y] = 1; //esto se va a borra
+	middle[X] = 2; //esto se va a borrar
+	middle[Y] = 2; //esto se va a borra
 	pl = mlx->player;
-	// init_player_orientation_pos(mlx->player, 'N', middle);//esta quizas se quita
+	init_player_orientation_pos(mlx->player, 'N', middle);//esta quizas se quita
 	pl->speed = SPEED_DIGITAL;
 	pl->fov = 60.0f;
 	pl->rad_fov = pl->fov * (PI / 180.0f);
