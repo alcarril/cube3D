@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+         #
+#    By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/19 00:00:00 by carbon-m          #+#    #+#              #
-#    Updated: 2026/01/30 10:56:00 by alejandro        ###   ########.fr        #
+#    Updated: 2026/01/30 16:22:41 by carbon-m         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,20 @@ SRC_DIR = src/
 OBJ_DIR = obj/
 LOG_DIR = log/
 MKDIR = mkdir -p
+
+BONUS_FILES = parsing/parse_map.c \
+			parsing/parse_elements.c \
+			parsing/parse_colors.c \
+			parsing/parse_map_grid.c \
+			parsing/read_file.c \
+			parsing/validate_map.c \
+			parsing/validate_map_borders.c \
+			parsing/parse_utils.c \
+			parsing/player_utils.c \
+			parsing/debug_utils.c \
+			parsing/debug_utils2.c \
+			parsing/cleanup_utils.c \
+			parsing/parse_textures_bonus.c \
 
 # Archivos de carbon (parsing)
 CARBON_FILES = parsing/parse_map.c \
@@ -92,11 +106,16 @@ PUENTE_FILES = bridge/bridge.c \
 
 # Todos los archivos fuente
 SRC_FILES = $(CARBON_FILES) $(ALCARRIL_FILES) $(PUENTE_FILES)
+BONUS_SRC_FILES = $(BONUS_FILES) $(ALCARRIL_FILES) $(PUENTE_FILES)
 
 SRCS = $(addprefix $(SRC_DIR), $(SRC_FILES))
+BONUS_SRCS = $(addprefix $(SRC_DIR), $(BONUS_SRC_FILES))
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
 OBJS = $(addprefix $(OBJ_DIR), $(OBJ_FILES))
+
+BONUS_OBJ_FILES = $(BONUS_SRC_FILES:.c=.o)
+BONUS_OBJS = $(addprefix $(OBJ_DIR), $(BONUS_OBJ_FILES))
 
 HEADERS_FILES = inc/cube3D.h inc/alcarril.h inc/carbon.h
 
@@ -104,6 +123,8 @@ LIBFT = $(LIB_DIR)/libft/libft.a
 MINI_LIBX = $(LIB_DIR)/minilibx-linux/libmlx.a
 
 all: $(LIBFT) $(MINI_LIBX) $(OBJ_DIR) $(LOG_DIR) $(NAME)
+
+bonus: $(LIBFT) $(MINI_LIBX) $(OBJ_DIR) $(LOG_DIR) $(NAME)_bonus
 
 $(LIBFT): 
 	make all -C libs/libft
@@ -120,6 +141,9 @@ $(LOG_DIR):
 $(NAME): $(OBJS) $(LIBFT) $(MINI_LIBX)
 	$(CC) $(CC_FLAGS) $(OBJS) $(LIBFT_FLAGS) $(MLX_FLAGS) -o $(NAME)
 
+$(NAME)_bonus: $(BONUS_OBJS) $(LIBFT) $(MINI_LIBX)
+	$(CC) $(CC_FLAGS) $(BONUS_OBJS) $(LIBFT_FLAGS) $(MLX_FLAGS) -o $(NAME)_bonus
+
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADERS_FILES)
 	$(MKDIR) $(dir $@)
 	$(CC) $(CC_FLAGS) $(HEADERS) -c $< -o $@
@@ -132,8 +156,9 @@ clean:
 fclean: clean
 	make fclean -C $(LIB_DIR)/libft
 	rm -rf $(NAME)
+	rm -rf $(NAME)_bonus
 	rm -rf $(LOG_DIR)
 
 re: fclean all
 
-.PHONY: clean fclean re all
+.PHONY: clean fclean re all bonus

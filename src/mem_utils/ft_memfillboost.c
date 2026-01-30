@@ -3,36 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memfillboost.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 20:25:34 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/23 20:50:41 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/30 15:28:22 by carbon-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
 
-/*
-	Puedoo usar sizeof ya que el compilador lo hace en compilacion
-	menos cuando se hace sizeof de un variable no de un tipo de dao
-	Ademas podria usar la dicsion constantemente poreel compilador lo trasnform
-	por bitwise si es potencia de dos y es recurrente.
-
-	libc internals
-	optimización de memoria
-	arquitectura de CPU
-	ABI
-	Estás tocando:
-		alineación de memoria
-		word writes
-		construcción de patrones por shifts
-		dispatch por tamaño
-		Esto es exactamente lo que se estudia en:
-		implementaciones de libc
-		kernels
-		motores de memoria
-		
-*/
 void	ft_memfillboost(void *s, int c, size_t n)
 {
 	while (n > 0 && ((uintptr_t)s % sizeof(unsigned long long)) != 0)
@@ -51,9 +30,6 @@ void	ft_memfillboost(void *s, int c, size_t n)
 		ft_memfillchar(s, c, n);
 }
 
-/*
-	// jumps = *n / sizeof(unsigned long long);
-*/
 void	ft_memfilllonglong(void **s, int c, size_t *n)
 {
 	unsigned long long	data;
@@ -72,17 +48,6 @@ void	ft_memfilllonglong(void **s, int c, size_t *n)
 	*n -= jumps * sizeof(unsigned long long);
 }
 
-/*
-	#if ULONG_MAX > 0xFFFFFFFFUL
-	data |= data << 32;   // Si long es 8 bytes
-	#endif
-	// jumps = *n / sizeof(unsigned long long);
-	Este comentario lo dejams porque hay que comporbar
-	si al arquitectura de So es de 64 bits o 32 bits
-	en los ordenadores de 42. Cundo lo pucliquemos podemos
-	poner las directivas del preporcesador dentro de la fuuncion in
-	dicando que nos estamos saltando la norma por compatibilidad
-*/
 void	ft_memfilllong(void **s, int c, size_t *n)
 {
 	unsigned long	data;
@@ -101,9 +66,6 @@ void	ft_memfilllong(void **s, int c, size_t *n)
 	*n -= jumps * sizeof(unsigned long);
 }
 
-/*
-	// jumps = *n / sizeof(int);
-*/
 void	ft_memfillint(void **s, int c, size_t *n)
 {
 	int		*ptr;

@@ -3,33 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   raycasting.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 19:04:35 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/27 03:45:31 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/30 15:35:17 by carbon-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
 
-/*
-	Función principal para lanzar los rayos y realizar la bufferización. Realiza 
-	el barrido de rayos desde la izquierda hasta la derecha del campo de visión. 
-	Esto se hace de esta manera porque los ejes de la ventana en mlx están 
-	invertidos respecto al minimapa. Si no se hiciera así, ocurriría un efecto 
-	espejo en la visualización 3D. Es mejor hacerlo de esta forma que corregir 
-	el efecto desde la bufferización.
-
-	Mejoras de rendimiento:
-	- Las conversiones a radianes se realizan desde los eventos de movimiento 
-	  para evitar recalcular en cada paso del raycasting (menos ciclos, ya que 
-	  son divisiones y multiplicaciones).
-	- Uso de variables locales para optimizar el acceso a memoria, el uso del 
-	  caché y los registros.
-	- Las variables `delta_rays` y `fov_half` se precalculan en la estructura 
-	  del frame y del jugador, respectivamente, para evitar recalculos en cada 
-	  frame.
-*/
 void	throw_rays(t_mlx *mlx)
 {
 	float			ray_angle;
@@ -53,35 +35,6 @@ void	throw_rays(t_mlx *mlx)
 	}
 }
 
-/*
-	Función auxiliar para manejar la lógica de un solo rayo. Esta función se 
-	encarga de calcular la intersección del rayo con las paredes y de dibujar 
-	la columna correspondiente en la pantalla.
-
-	Flujo de la función:
-	- Inicializa los parámetros del rayo, como su dirección y posición inicial 
-	  en el mapa, utilizando la función `set_ray`.
-	- Calcula la distancia del rayo hasta la pared más cercana utilizando el 
-	  algoritmo DDA (Digital Differential Analyzer) con la función 
-	  `get_distance_to_wall`.
-	- Almacena la distancia perpendicular al muro en el buffer de distancias 
-	  del frame actual.
-	- Escala la altura de la pared en función de la distancia perpendicular 
-	  utilizando la función `scale_wall_phisics`.
-	- Actualiza los límites de inicio y fin de la pared para optimizar el
-	  proceso de dibujo, asegurándose de que solo se dibujen las partes
-	  visibles de las paredes y que en el renderizado no haya sobreposiciones
-	  innecesarias, lo mejora mucho el rendimiento del motor sobretodo en 
-	  mapas centrados en pasillos estrechos.
-
-	Mejoras de rendimiento:
-	- El rayo (`ray`) y la pared (`wall`) se declaran en la memoria stack para 
-	  optimizar el acceso a memoria y el uso del caché, evitando paginaciones 
-	  de memoria lentas y la necesidad de liberar memoria después.
-	- Los ifs se minimizan para reducir las ramas en el código, mejorando la 
-	  predicción de saltos y el rendimiento general. Ademas el branch predictor
-	  de la CPU funciona mejor con menos ramas condicionales.
-*/
 void	cast_ray(t_mlx *mlx, unsigned int n_ray, float ray_angle)
 {
 	t_ray	*ray;
@@ -107,33 +60,6 @@ void	cast_ray(t_mlx *mlx, unsigned int n_ray, float ray_angle)
 	}
 }
 
-/*
-	Inicializa los parámetros del rayo necesarios para realizar el algoritmo de 
-	raycasting. Esta función configura la dirección y posición inicial del rayo 
-	en el mapa, así como las distancias necesarias para calcular las 
-	intersecciones con las paredes.
-
-	Flujo de la función:
-	- Calcula la dirección del rayo en los ejes X e Y utilizando funciones 
-	  trigonométricas (`cos` y `sin`) basadas en el ángulo del rayo.
-	- Determina la posición inicial del rayo en el mapa, basada en la posición 
-	  actual del jugador.
-	- Calcula las distancias delta para cada eje (X e Y), que representan la 
-	  distancia que el rayo necesita recorrer para pasar de una línea de 
-	  cuadrícula a la siguiente en el eje correspondiente.
-	- Maneja casos especiales donde la dirección del rayo en un eje es 0, 
-	  asignando un valor muy grande (1e30) para evitar divisiones por cero.
-
-	Parámetros:
-	- mlx: Puntero a la estructura principal del motor gráfico que contiene 
-	  toda la información del juego.
-	- ray: Puntero a la estructura del rayo que se está inicializando.
-	- ray_angle: Ángulo del rayo en radianes, que determina su dirección.
-
-	Esta función es fundamental para el correcto funcionamiento del algoritmo 
-	DDA, ya que establece los valores iniciales necesarios para calcular las 
-	intersecciones del rayo con las paredes del mapa.
-*/
 void	set_ray(t_mlx *mlx, t_ray *ray, float ray_angle)
 {
 	ray->raydir[X] = cos(ray_angle);
@@ -150,33 +76,6 @@ void	set_ray(t_mlx *mlx, t_ray *ray, float ray_angle)
 		ray->delta[Y] = fabs(1 / ray->raydir[Y]);
 }
 
-/*
-	Escala la altura de la pared en función de la distancia perpendicular:
-	- Calcula la altura de la pared en píxeles basada en la distancia 
-	  perpendicular.
-	- Calcula las posiciones de inicio y fin de la pared en píxeles de la 
-	  matriz de la ventana.
-	- Asegura que las posiciones estén dentro de los límites de la matriz de 
-	  píxeles de la ventana.
-	- Usa el desplazamiento vertical (pitch) para ajustar la posición vertical
-	  de la pared según la inclinación (simulada) de la cámara.
-	- Calcula el offset vertical de la cámara basado en su posición en z 
-	  (camz) y la distancia perpendicular para simular saltos y caídas.
-
-	NOTA:
-	- `wall_start` y `wall_end` deberían llamarse al revés porque el sistema de
-	  coordenadas de mlx está invertido respecto al minimapa, pero es más fácil
-	  de entender así.
-
-	Mejoras de rendimiento:
-	- La altura de la ventana se almacena en una variable estática para evitar 
-	  acceder repetidamente a la estructura `mlx`, mejorando el rendimiento al 
-	  usar registros de la CPU y el caché de la memoria, evitando cache misses.
-	- Se minimizan las operaciones dentro de la función para reducir el tiempo 
-	  de ejecución, utilizando variables locales para cálculos intermedios.
-	- Se usan variables locales para optimizar el acceso a memoria y el uso del
-	  caché.
-*/
 void	scale_wall_phisics(t_wall *wall, float perp_dist, t_mlx *mlx)
 {
 	static int	win_height;
@@ -204,21 +103,6 @@ void	scale_wall_phisics(t_wall *wall, float perp_dist, t_mlx *mlx)
 		wall->wall_end = win_height - 1;
 }
 
-/*
-	Dibuja una columna de pared en la pantalla cunado noestamos usando texturas
-	- Itera desde el inicio hasta el final de la pared en la pantalla.
-	- Bufferiza cada píxel de la columna con un color fijo (naranja en este 
-	  caso, 0xFF8C00).
-	- Se podría usar `buffering_line` para realizar el dibujado por líneas y 
-	  optimizar un poco más el rendimiento, pero este enfoque es menos 
-	  flexible.
-
-	Mejoras de rendimiento:
-	- Uso de variables locales para optimizar el acceso a memoria y el uso del 
-	  caché.
-	- Se minimizan las operaciones dentro del bucle para reducir el tiempo de 
-	  ejecución.
-*/
 void	draw_wall_column(t_mlx *mlx, int column, t_wall *wall, t_ray *ray)
 {
 	int	i;

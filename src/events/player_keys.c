@@ -3,24 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   player_keys.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/08 13:06:24 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/22 22:26:21 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/30 15:26:54 by carbon-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/cube3D.h"
 
-/*
-	Funcion que maneja la presion de teclas para el movimiento del jugador
-	Teclas manejadas:
-		-W A S D : movimiento
-		-Left Right : rotacion
-		-Up Down : mirar arriba y abajo
-	Si entra en alguna de las teclas retorna true
-	Si no retorna false
-*/
 bool	player_keypress(t_mlx *mlx, int keysym)
 {
 	if (keysym == XK_w)
@@ -46,21 +37,6 @@ bool	player_keypress(t_mlx *mlx, int keysym)
 	return (true);
 }
 
-/*
-	Funcion que maneja la presion de teclas adicionales para el jugador
-	- Si entra en alguna de las teclas retorna true
-	- Si no retorna false
-	- Teclas manejadas:
-		- Shift Izquierdo: sprint
-		- Control Izquierdo: agacharse
-		- Caps Lock: bloquear mayusculas
-		- Q: accion Q
-		- Barra espaciadora: salto
-		- Coma: aumentar volumen
-		- Punto: disminuir volumen
-		- V: cambiar fov
-		- J: togglear mouse
-*/
 bool	player_keypres2(t_mlx *mlx, int keysym)
 {
 	if (keysym == XK_Shift_L)
@@ -86,15 +62,6 @@ bool	player_keypres2(t_mlx *mlx, int keysym)
 	return (true);
 }
 
-/*
-	Funcion para cambiar el fov (angulo de vision) del jugador
-	- Si el fov actual es 60, lo cambia a 90
-	- Si el fov actual es 90, lo cambia a 60
-	- Ademas, actualiza las variables relacionadas con el fov:
-		rad_fov, fov_half, delta_rays, para no tener que actualizarlas
-		en el hoot loop cada frame. (mejora de eficiencia)
-	- Informa al usuario del cambio por terminal (stdout)
-*/
 void	change_fov(t_mlx *mlx)
 {
 	if (mlx->player->fov == 60.0f)
@@ -115,15 +82,6 @@ void	change_fov(t_mlx *mlx)
 	}
 }
 
-/*
-	Funcion para aumentar el volumen del jugador
-	- Si flag es true, aumenta el volumen en 0.1
-	- Si flag es false, disminuye el volumen en 0.1
-	- El volumen tiene un limite maximo de 1.0 y un limite minimo de 0.2
-	- Informa al usuario del cambio por terminal (stdout)
-	NOTA: Cuando el volumen es muy grande el personaje no puede
-	pasar por pasillos estrechos, por lo que se limita el volumen.
-*/
 void	change_player_volume(t_mlx *mlx, bool flag)
 {
 	if (flag == true && mlx->player->volume < 1.0f)

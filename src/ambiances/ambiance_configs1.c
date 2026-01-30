@@ -3,27 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   ambiance_configs1.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 20:24:57 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/22 20:58:38 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/30 15:24:33 by carbon-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/cube3D.h"
 
-/*
-	Calcla el factor de dissipacion que se va a usar en los shader y fogs
-	para el suelo en funcion de la posicion del pixel de la matriz de pixeles
-	respecto al eje de la pantalla con la trasformacion de los puntos segun el 
-	pitch del jugador, es decir el horizonte real simulado por el pitch del 
-	jugador. Cada ambiente usa un tipo de calculo diferente.
-	Despues se acota el factor entre 0.0 y 1.0
-*/
 float	dist_factor_floor(int win_height, int win_y, int horizon, int ambient)
 {
 	float	dist_fac;
 
+	dist_fac = 0;
 	if (ambient == CEMENTERY)
 		dist_fac = 1.0f - (float)(horizon - win_y) / (win_height - horizon);
 	else if (ambient == ASTURIAS)
@@ -37,18 +30,11 @@ float	dist_factor_floor(int win_height, int win_y, int horizon, int ambient)
 	return (dist_fac);
 }
 
-/*
-	Calcla el factor de dissipacion que se va a usar en los shader y fogs
-	para el techo en funcion de la posicion del pixel de la matriz de pixeles
-	respecto al eje de la pantalla con la trasformacion de los puntos segun el 
-	pitch del jugador, es decir el horizonte real simulado por el pitch del 
-	jugador. Cada ambiente usa un tipo de calculo diferente.
-	Despues se acota el factor entre 0.0 y 1.0
-*/
 float	dist_factor_ceiling(int win_y, int horizon, int ambient)
 {
 	float	dist_factor;
 
+	dist_factor = 0;
 	if (ambient == CEMENTERY)
 		dist_factor = 1.0f - (float)(win_y - horizon) / horizon;
 	else if (ambient == ASTURIAS)
@@ -62,18 +48,6 @@ float	dist_factor_ceiling(int win_y, int horizon, int ambient)
 	return (dist_factor);
 }
 
-/*
-	Aplica efectos de ambiente al color del techo
-	- Usa los parámetros de ambiente para calcular el sombreado y la niebla
-	  basados en el factor de distancia
-	- Aplica sombreado inverso para oscurecer el color con la distancia
-	- Aplica desaturación para simular pérdida de color con la distancia
-	- Aplica niebla para mezclar el color con el color de niebla basado en 
-	la distancia
-	- Devuelve el color modificado listo para renderizar
-	- Segun las configuraciones de ambiente del juego conseguimos esfectos 
-	 esteticos diferentes
-*/
 unsigned int	apllyamb_ceiling(t_ambiance *a, float df, unsigned int rcol)
 {
 	unsigned int	col;
@@ -92,18 +66,6 @@ unsigned int	apllyamb_ceiling(t_ambiance *a, float df, unsigned int rcol)
 	return (col);
 }
 
-/*
-	Aplica efectos de ambiente al color del suelo
-	- Usa los parámetros de ambiente para calcular el sombreado y la niebla
-	  basados en el factor de distancia
-	- Aplica sombreado inverso para oscurecer el color con la distancia
-	- Aplica desaturación para simular pérdida de color con la distancia
-	- Aplica niebla para mezclar el color con el color de niebla basado en la 
-	 distancia
-	- Devuelve el color modificado listo para renderizar
-	- Segun las configuraciones de ambiente del juego conseguimos esfectos 
-	esteticos diferentes
-*/
 unsigned int	apllyamb_floor(t_ambiance *a, float df, unsigned int rcol)
 {
 	unsigned int	col;

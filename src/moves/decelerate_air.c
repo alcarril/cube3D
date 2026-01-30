@@ -3,37 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   decelerate_air.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/21 16:28:39 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/23 07:08:50 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/30 15:31:06 by carbon-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
 
-/*
-	Funcion que sirve para poder decelerar al jugador en su trayectoria en el 
-	plano del mapa cunado esta en el aire. Funciona igual que la funcionde 
-	desaceleracion de la velocidad plicando la fuerza contraria  la aceleracion
-	en el plano "2D" mediante la friccion del aire (normalemte mas baja que 
-	la friccion del suelo).
-	Como el jugador no tiene control sobre su movimiento en el aire, la unica 
-	fuerza que actua sobre el es la friccion del aire, que reduce su velocidad
-	gradualmente hasta detenererlo.
-	La direccion que describe el cambio de posicion del juggador (diferencial 
-	del vector de moviento del jugadir se conserva, pero la magnitud de este 
-	vector disminuye con el tiempo.) Esto nor permite que el jugador cuando 
-	salte renga un trayectoria parabolica.
-	Cunado la velocidad del jugador baja de un umbral minimo (SPEEDMIN_MS)
-	esta se pone a 0 para evitar movimientos calculos innecesarios. ya que 
-	la friccion eesun porcentaje de la velocidad actual y nunca llegaria a 0.
-	asi damos menos trabajo a la CPU.
-	Variables:
-		speed: velocidad actual del jugador en el aire.
-		friction: coeficiente de friccion del aire que afecta al jugador.
-		dt: delta time, tiempo transcurrido desde la ultima actualizacion.
-*/
 void	decelerate_player_air(t_mlx *mlx, long long dt)
 {
 	float	speed;
@@ -49,10 +27,6 @@ void	decelerate_player_air(t_mlx *mlx, long long dt)
 	mlx->player->speed_dt = speed;
 }
 
-/*
-	Hace lo mismo que la funcion decelerate_player_air pero en el
-	plano 2D, afectando a las componentes X e Y de la velocidad del jugador.
-*/
 void	decelerate_dukedoom_air(t_mlx *mlx, long long dt)
 {
 	float	speed[2];

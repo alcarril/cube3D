@@ -3,38 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   keys.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 22:31:15 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/22 21:58:04 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/30 15:25:38 by carbon-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/cube3D.h"
 
-/*
-	Funcion que maneja lso evetos de teclado de X11  de KeyPress. Cunado
-	el hook de x11 detecta una presion de tecla, las transforma en un evecto
-	 y esta funcion (handler) es triggered.
-	- Si entra en alguna de las teclas retorna 0
-	- Si no imprieme los controles y las configuraciones del juego
-	Funciones llamadas:
-	- close_game_manager: Cierra el juego y libera la memoria cuando se
-	 la tecla ESC es presionada.
-	- player_keypress: Maneja las teclas relacionadas con el movimiento
-	 del jugador. Retorna true si la tecla fue manejada.
-	- graphics_engine_keypress: Maneja las teclas relacionadas con
-	 los ajustes del motor grafico. Retorna true si la tecla fue manejada.
-	- phisics_engine_keypress: Maneja las teclas relacionadas con
-	 los ajustes del motor fisico. Retorna true si la tecla fue manejada.
-	- toggle_minimap: Activa o desactiva el minimapa cuando se presiona
-	 la tecla 'm'.
-	- minimap_zoom: Aumenta o disminuye el zoom del minimapa cuando
-	 se presionan las teclas '+' o '-'.
-	- toggle_rays: Activa o desactiva la visualizacion de rayos en
-	 el minimapa cuando se presiona la tecla 'r'.
-	- print_controls: Imprime los controles del juego en la consola
-*/
 int	key_press(int keysym, t_mlx *mlx)
 {
 	if (keysym == XK_Escape)
@@ -60,21 +37,6 @@ int	key_press(int keysym, t_mlx *mlx)
 	return (0);
 }
 
-/*
-	Funcion que maneja los eventos de teclado de X11 de KeyRelease. Cunado
-	el hook de x11 detecta una liberacion de tecla, las transforma en un evecto
-	 y esta funcion (handler) es triggered.
-	- Si entra en alguna de las teclas retorna 0
-	- Si no retorna 0
-	Teclas gestionadas y funciones llamadas:
-	- Teclas de movimiento (W, A, S, D, Flechas): Actualizan el estado de las
-	 teclas en la estructura del jugador para detener el movimiento o
-	 rotacion correspondiente.
-	- Shift Izquierdo: Llama a player_sprint_keyrelease para detener
-	 el sprint del jugador.
-	- Barra espaciadora: Llama a player_space_keyrelease para detener
-	 el salto del jugador.
-*/
 int	key_release(int keysym, t_mlx *mlx)
 {
 	if (mlx == NULL)
@@ -102,23 +64,6 @@ int	key_release(int keysym, t_mlx *mlx)
 	return (0);
 }
 
-/*
-	Funcion que maneja las teclas relacionadas con
-	los ajustes del motor grafico.
-	- Si entra en alguna de las teclas retorna true
-	- Si no retorna false
-	Teclas gestionadas y funciones llamadas:
-	- O: Llama a toogle_raycasting para activar o desactivar el raycasting.
-	- F: Llama a toggle_fish_eye para activar o desactivar el efecto fish eye.
-	- E: Llama a toogle_dist_calc para cambiar el metodo de calculo de 
-	  distancia.
-	- T: Llama a toggle_textures para activar o desactivar las texturas.
-	- C: Llama a toogle_floor_celling para cambiar el metodo de renderizado
-	  de piso y techo.
-	- U: Llama a toogle_ambiance para activar o desactivar la ambiancia.
-	- 1, 2, 3, 4: Llama a ambiance_keypress para seleccionar diferentes 
-	  ambientes.
-*/
 bool	graphics_engine_keypress(t_mlx *mlx, int keysym)
 {
 	if (keysym == XK_o)
@@ -140,12 +85,6 @@ bool	graphics_engine_keypress(t_mlx *mlx, int keysym)
 	return (true);
 }
 
-/*
-	Funcion que imprime los controles y configuraciones del motor grafico
-	en la consola (stdout).
-	- Organiza los controles en secciones para facilitar la lectura.
-	- Llama a print_controls2 para imprimir controles adicionales.
-*/
 void	print_controls(void)
 {
 	printf("Controls and configs:\n");

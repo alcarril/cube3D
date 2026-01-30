@@ -3,36 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memset_boost.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/22 00:43:30 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/23 20:53:11 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/30 15:28:45 by carbon-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
 
-/*
-	Puedoo usar sizeof ya que el compilador lo hace en compilacion
-	menos cuando se hace sizeof de un variable no de un tipo de dao
-	Ademas podria usar la dicsion constantemente poreel compilador lo trasnform
-	por bitwise si es potencia de dos y es recurrente.
-
-	libc internals
-	optimización de memoria
-	arquitectura de CPU
-	ABI
-	Estás tocando:
-		alineación de memoria
-		word writes
-		construcción de patrones por shifts
-		dispatch por tamaño
-		Esto es exactamente lo que se estudia en:
-		implementaciones de libc
-		kernels
-		motores de memoria
-		
-*/
 void	ft_memsetboost(void *s, int c, size_t n)
 {
 	while (n > 0 && ((uintptr_t)s % sizeof(unsigned long long)) != 0)
@@ -51,11 +30,6 @@ void	ft_memsetboost(void *s, int c, size_t n)
 		ft_memsetchar(s, c, n);
 }
 
-/*
-	#if ULONG_MAX > 0xFFFFFFFFUL
-	data |= data << 32;   // Si long es 8 bytes
-	#endif
-*/
 void	ft_memsetlonglong(void *s, int c, size_t n)
 {
 	unsigned long long	data;
@@ -75,11 +49,6 @@ void	ft_memsetlonglong(void *s, int c, size_t n)
 	ft_memsetboost(s, c, n);
 }
 
-/*
-	#if ULONG_MAX > 0xFFFFFFFFUL
-	data |= data << 32;   // Si long es 8 bytes
-	#endif
-*/
 void	ft_memsetlong(void *s, int c, size_t n)
 {
 	unsigned long	data;

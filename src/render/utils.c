@@ -3,36 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/16 00:11:37 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/28 08:36:25 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/30 15:36:56 by carbon-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
 
-/*
-	Función para contar y mostrar los FPS promedio en el archivo de log.
-
-	Detalles:
-	- Utiliza `gettimeofday` para obtener el tiempo actual en milisegundos.
-	- Lleva un conteo de los frames renderizados desde el inicio del juego.
-	- Cada segundo (1000 ms), calcula y muestra los FPS promedio en el archivo 
-	  de log.
-	- Para evitar saturar el archivo de log, solo muestra los FPS cada 140 
-	  frames.
-	- Guarda la marca de tiempo actual (`now_timestamp`) y la diferencia de 
-	  tiempo entre frames (`del_timestamp`) en la estructura principal del 
-	  juego (`mlx`).
-
-	Parámetros:
-	- mlx: Puntero a la estructura principal del motor gráfico que contiene 
-	  toda la información del juego.
-
-	Retorno:
-	- No tiene retorno. Escribe directamente en el archivo de log.
-*/
 void	fps_counter_average(t_mlx *mlx)
 {
 	static long long	frames;
@@ -61,24 +40,6 @@ void	fps_counter_average(t_mlx *mlx)
 	mlx->bef_timestamp = now_timestamp;
 }
 
-/*
-	Función para contar y mostrar los FPS en tiempo real en el archivo de log.
-
-	Detalles:
-	- Utiliza `gettimeofday` para obtener el tiempo actual en milisegundos.
-	- Lleva un conteo de los frames renderizados desde el inicio del juego.
-	- Cada 500 ms, calcula y muestra los FPS en tiempo real en el archivo de 
-	  log.
-	- Reinicia el contador de frames y la marca de tiempo inicial después de 
-	  cada cálculo para mantener los FPS actualizados en tiempo real.
-
-	Parámetros:
-	- mlx: Puntero a la estructura principal del motor gráfico que contiene 
-	  toda la información del juego.
-
-	Retorno:
-	- No tiene retorno. Escribe directamente en el archivo de log.
-*/
 void	fps_counter_realtime(t_mlx *mlx)
 {
 	static long long	frames;
@@ -108,12 +69,6 @@ void	fps_counter_realtime(t_mlx *mlx)
 	mlx->bef_timestamp = now_timestamp;
 }
 
-/*
-	Función para determinar si un valor del mapa representa una pared
-	- Recibe un valor de mapa (char)
-	- Compara el valor con los defines WALL y BONUS_WALL
-	- Retorna true si el valor es una pared, false en caso contrario
-*/
 bool	is_wall_tile(char map_value)
 {
 	if (map_value == WALL || map_value == BONUS_WALL)
@@ -121,12 +76,6 @@ bool	is_wall_tile(char map_value)
 	return (false);
 }
 
-/*
-	Puedoo usar sizeof ya que el compilador lo hace en compilacion
-	menos cuando se hace sizeof de un variable no de un tipo de dao
-	Ademas podria usar la dicsion constantemente poreel compilador lo trasnforma 
-	por bitwise si es potencia de dos y es recurrente
-*/
 void	ft_memset_int(void *s, int c, size_t n)
 {
 	size_t	i;

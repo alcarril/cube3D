@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_textures.c                                   :+:      :+:    :+:   */
+/*   parse_textures_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 00:00:00 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/30 15:40:56 by carbon-m         ###   ########.fr       */
+/*   Updated: 2026/01/30 15:41:00 by carbon-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,9 @@ static int	assign_texture_to_map(char *identifier, char *path,
 	else if (ft_strncmp(identifier, "EA", 2) == 0
 		&& ft_strlen(identifier) == 2)
 		map->textures.east = path;
+	else if (ft_strncmp(identifier, "BO", 2) == 0
+		&& ft_strlen(identifier) == 2)
+		map->textures.bonus = path;
 	else
 	{
 		printf("Error: Invalid texture identifier: %s\n", identifier);

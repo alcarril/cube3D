@@ -3,32 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   init_mlx_game.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 20:07:49 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/27 21:01:07 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/30 15:29:56 by carbon-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
 
-/*
-	Inicializamos los componentes de la mlx:
-	- Inicializamos la conexión con el servidor X11 (Xorg) con `mlx_init`. Esto 
-	  establece la comunicación entre el programa y el servidor gráfico.
-	- Configuramos las dimensiones de la ventana en función del número de filas 
-	  y columnas del mapa y de una escala definida (`WIN_SCALE`).
-	- Creamos la ventana con `mlx_new_window` y la asociamos a la conexión 
-	  establecida con el servidor X11.
-	- Creamos la imagen que se usará como buffer de la ventana para el 
-	  renderizado.
-	- Inicializamos la variable `has_been_mouse_in_window` para controlar si el 
-	  ratón ha entrado en la ventana.
-	En caso de error:
-	- Liberamos los componentes creados hasta el momento.
-	- Mostramos un mensaje de error por `stderr`.
-	- Devolvemos `false` para indicar que la inicialización falló.
-*/
 bool	init_mlx_components(t_mlx *mlx)
 {
 	if (mlx == NULL)
@@ -54,18 +37,6 @@ bool	init_mlx_components(t_mlx *mlx)
 	return (true);
 }
 
-/*
-	Inicializamos los datos de la imagen que se usará como buffer de la ventana:
-	- Creamos la imagen con `mlx_new_image`, que reserva memoria para el buffer 
-	  de la ventana.
-	- Obtenemos la dirección de memoria del buffer de la imagen con 
-	  `mlx_get_data_addr`, que nos permite acceder directamente a los píxeles 
-	  de la imagen para modificarlos.
-	En caso de error:
-	- Liberamos los componentes creados hasta el momento.
-	- Mostramos un mensaje de error por `stderr`.
-	- Devolvemos `false` para indicar que la inicialización falló.
-*/
 bool	init_images_data(t_mlx *mlx)
 {
 	mlx->mlx_img = mlx_new_image(mlx->mlx_var, mlx->win_width, mlx->win_height);
@@ -87,25 +58,6 @@ bool	init_images_data(t_mlx *mlx)
 	return (true);
 }
 
-/*
-	Cargamos las texturas del mapa:
-	- Recorremos las rutas de las texturas del mapa y cargamos cada textura con 
-	  la función `load_single_texture`.
-	- Verificamos que cada textura se haya cargado correctamente. Si ocurre un 
-	  error, liberamos las texturas que se hayan cargado hasta el momento.
-	- Mostramos un mensaje en la consola indicando la ruta de cada textura que 
-	  se carga correctamente.
-	NOTA:
-	- Usamos `n_textures` (número de texturas encontradas en el parseo) para 
-	  saber cuántas texturas debemos cargar. Actualmente, este valor está 
-	  configurado en 5 por defecto, ya que la conexión entre el parseo y la 
-	  ejecución del motor aún no está implementada.
-	- Comprobamos cuántas texturas hay desde `texture_paths`, que puede 
-	  contener valores `NULL` en el caso de que no se hayan definido todas las 
-	  rutas en el archivo de configuración.
-	- El array de texturas no puede contener valores `NULL` porque es un array 
-	  de estructuras, lo que permite un acceso más rápido en memoria.
-*/
 bool	load_textures(t_mlx *mlx)
 {
 	int	i;
@@ -124,23 +76,6 @@ bool	load_textures(t_mlx *mlx)
 	return (true);
 }
 
-/*
-	Cargamos una textura individual desde un archivo XPM:
-	- Cargamos la imagen XPM de la textura con `mlx_xpm_file_to_image`, que 
-	  convierte el archivo XPM en una imagen compatible con la `mlx`.
-	- Obtenemos los datos de la imagen con `mlx_get_data_addr`, que nos permite
-	  acceder directamente a los píxeles de la textura para renderizarlos.
-	En caso de error:
-	- Mostramos un mensaje de error por `stderr`.
-	- Devolvemos `false` para indicar que la carga de la textura falló.
-	Parámetros:
-	- mlx: Puntero a la estructura principal del motor gráfico.
-	- texture: Puntero a la estructura de la textura que se va a cargar.
-	- path: Ruta del archivo XPM que contiene la textura.
-	Retorno:
-	- `true` si la textura se cargó correctamente.
-	- `false` si ocurrió un error durante la carga.
-*/
 bool	load_single_texture(t_mlx *mlx, t_texture *texture, char *path)
 {
 	texture->img = mlx_xpm_file_to_image(mlx->mlx_var, path,
@@ -160,30 +95,6 @@ bool	load_single_texture(t_mlx *mlx, t_texture *texture, char *path)
 	return (true);
 }
 
-/*
-	Inicializamos los hooks de la ventana y el loop del juego:
-
-	- Creamos hooks para detectar eventos de teclado:
-	  - `KeyPress`: Llama a la función `key_press` cuando se presiona una tecla
-	  - `KeyRelease`: Llama a la función `key_release` cuando se suelta una 
-		tecla.
-	- Creamos un hook para detectar el cierre de la ventana:
-	  - `DestroyNotify`: Llama a la función `close_game_manager` cuando se 
-		cierra la ventana.
-	- Creamos hooks para eventos del ratón:
-	  - `ButtonPress`: Llama a la función `mouse_button_manager` cuando se 
-		presiona un botón del ratón.
-	  - `EnterNotify`: Llama a la función `mouse_init_manager` cuando el ratón 
-		entra en la ventana.
-	- Mostramos por consola la información de los controles del juego.
-	- Creamos el loop principal del juego con `mlx_loop_hook`, que ejecuta la 
-	  función `game_engine` en cada iteración del loop de la `mlx` o cuando se 
-	  detecta un evento para el que hemos creado un hook.
-
-	Esta función configura todos los eventos necesarios para interactuar con 
-	el juego y asegura que el motor del juego se ejecute correctamente en cada 
-	iteración del loop.
-*/
 void	start_hooks_and_game(t_mlx *mlx)
 {
 	mlx_hook(mlx->mlx_window, KeyPress, KeyPressMask,

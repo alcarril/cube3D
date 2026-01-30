@@ -3,34 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   mouse_keys_buttons.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
+/*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/09 22:59:20 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/22 22:19:23 by alejandro        ###   ########.fr       */
+/*   Updated: 2026/01/30 15:26:29 by carbon-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/cube3D.h"
 
-/*
-	Funcion para inicializar el mouse cuando mlx_hookk detecte que ha entrado
-	en la ventana por primera vez. 
-	- Si el mouse ya ha entrado en la ventana, no hace nada
-	- Si es la primera vez que entra, esconde el cursor, activa el mouse
-	  y ajusta la variable has_been_mouse_in_window a true para no volver
-	  a inicializar el mouse.
-	 - Pone la vairbale player->mouse.onoff a ON para indicar que el mouse
-	  esta activado. yel bucle principal de renderizado pueda entrar s analizar
-	  la posicion del mouse solo cuando sea necesario (mas eficiencia de codigo)
-	- El resto de veces que el mouse entre en la ventana cunado se ha 
-	  desactivado se saca y se vueleve a activar lo gestiona la funcion 
-	  is_mouse_in_windowdentro del bucle de renderizado principal.
-	- Avisamos que ya se puede usar el boost mode sin que crashee el kernell 
-	  pixmap al activar el mouse correctamente. Porque el boost mode usa un 
-	  renderizado rapido y escribe usando alineacion de memeria y sube tanto 
-	  la tasasd defps que al kernell no le da tiempo a crear el pixmap del 
-	  mouse y crashea.
-*/
 int	mouse_init_manager(t_mlx *mlx)
 {
 	if (mlx->has_been_mouse_in_window == true)
@@ -43,22 +24,6 @@ int	mouse_init_manager(t_mlx *mlx)
 	return (0);
 }
 
-/*
-	Función para activar o desactivar el mouse.
-	- Cuando el mouse está activado, se esconde el cursor y se desactiva
-	  la variable que indica al bicle de renderizado que debe analizar
-	  la posición del mouse. (mejora de eficincia)
-	- Cuando el mouse está desactivado, se muestra el cursor y se activa.
-	- Al activarlo, se evalúa si el mouse está dentro o fuera de la ventana:
-	  - Si el mouse está dentro de la ventana, se mueve a la posición de 
-		referencia (axis_x, axis_y) y se ajusta la variable out_and_on a false.
-	  - Si el mouse está fuera de la ventana, se ajusta la variable out_and_on
-		a true, indicando que el mouse no debe ser considerado para mover al 
-		jugador hasta que vuelva a entrar en la ventana.
-	La variable out_and_on se usa en el bucle principal de renderizado para que
-	cunado antivamso el mouse fuera de la ventana no se mueva al jugador hasta
-	que vuelva a entrar en la ventana. Sino pega tirones raros.
-*/
 void	toogle_mouse(t_mlx *ml)
 {
 	t_mouse	*m;
@@ -88,20 +53,6 @@ void	toogle_mouse(t_mlx *ml)
 	}
 }
 
-/*
-	Funcion que maneja los botones del mouse para ajustar la sensibilidad
-	del mouse en el eje x (rotacion) y el factor de pitch (eje y). Tanto la 
-	sensibilidad como el factor de pitch tienen limites maximos y minimos
-	para evitar que el jugador pueda poner valores extremos que hagan
-	inutilizable el mouse.
-	- Rueda del mouse hacia arriba (boton 4): Aumenta la
-	  sensibilidad y el factor de pitch.
-	- Rueda del mouse hacia abajo (boton 5): Disminuye la
-	  sensibilidad y el factor de pitch.
-	- Se informa al usuario del cambio por terminal (stdout).
-	- Se aplican los limites maximos y minimos a la sensibilidad
-	  y al factor de pitch.
-*/
 int	mouse_button_manager(int mouse_button, int x, int y, t_mlx *mlx)
 {
 	(void)x;
