@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
+/*   By: alejandro <alejandro@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 00:00:00 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/26 00:46:20 by carbon-m         ###   ########.fr       */
+/*   Updated: 2026/01/29 22:57:12 by alejandro        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,11 @@ int	init_parse_data(t_carbon_parse *data, char *filename)
 {
 	if (!data || !filename)
 		return (0);
+	if (ft_strncmp(filename + ft_strlen(filename) - 4, ".cub", 4) != 0)
+	{
+		printf("Error: Invalid file. Expected <path>/file.cub\n");
+		return (0);
+	}
 	data->fd = open(filename, O_RDONLY);
 	if (data->fd < 0)
 	{
