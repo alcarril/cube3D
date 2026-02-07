@@ -1,4 +1,23 @@
+
+
 # cub3D
+
+<div align="center">
+
+**3D raycasting engine inspired by classic 90s FPS games.**
+
+[![42 School Project](https://img.shields.io/badge/42-Project-00babc?style=flat-square&logo=42)](https://www.42madrid.com/)
+[![Made with C](https://img.shields.io/badge/Made%20with-C-A8B9CC?style=flat-square&logo=c)](https://en.wikipedia.org/wiki/C_(programming_language))
+[![MiniLibX](https://img.shields.io/badge/Graphics-MiniLibX-orange?style=flat-square)](https://github.com/42Paris/minilibx-linux)
+
+</div>
+
+
+## Table of Contents
+
+[Demo](#demo) | [Technical details](#core-features-and-technical-highlights) | [Getting Started](#getting-started) | [Game](#game) | [Features](#features) | [Boost](#-boost-mode-implementation-) | [Architecture](#-game-engine-architecture-) | [Physics](#-physics-system) | [Atmosphere](#-atmospheric-effects) | [Gallery](#-gallery) | [Resources](#-resources) | [Authors](#authors) | [License](#license)
+
+## 📖Overview
 
 cub3D is a 3D graphics engine inspired by classic shooters like Wolfenstein 3D. This project introduces raycasting algorithms and real-time graphics programming, creating a dynamic 3D representation of a 2D maze from a first-person perspective using trigonometry, geometrics, and efficient rendering techniques.
 
@@ -99,7 +118,7 @@ cub3D/
 └── Makefile             # Build rules
 ```
 
-## 🔍 Project Overview
+### Project Overview
 
 You can view the complete project architecture and ask an AI about the code here: https://deepwiki.com/alcarril/cub3D/1-overview
 
@@ -226,7 +245,6 @@ C 225,30,0
 
 **Raycasting** is the **core rendering technique** used in this project, allowing us to create a **3D perspective from a 2D map** by casting rays from the player's position and calculating their intersections with walls. This method is **efficient for rendering simple 3D environments** and is the basis for many classic games like **Wolfenstein 3D** and **Doom**. It uses **mathematical concepts** such as **trigonometry and geometry** to determine how rays interact with the environment, enabling the engine to render **walls, floors, ceilings, and textures in real time**.
 
-> **Note:** 📝 More on raycasting, DDA, and fish-eye correction: [ Our Notion article](https://broken-snowdrop-f03.notion.site/Raycasting-y-DDA-algorithm-2f9b80eb3d8880f4b86ae04ee0229cde).
 
 ### 💥 ​DDA Algorithm
 
@@ -240,6 +258,8 @@ The **Digital Differential Analyzer (DDA)** algorithm is a method for calculatin
 
 When textures are disabled, the engine can switch between **Euclidean distance** (straight-line distance from player to wall) and **perpendicular distance** (distance along the ray's path). The latter is used for **fish-eye correction**, which eliminates distortion by ensuring that walls appear straight regardless of the viewing angle, providing a more realistic perspective.
 
+> **Note:** 📝 More on raycasting, DDA, and fish-eye correction: [ Our Notion article](https://broken-snowdrop-f03.notion.site/Raycasting-y-DDA-algorithm-2f9b80eb3d8880f4b86ae04ee0229cde).v
+
 
 <br>
 
@@ -247,7 +267,6 @@ When textures are disabled, the engine can switch between **Euclidean distance**
 
 To render the minimap, a **2D scaling relationship** is established between the window's pixel matrix dimensions and the map's grid dimensions. This scaling is then applied to each point drawn on the minimap, leveraging **2D set rendering logic** to efficiently map world coordinates to screen space.
 
-> **Note:** 📝 More on 2D rendering sets and minimap: [Our Notion article](https://broken-snowdrop-f03.notion.site/Renderizado-de-imagenes-2D-y-minimapa-2fab80eb3d8880f88e56f189f2cde9e7?pvs=74).
 
 
 ### Key Concepts
@@ -265,6 +284,7 @@ To render the minimap, a **2D scaling relationship** is established between the 
 - **Ray visualization**: Rays are drawn using the same scale and translation as the map, with a distinctive color for differentiation
 - **Adaptive rendering**: The minimap adjusts dynamically to window size and map dimensions while maintaining spatial accuracy and visual clarity
 
+> **Note:** 📝 More on 2D rendering sets and minimap: [Our Notion article](https://broken-snowdrop-f03.notion.site/Renderizado-de-imagenes-2D-y-minimapa-2fab80eb3d8880f88e56f189f2cde9e7?pvs=74).
 
 <br>
 
@@ -275,7 +295,6 @@ Mouse control is implemented by capturing mouse movement and translating it into
 **Why polling instead of event queues?** 
 Event-based systems process input through MiniLibX's event queue, which introduces latency that can exceed frame time, causing inconsistent camera responsiveness. Polling the mouse position every frame ensures input is processed synchronously with the render loop, delivering predictable, low-latency control that matches modern shooter games.
 
-> **Note:** 📝 First MLX API usage and event handling example: [Fractol repo](https://github.com/alcarril/Fractol).
 
 **Key features:**
 - **Polling-based tracking**: Mouse position is queried each frame rather than handled through event hooks, reducing input latency and jitter
@@ -284,6 +303,8 @@ Event-based systems process input through MiniLibX's event queue, which introduc
 - **Center reset**: The mouse cursor is repositioned to the screen center after each frame, preventing the player's wrist from leaving the mousepad
 - **Configurable sensitivity**: Mouse sensitivity is fully adjustable to suit individual player preferences
 - **Toggle control**: Mouse look can be enabled or disabled with **J**, allowing players to switch between mouse and keyboard control as needed
+
+> **Note:** 📝 First MLX API usage and event handling example: [Fractol repo](https://github.com/alcarril/Fractol).
 
 <br>
 
@@ -297,9 +318,6 @@ When rendering an image, there are certain functions that are called **once per 
 
 Hot loops are loops that execute millions of times per second in performance-critical code across **graphics engines**, **real-time simulations**, **physics**, **machine learning**, and **data processing systems**. Because they run so frequently, every CPU cycle counts, small inefficiencies drastically reduce performance and optimizing hot loops is essential for achieving high FPS rates in realtime applications.
 
-> **Note:** 📝 More on CPU: [Our Notion article](https://broken-snowdrop-f03.notion.site/Microprocesador-CPU-2fbb80eb3d8880768146c87d1607167d?pvs=74).
-
-> **Note:** 📝 More on processor optimizations: [Our Notion article](https://broken-snowdrop-f03.notion.site/Pr-cticas-para-optimizar-el-uso-de-procesador-en-hoot-lopps-2fdb80eb3d888095948ee1b523863e2d).
 
 ### ❌ Things to Avoid in hot loops
 
@@ -328,12 +346,12 @@ Hot loops are loops that execute millions of times per second in performance-cri
 | **Use of registers and local variables** | Reduces memory accesses, keeps data close to the CPU, accelerates hot loops and vectorization |
 | **Microprocessor performance improvements** | Takes advantage of modern CPU enhancements like larger caches, better branch prediction, higher clock speeds, and SIMD/vector units |
 
+> **Note:** 📝 More on CPU: [Our Notion article](https://broken-snowdrop-f03.notion.site/Microprocesador-CPU-2fbb80eb3d8880768146c87d1607167d?pvs=74).
 
+> **Note:** 📝 More on processor optimizations: [Our Notion article](https://broken-snowdrop-f03.notion.site/Pr-cticas-para-optimizar-el-uso-de-procesador-en-hoot-lopps-2fdb80eb3d888095948ee1b523863e2d).
 
 ### 💾 Memory Fill Optimizations
 Instead of writing memory byte-by-byte, this implementation fills memory using **larger aligned blocks** that match cache lines and pages, allowing modern CPUs to write much faster. By **aligning the destination pointer**, **expanding the fill value** into larger patterns, and writing progressively smaller blocks only when needed, this approach reduces write operations and improves CPU and cache efficiency.
-
-> **Note:** 📝 More on Memory Fill: [Our Notion article](https://broken-snowdrop-f03.notion.site/Mejoras-de-bufferizacion-2fdb80eb3d8880d08f50d5f284dd28c8?pvs=74).
 
 | Optimization | Description |
 | --- | --- |
@@ -345,6 +363,7 @@ Instead of writing memory byte-by-byte, this implementation fills memory using *
 | **Linear control flow** | Uses a single iterative flow to minimize function calls and branch mispredictions. |
 | **Tail handling** | Handles remaining bytes with progressively smaller writes to ensure correctness. |
 
+> **Note:** 📝 More on Memory Fill: [Our Notion article](https://broken-snowdrop-f03.notion.site/Mejoras-de-bufferizacion-2fdb80eb3d8880d08f50d5f284dd28c8?pvs=74).
 
 <br>
 
@@ -353,7 +372,6 @@ Instead of writing memory byte-by-byte, this implementation fills memory using *
 The architecture of our game engine is designed to be **modular, efficient, and scalable**, with a clear separation between the **simulation** (game logic, physics, world state) and the **renderer** (visual representation). This separation allows for **independent development and optimization** of each component, enabling us to maintain a clean codebase and easily add new features without disrupting existing functionality.
 
 
-> **Note:** 📝 More on Architecture: [Our Notion article](https://broken-snowdrop-f03.notion.site/Arquitectura-de-motor-grafico-2fdb80eb3d8880b28a51eca96da33a10).
 ### Architecture Principles
 
 | Principle | Description |
@@ -403,12 +421,14 @@ flowchart LR
   T -- no --> V[swap buffer]
   U --> V
 ```
+
+> **Note:** 📝 More on Architecture: [Our Notion article](https://broken-snowdrop-f03.notion.site/Arquitectura-de-motor-grafico-2fdb80eb3d8880b28a51eca96da33a10).
 <br>
 
 ## ⚛️ Physics System
 
 The physics system manages movement and interactions through discrete real-time simulation, ensuring **deterministic, framerate-independent behavior**.
-> **Note:** 📝 More on physics and movement: [Our Notion article](https://broken-snowdrop-f03.notion.site/Fisicas-de-motor-de-videojuegos-2f9b80eb3d8880f89899f356d1396a84?pvs=74).
+
 
 **Core Features:**
 - **2D Acceleration/Deceleration** – Responsive movement with configurable forces
@@ -427,6 +447,8 @@ The physics system manages movement and interactions through discrete real-time 
 | `8` | Jupiter | Increased gravity (2.5x Earth) |
 | `9` | Spectre | Zero gravity |
 | `0` | Jetpack | Upward thrust |
+
+> **Note:** 📝 More on physics and movement: [Our Notion article](https://broken-snowdrop-f03.notion.site/Fisicas-de-motor-de-videojuegos-2f9b80eb3d8880f89899f356d1396a84?pvs=74).
 
 <br>
 
