@@ -60,6 +60,7 @@ Our implementation prioritizes a **solid, highly configurable graphics engine** 
 
 
 <br><br>
+
 ---
 # Getting Started
 
@@ -104,6 +105,8 @@ make
 ```bash
 ./cub3D assets/maps/good/self/performance.cub
 ```
+
+<br>
 <br>
 
 ---
