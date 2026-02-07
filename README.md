@@ -53,20 +53,24 @@ Our implementation prioritizes a **solid, highly configurable graphics engine** 
 - 📍 **Jump direction preservation** and flight mode
 - 🧍 **Crouch and prone position** support
 
-### Visual Effects
+#### Visual Effects
 - 🌫️ **Configurable Atmospheric effects** with fog and desaturation shaders featuring multiple modes
 - 🧱 **Bonus textures for walls**
 - 🎨 **Custom Maps and Textures** with personalized visual configurations and styling options
 
 
-## Requirements
+<br><br>
+
+# Getting Started
+
+## 📋Requirements
 
 - Linux with X11 (Xlib, Xext, Xfixes) and zlib.
 - `cc` and `make`.
 - MiniLibX: a simple graphics library for window management and drawing, included as a submodule in this repository.
 - Libft: self custom C library with utility functions, included in this repository.
 
-## Installation
+## 🔧Installation
 
 ### Install dependencies (Ubuntu/Debian)
 
@@ -90,19 +94,21 @@ git clone --recurse-submodules https://github.com/alcarril/cub3D.git
 cd cub3D
 ```
 
-## Build
+## ▶️ Build and run
 
 ```bash
 make
 ```
 
-## Usage
 
 ```bash
 ./cub3D assets/maps/good/self/performance.cub
 ```
+<br><br>
 
-# 🎮 Controls and Graphics Engine Configuration
+# Game
+
+## 🎮 Controls and Graphics Engine Configuration
 
 Controls are handled through keyboard and mouse events captured by the X11 library via MiniLibX, allowing real-time configuration of the graphics engine, frame display, physics behavior, and overall gameplay experience. 
 
@@ -165,6 +171,10 @@ C 225,30,0
   - `0`: Empty space
   - `N/S/E/W`: Player starting position and orientation
 
+
+<br><br>
+
+# Features
 
 ## 👁️​​🧱 ​​Raycasting and DDA
 
@@ -261,7 +271,45 @@ The architecture of our game engine is designed to be **modular, efficient, and 
 | **Modularity** | `renderer_t` abstraction allows swapping MiniLibX, SDL2, OpenGL, or Vulkan without disruption |
 
 
-![Render Pipeline](docs/image/render_pipeline.png)
+
+### Pipeline de render
+
+```mermaid
+flowchart LR
+  A[frame start] --> B[mouse input]
+  B --> C[player movement]
+  C --> D{raycasting on?}
+  D -- yes --> E[throw rays]
+  D -- no --> K[skip 3D]
+
+  E --> F{textures + ambiance?}
+  F -- yes --> G[render floor/ceiling amb]
+  F -- no --> H{boost + mouse seen?}
+  H -- yes --> I[render floor/ceiling speed]
+  H -- no --> J[render floor/ceiling]
+
+  G --> L[render walls]
+  I --> L
+  J --> L
+
+  L --> M{textures on?}
+  M -- yes --> N{ambiance on?}
+  N -- yes --> O[render walls ambiance]
+  N -- no --> P{boost on?}
+  P -- yes --> Q[render walls tex speed]
+  P -- no --> R[render walls tex]
+  M -- no --> S[render walls no textures]
+
+  O --> T
+  Q --> T
+  R --> T
+  S --> T
+  K --> T
+
+  T{minimap on?} -- yes --> U[render minimap]
+  T -- no --> V[swap buffer]
+  U --> V
+```
 
 
 ## 🗺️ Minimap
@@ -366,44 +414,6 @@ flowchart TD
   E --> H[raycasting/render]
 ```
 
-### Pipeline de render
-
-```mermaid
-flowchart LR
-  A[frame start] --> B[mouse input]
-  B --> C[player movement]
-  C --> D{raycasting on?}
-  D -- yes --> E[throw rays]
-  D -- no --> K[skip 3D]
-
-  E --> F{textures + ambiance?}
-  F -- yes --> G[render floor/ceiling amb]
-  F -- no --> H{boost + mouse seen?}
-  H -- yes --> I[render floor/ceiling speed]
-  H -- no --> J[render floor/ceiling]
-
-  G --> L[render walls]
-  I --> L
-  J --> L
-
-  L --> M{textures on?}
-  M -- yes --> N{ambiance on?}
-  N -- yes --> O[render walls ambiance]
-  N -- no --> P{boost on?}
-  P -- yes --> Q[render walls tex speed]
-  P -- no --> R[render walls tex]
-  M -- no --> S[render walls no textures]
-
-  O --> T
-  Q --> T
-  R --> T
-  S --> T
-  K --> T
-
-  T{minimap on?} -- yes --> U[render minimap]
-  T -- no --> V[swap buffer]
-  U --> V
-```
 
 ## Galeria de disenos
 
