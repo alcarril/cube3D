@@ -68,6 +68,11 @@ Our implementation prioritizes a **solid, highly configurable graphics engine** 
 - 🎨 **Custom Maps and Textures** with personalized visual configurations and styling options
 
 
+<br><br>
+
+---
+# Getting Started
+
 ## 📂 Project Structure
 
 ```
@@ -93,11 +98,6 @@ cub3D/
 ├── docs/                # Documentation and media
 └── Makefile             # Build rules
 ```
-
-<br><br>
-
----
-# Getting Started
 
 ## 📋Requirements
 
