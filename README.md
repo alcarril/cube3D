@@ -16,7 +16,6 @@
 ---
 
 
-[Demo](#demo) | [Technical details](#core-features-and-technical-highlights) | [Getting Started](#getting-started) | [Game](#game) | [Features](#features) | [Boost](#-boost-mode-implementation-) | [Architecture](#-game-engine-architecture-) | [Physics](#-physics-system) | [Atmosphere](#-atmospheric-effects) | [Gallery](#-gallery) | [Resources](#-resources) | [Authors](#authors) | [License](#license)
 
 ## 📖Overview
 
@@ -39,7 +38,7 @@ cub3D is a 3D graphics engine inspired by classic shooters like Wolfenstein 3D. 
 
 Our implementation prioritizes a **solid, highly configurable graphics engine** with a clean architecture that separates simulation from rendering, enabling real-time experimentation with rendering techniques and in-game configuration. We've integrated **performance optimizations** to maintain high FPS rates, and built an **advanced physics system**. This foundation allows seamless addition of new features—sprites, dynamic lighting, AI—without compromising performance.
 
-## 🛠️ Core Features and technical highlights
+## 🛠️Core Features and technical highlights
 
 ### Parsing and Map Validation
 - ✅ **Map validation** ensuring proper maze structure and player positioning
