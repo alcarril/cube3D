@@ -3,36 +3,42 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 21:01:02 by alcarril          #+#    #+#             */
-/*   Updated: 2024/10/08 13:19:09 by alex             ###   ########.fr       */
+/*   Updated: 2026/03/11 18:43:58 by carbon-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+static int	ft_ovflow(unsigned long long num, int neg)
+{
+	if (neg == -1 && num > 9223372036854775807)
+		return (0);
+	if (neg == 1 && num > 9223372036854775807)
+		return (-1);
+	return (num);
+}
+
 int	ft_atoi(const char *nptr)
 {
-	int	sing;
-	int	num;
+	int					i;
+	unsigned long long	num;
+	int					sign;
 
-	sing = 1;
+	i = 0;
 	num = 0;
-	while (*nptr == 32 || (*nptr >= 9 && *nptr <= 13))
+	sign = 1;
+	while (nptr[i] == ' ' || (nptr[i] >= 9 && nptr[i] <= 13))
+		i++;
+	if (nptr[i] == '-')
+		sign *= -1;
+	if (nptr[i] == '-' || nptr[i] == '+')
+		i++;
+	while (nptr[i] >= '0' && nptr[i] <= '9')
 	{
-		nptr++;
+		num = num * 10 + nptr[i] - 48;
+		i++;
 	}
-	if (*nptr == '-' || *nptr == '+')
-	{
-		if (*nptr == '-')
-		{
-			sing = -1;
-		}
-		nptr++;
-	}
-	while (*nptr >= '0' && *nptr <= '9')
-	{
-		num = num * 10 + (*nptr - '0');
-		nptr++;
-	}
-	return (num * sing);
+	num = ft_ovflow(num, sign);
+	return (num * sign);
 }

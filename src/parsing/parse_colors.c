@@ -6,17 +6,40 @@
 /*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 00:00:00 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/22 13:58:59 by carbon-m         ###   ########.fr       */
+/*   Updated: 2026/03/11 18:57:04 by carbon-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/carbon.h"
+
+int	is_numeric_string(char *str)
+{
+	int	i;
+
+	if (!str || !str[0])
+		return (0);
+	i = 0;
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 int	parse_rgb_values(char **rgb_split, t_carbon_color *color)
 {
 	if (!rgb_split || !rgb_split[0] || !rgb_split[1]
 		|| !rgb_split[2] || rgb_split[3])
 		return (0);
+	if (!is_numeric_string(rgb_split[0]) || !is_numeric_string(rgb_split[1])
+		|| !is_numeric_string(rgb_split[2]))
+	{
+		printf("Error: RGB values must be numeric: %s,%s,%s\n",
+			rgb_split[0], rgb_split[1], rgb_split[2]);
+		return (0);
+	}
 	color->r = ft_atoi(rgb_split[0]);
 	color->g = ft_atoi(rgb_split[1]);
 	color->b = ft_atoi(rgb_split[2]);

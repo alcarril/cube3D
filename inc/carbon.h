@@ -6,7 +6,7 @@
 /*   By: carbon-m <carbon-m@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/15 03:15:03 by alejandro         #+#    #+#             */
-/*   Updated: 2026/01/25 21:52:37 by carbon-m         ###   ########.fr       */
+/*   Updated: 2026/03/11 18:57:04 by carbon-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,7 @@ int		check_multiple_players(t_carbon_map *map);
 void	set_player_data(t_carbon_map *map, int i, int y, char direction);
 
 // Color parsing functions
+int		is_numeric_string(char *str);
 int		parse_rgb_values(char **rgb_split, t_carbon_color *color);
 int		get_color_pointer(char *identifier, t_carbon_map *map,
 			t_carbon_color **color);
